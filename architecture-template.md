@@ -1,18 +1,20 @@
 ---
-artifact_id: ARC-<DOMAIN>-###
+artifact_id: ARC-<DOMAIN>[-<GROUPING>...]-###
 artifact_type: architecture
 title: <Architecture or Design Title>
 domain: <domain>
 status: draft
 owner: <team-or-role>
 satisfies:
-  - REQ-<DOMAIN>-###
+  - REQ-<DOMAIN>[-<GROUPING>...]-###
 related_artifacts:
-  - SPEC-<DOMAIN>-###
+  - SPEC-<DOMAIN>[-<GROUPING>...]-###
   - ADR-###
 ---
 
-# ARC-<DOMAIN>-### - <Architecture or Design Title>
+# ARC-<DOMAIN>[-<GROUPING>...]-### - <Architecture or Design Title>
+
+Optional grouping segments may appear between the domain code and the terminal number.
 
 ## Purpose
 
@@ -20,7 +22,7 @@ Describe how the named requirements will be satisfied by design. Keep this focus
 
 ## Requirements Satisfied
 
-- REQ-<DOMAIN>-###
+- REQ-<DOMAIN>[-<GROUPING>...]-###
 
 ## Design Summary
 

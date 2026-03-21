@@ -1,6 +1,6 @@
 ## Recommended Product Repository Layout and Conventions
 
-This layout is for repositories that adopt the standard. The `incursa/spec-trace` repository is the public reference package; it keeps the standard documents at the repository root for packaging and copy convenience. Product repositories should treat the `/specs/...` tree below as the recommended layout for the live standard content.
+This layout is for repositories that adopt the standard. The `incursa/spec-trace` repository is the public reference package; it keeps the standard documents at the repository root for packaging and copy convenience. Product repositories should treat the `/specs/...` tree below as the recommended layout for the live standard content. Nested grouping directories are valid between the top-level domain folder and the leaf artifact file.
 
 The recommended default layout is:
 
@@ -12,15 +12,15 @@ The recommended default layout is:
       <capability>.md
   /architecture
     /<domain>/
-      ARC-<DOMAIN>-###-<slug>.md
+      ARC-<DOMAIN>[-<GROUPING>...]-###-<slug>.md
   /decisions
     ADR-###-<slug>.md
   /work-items
     /<domain>/
-      WI-<DOMAIN>-###-<slug>.md
+      WI-<DOMAIN>[-<GROUPING>...]-###-<slug>.md
   /verification
     /<domain>/
-      VER-<DOMAIN>-###-<slug>.md
+      VER-<DOMAIN>[-<GROUPING>...]-###-<slug>.md
   /templates
     spec-template.md
     architecture-template.md
@@ -50,6 +50,8 @@ A good default is:
 
 Within each domain folder, each Markdown file should represent a **capability-level specification**, not a single requirement and not an entire subsystem. A healthy file usually contains a coherent group of related requirements for one capability. As a general guideline, a specification file should usually contain somewhere between roughly five and twenty related requirements. If it becomes too large or starts to mix multiple capabilities, split it.
 
+If a domain needs further organization, add nested grouping directories beneath it. Keep those groupings stable and capability-oriented rather than date-oriented.
+
 Each domain folder may include an `_index.md` file that briefly explains what belongs in that domain and links to the relevant specification, architecture, decision, work-item, and verification artifacts.
 
 ### Artifact Placement
@@ -75,10 +77,11 @@ File names should be stable, readable, and easy to scan in Git. Use hyphenated t
 Recommended examples:
 
 - `/specs/requirements/payments/ach-batch-processing.md`
+- `/specs/requirements/payments/ach/duplicate-batch-processing.md`
 - `/specs/requirements/notary/template-generation.md`
-- `/specs/architecture/payments/ARC-PAY-002-duplicate-batch-detection.md`
-- `/specs/work-items/payments/WI-PAY-081-duplicate-batch-guard.md`
-- `/specs/verification/payments/VER-PAY-021-duplicate-batch-rejection.md`
+- `/specs/architecture/payments/ach/ARC-PAY-ACH-002-duplicate-batch-detection.md`
+- `/specs/work-items/payments/ach/WI-PAY-ACH-081-duplicate-batch-guard.md`
+- `/specs/verification/payments/ach/VER-PAY-ACH-021-duplicate-batch-rejection.md`
 
 Avoid using dates, sprint numbers, or developer names in file names.
 
@@ -88,21 +91,27 @@ Each artifact type should use a distinct identifier pattern so links are obvious
 
 A recommended convention is:
 
-- `SPEC-<DOMAIN>-###` for specification documents
-- `REQ-<DOMAIN>-###` for individual requirements
-- `ARC-<DOMAIN>-###` for architecture or design artifacts
+- `SPEC-<DOMAIN>[-<GROUPING>...]-###` for specification documents
+- `REQ-<DOMAIN>[-<GROUPING>...]-###` for individual requirements
+- `ARC-<DOMAIN>[-<GROUPING>...]-###` for architecture or design artifacts
 - `ADR-###` for architectural decision records
-- `WI-<DOMAIN>-###` for work items
-- `VER-<DOMAIN>-###` for verification artifacts
+- `WI-<DOMAIN>[-<GROUPING>...]-###` for work items
+- `VER-<DOMAIN>[-<GROUPING>...]-###` for verification artifacts
 
 Examples:
 
 - `SPEC-PAY-001`
+- `SPEC-PAY-ACH-001`
 - `REQ-PAY-014`
 - `ARC-PAY-002`
+- `ARC-PAY-ACH-002`
 - `ADR-012`
 - `WI-PAY-081`
+- `WI-PAY-ACH-081`
 - `VER-PAY-021`
+- `VER-PAY-ACH-021`
+
+The optional grouping segments may be used to reflect multi-level organization. The identifier must still start with the artifact type prefix and domain code and end with a terminal sequence number.
 
 The domain code should be short, stable, and reused consistently across the repository. Once an identifier is assigned, it should not be reused for a different artifact.
 

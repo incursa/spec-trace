@@ -93,7 +93,7 @@ Common artifact types include:
 - **Verification artifact**: identifies how a requirement was verified, whether by automated test, manual test, inspection, or another method
 - **Decision record**: records a significant design or product decision
 
-The exact artifact names can vary outside this package. What must stay stable is the artifact identifier, the required field names, and the explicit links between artifacts.
+The exact artifact names can vary outside this package. What must stay stable is the artifact identifier, the required field names, and the explicit links between artifacts. Artifact identifiers may include one or more grouping segments between the type prefix and the terminal sequence number.
 
 ## Canonical Field Names
 
@@ -205,7 +205,7 @@ The exact folder names may vary, but the model should remain the same:
 - verification artifacts define **how fulfillment is proven**
 - generated content contains indexes, traceability reports, and published documentation
 
-Requirements should be organized by business domain, feature area, or product capability rather than by date.
+Requirements should be organized by business domain, feature area, or product capability rather than by date. Nested grouping levels are allowed when they help keep a domain organized, as long as the leaf artifact remains capability-level and the grouping stays stable.
 
 ## Requirement Document Structure
 

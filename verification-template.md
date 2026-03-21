@@ -1,19 +1,21 @@
 ---
-artifact_id: VER-<DOMAIN>-###
+artifact_id: VER-<DOMAIN>[-<GROUPING>...]-###
 artifact_type: verification
 title: <Verification Title>
 domain: <domain>
 status: <implementation-specific>
 owner: <team-or-role>
 verifies:
-  - REQ-<DOMAIN>-###
+  - REQ-<DOMAIN>[-<GROUPING>...]-###
 related_artifacts:
-  - SPEC-<DOMAIN>-###
-  - ARC-<DOMAIN>-###
-  - WI-<DOMAIN>-###
+  - SPEC-<DOMAIN>[-<GROUPING>...]-###
+  - ARC-<DOMAIN>[-<GROUPING>...]-###
+  - WI-<DOMAIN>[-<GROUPING>...]-###
 ---
 
-# VER-<DOMAIN>-### - <Verification Title>
+# VER-<DOMAIN>[-<GROUPING>...]-### - <Verification Title>
+
+Optional grouping segments may appear between the domain code and the terminal number.
 
 The `status` field is implementation-specific. Use the repository's normal verification workflow vocabulary if one exists.
 
@@ -23,7 +25,7 @@ State what is being verified and what is out of scope.
 
 ## Requirements Verified
 
-- REQ-<DOMAIN>-###
+- REQ-<DOMAIN>[-<GROUPING>...]-###
 
 ## Verification Method
 
@@ -51,6 +53,6 @@ Record the verification outcome here using the repository's chosen workflow voca
 
 ## Related Artifacts
 
-- SPEC-<DOMAIN>-###
-- ARC-<DOMAIN>-###
-- WI-<DOMAIN>-###
+- SPEC-<DOMAIN>[-<GROUPING>...]-###
+- ARC-<DOMAIN>[-<GROUPING>...]-###
+- WI-<DOMAIN>[-<GROUPING>...]-###

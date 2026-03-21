@@ -22,7 +22,7 @@ Actual product requirements should live in the product repository. This repo is 
 ## Getting Started
 
 1. Read [overview.md](overview.md) for the standard rules and canonical field names.
-2. Read [layout.md](layout.md) for the recommended repository structure and naming conventions for adopting product repos.
+2. Read [layout.md](layout.md) for the recommended repository structure and naming conventions for adopting product repos, including nested grouping levels.
 3. Open [examples/README.md](examples/README.md) and [examples/payments/](examples/payments/) to see one complete worked example set.
 4. Copy the templates into a product repo, typically under `/specs/templates/`, or use them as the basis for your own internal standard.
 

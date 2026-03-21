@@ -11,6 +11,7 @@
 
 - Standardized the root template filenames to hyphenated names: `spec-template.md`, `architecture-template.md`, `work-item-template.md`, and `verification-template.md`.
 - Clarified that `layout.md` describes the recommended layout for product repositories that adopt the standard, not the reference package's own root layout.
+- Allowed multi-level grouping segments in artifact identifiers and repository paths.
 - Split the trace-field guidance into separate requirement and work-item schema files.
 - Tightened the artifact front-matter schema for type-specific required fields and artifact-ID patterns.
 

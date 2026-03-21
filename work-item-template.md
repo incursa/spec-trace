@@ -1,21 +1,23 @@
 ---
-artifact_id: WI-<DOMAIN>-###
+artifact_id: WI-<DOMAIN>[-<GROUPING>...]-###
 artifact_type: work_item
 title: <Work Item Title>
 domain: <domain>
 status: <implementation-specific>
 owner: <team-or-role>
 addresses:
-  - REQ-<DOMAIN>-###
+  - REQ-<DOMAIN>[-<GROUPING>...]-###
 design_links:
-  - ARC-<DOMAIN>-###
+  - ARC-<DOMAIN>[-<GROUPING>...]-###
 verification_links:
-  - VER-<DOMAIN>-###
+  - VER-<DOMAIN>[-<GROUPING>...]-###
 related_artifacts:
   - ADR-###
 ---
 
-# WI-<DOMAIN>-### - <Work Item Title>
+# WI-<DOMAIN>[-<GROUPING>...]-### - <Work Item Title>
+
+Optional grouping segments may appear between the domain code and the terminal number.
 
 The `status` field is implementation-specific. Use the work-item lifecycle that fits the team or repository, and keep that vocabulary documented in the repo if it matters for tooling or reporting.
 
@@ -25,12 +27,12 @@ State the unit of work to be completed in plain language.
 
 ## Requirements Addressed
 
-- REQ-<DOMAIN>-###
-- REQ-<DOMAIN>-###
+- REQ-<DOMAIN>[-<GROUPING>...]-###
+- REQ-<DOMAIN>[-<GROUPING>...]-###
 
 ## Design Inputs
 
-- ARC-<DOMAIN>-###
+- ARC-<DOMAIN>[-<GROUPING>...]-###
 - ADR-###
 
 ## Planned Changes
@@ -53,12 +55,12 @@ Optional section used after implementation to record any important deviations, f
 
 Addresses:
 
-- REQ-<DOMAIN>-###
+- REQ-<DOMAIN>[-<GROUPING>...]-###
 
 Uses Design:
 
-- ARC-<DOMAIN>-###
+- ARC-<DOMAIN>[-<GROUPING>...]-###
 
 Verified By:
 
-- VER-<DOMAIN>-###
+- VER-<DOMAIN>[-<GROUPING>...]-###

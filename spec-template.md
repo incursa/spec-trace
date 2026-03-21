@@ -1,5 +1,5 @@
 ---
-artifact_id: SPEC-<DOMAIN>-###
+artifact_id: SPEC-<DOMAIN>[-<GROUPING>...]-###
 artifact_type: specification
 title: <Specification Title>
 domain: <domain>
@@ -12,7 +12,9 @@ related_artifacts:
   - <artifact-id>
 ---
 
-# SPEC-<DOMAIN>-### - <Specification Title>
+# SPEC-<DOMAIN>[-<GROUPING>...]-### - <Specification Title>
+
+Optional grouping segments may appear between the domain code and the terminal number, for example `SPEC-PAY-ACH-001`.
 
 ## Purpose
 
@@ -26,7 +28,7 @@ State what is in scope and, if needed, what is out of scope.
 
 Provide brief business or product context that helps the reader understand why this capability exists.
 
-## REQ-<DOMAIN>-### <Requirement Title>
+## REQ-<DOMAIN>[-<GROUPING>...]-### <Requirement Title>
 
 Type: <required: functional | non-functional | constraint | edge-case>
 Status: <required: draft | proposed | approved | implemented | verified | superseded | retired>
@@ -49,7 +51,7 @@ Optional explanation of why this requirement exists.
 Notes:
 Optional implementation-neutral notes, examples, or edge clarifications.
 
-## REQ-<DOMAIN>-### <Requirement Title>
+## REQ-<DOMAIN>[-<GROUPING>...]-### <Requirement Title>
 
 Type: <required: functional | non-functional | constraint | edge-case>
 Status: <required: draft | proposed | approved | implemented | verified | superseded | retired>
