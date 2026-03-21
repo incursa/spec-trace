@@ -7,6 +7,8 @@ status: complete
 owner: payments-platform
 addresses:
   - REQ-PAY-ACH-0014
+  - REQ-PAY-ACH-0015
+  - REQ-PAY-ACH-0016
 design_links:
   - ARC-PAY-ACH-0002
 verification_links:
@@ -17,17 +19,17 @@ related_artifacts:
   - VER-PAY-ACH-0021
 ---
 
-# WI-PAY-ACH-0081 - Add ACH duplicate batch guard
-
-The `status` field is implementation-specific. This work item uses the team's normal delivery vocabulary and stays traceable to the requirement, design, and verification artifacts.
+# WI-PAY-ACH-0081 - Add ACH Duplicate Batch Guard
 
 ## Summary
 
-Implement the duplicate batch guard for ACH batch intake.
+Implement the tenant-scoped duplicate guard for ACH batch intake and prevent rejected duplicates from starting downstream work.
 
 ## Requirements Addressed
 
 - REQ-PAY-ACH-0014
+- REQ-PAY-ACH-0015
+- REQ-PAY-ACH-0016
 
 ## Design Inputs
 
@@ -35,27 +37,29 @@ Implement the duplicate batch guard for ACH batch intake.
 
 ## Planned Changes
 
-Add a tenant-scoped duplicate check at batch intake, persist accepted batch identifiers, and map duplicate detection to the approved rejection outcome.
+Add a tenant-scoped identity key, check the accepted-batch registry before dispatch, reject same-tenant duplicates, and preserve acceptance for the same external batch identifier when the tenant differs.
 
 ## Out of Scope
 
-- downstream settlement logic
-- changes to unrelated payment rails
-- changes to the requirement text itself
+- settlement behavior
+- unrelated payment rails
+- changes to the requirement text
 
 ## Verification Plan
 
-Use VER-PAY-ACH-0021 to confirm that a duplicate submission for the same tenant and external batch identifier is rejected after the initial acceptance path succeeds.
+Use `VER-PAY-ACH-0021` to verify same-tenant rejection, cross-tenant acceptance, and absence of downstream side effects for rejected duplicates.
 
 ## Completion Notes
 
-The implementation should preserve the same acceptance path for unique batch identifiers.
+The implementation preserves the existing success path for unique batch identifiers.
 
 ## Trace Links
 
 Addresses:
 
 - REQ-PAY-ACH-0014
+- REQ-PAY-ACH-0015
+- REQ-PAY-ACH-0016
 
 Uses Design:
 

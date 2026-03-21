@@ -9,16 +9,15 @@ satisfies:
   - REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 related_artifacts:
   - SPEC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
-  - ADR-<SEQUENCE:4+>
 ---
 
 # ARC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+> - <Architecture or Design Title>
 
-Optional grouping segments may appear between the domain code and the terminal number, for example `ARC-PAY-ACH-0002`.
+Use one of the approved architecture statuses: `draft`, `proposed`, `approved`, `implemented`, `verified`, `superseded`, or `retired`.
 
 ## Purpose
 
-Describe how the named requirements will be satisfied by design. Keep this focused on the design intent, not implementation trivia.
+State how this design satisfies the named requirements.
 
 ## Requirements Satisfied
 
@@ -26,7 +25,7 @@ Describe how the named requirements will be satisfied by design. Keep this focus
 
 ## Design Summary
 
-Summarize the design approach and the main mechanism used to satisfy the requirement.
+Summarize the chosen design and the core mechanism that satisfies the requirement set.
 
 ## Key Components
 
@@ -35,19 +34,19 @@ Summarize the design approach and the main mechanism used to satisfy the require
 
 ## Data and State Considerations
 
-Describe the data that must be stored, derived, or compared, and note any state transitions that matter to the design.
+Describe the state, data, and ordering rules that materially affect requirement satisfaction.
 
 ## Edge Cases and Constraints
 
-Call out the behavior for duplicates, failures, retries, boundary conditions, and any explicit constraints.
+Call out boundary cases, failure paths, retries, or invariants that matter to the requirements.
 
 ## Alternatives Considered
 
-List the main alternatives and why the chosen approach is preferred.
+- <alternative and reason rejected>
 
 ## Risks
 
-List the main technical or operational risks and any mitigation or follow-up work.
+- <risk or follow-up>
 
 ## Open Questions
 

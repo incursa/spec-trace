@@ -3,7 +3,7 @@ artifact_id: VER-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 artifact_type: verification
 title: <Verification Title>
 domain: <domain>
-status: <implementation-specific>
+status: planned
 owner: <team-or-role>
 verifies:
   - REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
@@ -15,13 +15,11 @@ related_artifacts:
 
 # VER-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+> - <Verification Title>
 
-Optional grouping segments may appear between the domain code and the terminal number, for example `VER-PAY-ACH-0021`.
-
-The `status` field is implementation-specific. Use the repository's normal verification workflow vocabulary if one exists.
+Use one of the approved verification statuses: `planned`, `passed`, `failed`, `blocked`, `waived`, or `obsolete`.
 
 ## Scope
 
-State what is being verified and what is out of scope.
+State what is being verified.
 
 ## Requirements Verified
 
@@ -29,7 +27,7 @@ State what is being verified and what is out of scope.
 
 ## Verification Method
 
-Describe the method at a tooling-agnostic level, such as execution, inspection, analysis, or manual review.
+Describe the method in tooling-agnostic terms, such as execution, inspection, analysis, or manual review.
 
 ## Preconditions
 
@@ -37,7 +35,7 @@ Describe the method at a tooling-agnostic level, such as execution, inspection, 
 
 ## Procedure or Approach
 
-Describe the steps or the approach used to verify the requirement.
+Describe the steps or approach used to verify the requirement set.
 
 ## Expected Result
 
@@ -45,11 +43,11 @@ Describe the expected outcome in plain language.
 
 ## Evidence
 
-- <evidence>
+- <evidence or test reference>
 
 ## Status
 
-Record the verification outcome here using the repository's chosen workflow vocabulary.
+planned
 
 ## Related Artifacts
 

@@ -1,90 +1,77 @@
 # Repository-Native Requirements and Traceability Standard
 
-This repository is the public reference package for `incursa/spec-trace`, a lightweight, Markdown-first standard for requirements and traceability.
+`incursa/spec-trace` is a public reference standard for precise, Markdown-first software specifications.
 
-The files here define the standard, ship copy-ready templates, and provide strict reference schemas plus a worked example set. The shared artifact ID policy lives in [artifact-id-policy.json](artifact-id-policy.json). The `/specs/...` layout in [layout.md](layout.md) is the recommended structure for product repositories that adopt the standard; it is not the required layout of this reference package itself.
+The standard is optimized for compact requirement clauses with stable IDs and direct traceability to:
 
-## Repository Status
+- architecture and design artifacts
+- work items
+- verification artifacts
+- tests
+- code references
 
-This is an early public `0.1.x` reference release. The standard is intentionally small and practical, and the package is meant to be easy to read, copy, and adapt.
+The canonical standard lives in `specs/requirements/spec-trace/`. The root documents are practical summaries and copy-ready templates. If a root document and the SPEC suite ever disagree, the SPEC suite wins.
 
-## What This Repo Solves
+## Core Model
 
-The repo gives you a simple way to:
+- A specification is a document that groups related requirements for one capability, behavior area, interface, or narrow technical concern.
+- A requirement is the smallest normative, testable statement in the system.
+- The requirement clause is the normative content.
+- Traceability is explicit. Related artifacts are linked by stable IDs or implementation-specific string references, not by loose prose.
+- Verification proves a requirement. Tests may reference requirement IDs directly. Code may reference requirement IDs directly.
+- Each specification Markdown file contains one specification and one or more related `REQ-...` clauses under it.
 
-- write requirements in Markdown
-- keep design, work items, and verification linked by stable identifiers
-- keep examples and schemas aligned with the standard
-- publish a reference package that teams can copy into product repositories
-
-Actual product requirements should live in the product repository. This repo is the reference standard package, not the live product spec.
+The standard is intentionally small. It does not require a requirements platform, a workflow tool, Gherkin, or a test-framework abstraction layer.
 
 ## Getting Started
 
-1. Read [overview.md](overview.md) for the standard rules and canonical field names.
-2. Read [layout.md](layout.md) for the recommended repository structure and naming conventions for adopting product repos, including nested grouping levels.
-3. Open [examples/README.md](examples/README.md) and [examples/payments/](examples/payments/) to see one complete worked example set.
-4. Copy the templates into `/specs/templates/` and the [artifact-id-policy.json](artifact-id-policy.json) file into the repo root, or use them as the basis for your own internal standard.
+1. Read `specs/requirements/spec-trace/` for the canonical self-specification suite.
+2. Read [overview.md](overview.md) for the compact authoring model.
+3. Read [layout.md](layout.md) for the recommended repository structure.
+4. Copy from the root templates if you want a starting point for your own repo.
+5. Use [artifact-id-policy.json](artifact-id-policy.json) and the files under [schemas/](schemas/) for machine-readable validation targets.
+6. Open [examples/README.md](examples/README.md) for worked examples, including a product-style payments example and a narrow arithmetic example.
 
-## Contents
+## Repository Contents
 
-- [overview.md](overview.md) - the main standard document
-- [artifact-id-policy.json](artifact-id-policy.json) - shared artifact ID policy metadata
-- [layout.md](layout.md) - the recommended product-repository layout and naming conventions
+- `specs/requirements/spec-trace/` - canonical SPEC suite and proving ground for the standard
+- [overview.md](overview.md) - concise summary of the authoring model
+- [layout.md](layout.md) - recommended repository layout and placement guidance
 - [spec-template.md](spec-template.md) - copy-ready specification template
 - [architecture-template.md](architecture-template.md) - copy-ready architecture or design template
 - [work-item-template.md](work-item-template.md) - copy-ready work-item template
 - [verification-template.md](verification-template.md) - copy-ready verification template
-- [examples/](examples/) - one worked example set based on the ACH duplicate batch scenario
-- [examples/README.md](examples/README.md) - navigation for the example set
-- [schemas/](schemas/) - strict reference JSON Schemas for front matter and trace fields
-- [schemas/README.md](schemas/README.md) - navigation for the schema set and field mappings
-- [.github/](.github/) - issue forms and pull request guidance for contributors
-- [CHANGELOG.md](CHANGELOG.md) - package history for this reference repo
-- [CONTRIBUTING.md](CONTRIBUTING.md) - how to propose changes to the standard
-- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) - project conduct expectations
-- [SECURITY.md](SECURITY.md) - how to report security-related concerns
-- [LICENSE](LICENSE) - Apache 2.0 license text
+- [artifact-id-policy.json](artifact-id-policy.json) - shared identifier policy and grouping-key registry
+- [schemas/](schemas/) - reference JSON Schemas for extracted metadata
+- [examples/](examples/) - worked examples that apply the standard directly
 
-## How To Use The Standard
+## Why This Exists
 
-1. Use [overview.md](overview.md) as the canonical source for the standard.
-2. Use [layout.md](layout.md) when organizing artifacts in a product repository.
-3. Keep artifact IDs stable and link related artifacts by ID, not by prose alone.
-4. Treat generated reports as derived outputs, not source-of-truth documents.
+The standard is meant to answer practical software questions with minimal ceremony:
 
-## How To Use The Templates
+- Which requirements have tests?
+- Which requirements have implementation references?
+- Which requirements are missing verification?
+- Which tests exist because of which requirements?
+- Which code paths were introduced to satisfy which rules or edge cases?
 
-- Use [spec-template.md](spec-template.md) for capability-level specification documents.
-- Use [architecture-template.md](architecture-template.md) for design artifacts that explain how requirements are satisfied.
-- Use [work-item-template.md](work-item-template.md) for implementation work that is traceable back to requirements and design.
-- Use [verification-template.md](verification-template.md) for lightweight verification records that show how a requirement was proven.
+That only works if requirement IDs are stable, requirement clauses are compact, and trace links are explicit.
 
-The templates are intentionally direct. They are meant to be copied and filled in, not wrapped in another process.
+## Self-Application
 
-## How To Use The Examples
-
-The [examples/payments/](examples/payments/) folder contains a complete worked example derived from the ACH duplicate batch scenario already referenced in the standard.
-
-Use it as:
-
-- a formatting reference
-- a trace-link reference
-- a starting point for your own product artifacts
-
-The example artifacts cross-link the same core requirement across specification, architecture, work item, and verification records. Treat the wording as reference material, not as mandatory prose.
+This repository uses the standard to specify itself under `specs/requirements/spec-trace/`. That recursive self-application is intentional. The SPEC suite is not an example pasted beside the standard; it is the standard expressed in its own form.
 
 ## Versioning
 
-This repository uses a simple public-reference versioning approach. The initial public package is `0.1.0`.
+This repository uses a simple public-reference versioning approach.
 
 - `0.1.x` tracks the early public reference package while the standard settles.
-- Changes to canonical field names or artifact structure should be treated as deliberate and documented.
-- The changelog records package-level changes, not product-specific work.
+- Changes to canonical field names, identifier rules, or required structures are breaking changes and should be documented.
+- `CHANGELOG.md` records package-level changes to the reference standard.
 
 ## Contributing
 
-See `CONTRIBUTING.md` for the practical rules for proposing changes, keeping examples and schemas aligned, and handling breaking changes to the standard.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the rules for proposing changes and keeping the SPEC suite, templates, schemas, and examples aligned.
 
 ## License
 
@@ -92,6 +79,6 @@ This repository is licensed under Apache-2.0. See `LICENSE`.
 
 ## Security
 
-This repository is primarily documentation, templates, schemas, and examples. Most issues are specification or documentation issues and should go through normal issues or pull requests.
+This repository is primarily documentation, schemas, examples, and policy files. Most issues should go through the normal issue or pull-request flow.
 
 If you believe you found a security-sensitive problem in the repository contents or release process, follow `SECURITY.md`.

@@ -1,8 +1,8 @@
-## Recommended Product Repository Layout and Conventions
+# Recommended Repository Layout
 
-This layout is for repositories that adopt the standard. The `incursa/spec-trace` repository is the public reference package; it keeps the standard documents at the repository root for packaging and copy convenience. Product repositories should treat the `/specs/...` tree below as the recommended layout for the live standard content. Nested grouping directories are valid between the top-level domain folder and the leaf artifact file. The shared artifact ID policy lives in `artifact-id-policy.json` at the repository root.
+This file describes the recommended layout for repositories that adopt the standard. The `incursa/spec-trace` repository is the public reference package, so it also keeps a small root reference layer for readability and copy convenience.
 
-The recommended default layout is:
+## Default Layout
 
 ```text
 artifact-id-policy.json
@@ -10,18 +10,23 @@ artifact-id-policy.json
   /requirements
     /<domain>/
       _index.md
-      <capability>.md
+      SPEC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>.md
   /architecture
     /<domain>/
-      ARC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>-<slug>.md
+      <readable-file-name>.md
   /decisions
     ADR-<SEQUENCE:4+>-<slug>.md
   /work-items
     /<domain>/
-      WI-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>-<slug>.md
+      <readable-file-name>.md
   /verification
     /<domain>/
-      VER-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>-<slug>.md
+      <readable-file-name>.md
+  /generated
+    requirements-index.json
+    traceability-matrix.md
+    orphan-report.md
+    verification-coverage.md
   /templates
     spec-template.md
     architecture-template.md
@@ -29,130 +34,83 @@ artifact-id-policy.json
     verification-template.md
   /schemas
     artifact-frontmatter.schema.json
+    artifact-id-policy.schema.json
+    requirement-clause.schema.json
     requirement-trace-fields.schema.json
     work-item-trace-fields.schema.json
-  /generated
-    requirements-index.json
-    traceability-matrix.md
-    orphan-report.md
-    verification-coverage.md
 ```
 
-### Layout Rules
+## Layout Rules
 
-Requirements should be organized first by **domain or bounded area of the product**, and then by **capability or feature area**. In other words, organize by the shape of the system, not by sprint, release, assignee, or date.
+### Specifications
 
-A good default is:
+Place specifications under `/specs/requirements/`.
 
-- `/specs/requirements/payments/`
-- `/specs/requirements/notary/`
-- `/specs/requirements/auth/`
-- `/specs/requirements/compliance/`
+Organize them:
 
-Within each domain folder, each Markdown file should represent a **capability-level specification**, not a single requirement and not an entire subsystem. A healthy file usually contains a coherent group of related requirements for one capability. As a general guideline, a specification file should usually contain somewhere between roughly five and twenty related requirements. If it becomes too large or starts to mix multiple capabilities, split it.
+1. by domain or bounded area first
+2. by capability, behavior area, interface, or narrow technical concern second
 
-If a domain needs further organization, add nested grouping directories beneath it. Keep those groupings stable and capability-oriented rather than date-oriented.
+Good grouping dimensions are stable technical or business concepts. Dates, sprints, owners, and release numbers are not.
 
-Each domain folder may include an `_index.md` file that briefly explains what belongs in that domain and links to the relevant specification, architecture, decision, work-item, and verification artifacts.
+### Architecture or Design
 
-### Artifact Placement
+Place architecture and design artifacts under `/specs/architecture/`.
 
-The repository should treat each artifact type differently.
+These documents explain how requirements are satisfied. They do not redefine the requirements.
 
-Requirements belong under `/specs/requirements/` because they define what the system must do.
+### Work Items
 
-Architecture and design artifacts belong under `/specs/architecture/` because they explain how the requirements are being satisfied.
+Place work items under `/specs/work-items/`.
 
-Decision records belong under `/specs/decisions/` because they capture cross-cutting or significant design choices that may affect many artifacts.
+Work items describe implementation work and should trace back to requirement IDs and design artifacts.
 
-Work-item artifacts belong under `/specs/work-items/` because they capture planned or completed units of implementation work.
+### Verification
 
-Verification artifacts belong under `/specs/verification/` because they describe how fulfillment was proven, whether by automated testing, manual testing, inspection, or some other means.
+Place verification artifacts under `/specs/verification/`.
 
-Generated reports, indexes, and matrices belong under `/specs/generated/` and should not be treated as source-of-truth documents.
+Verification artifacts prove requirements. They may summarize verification at a scenario level while tests reference requirement IDs directly.
 
-### File Naming Conventions
+### Generated Outputs
 
-File names should be stable, readable, and easy to scan in Git. Use hyphenated template filenames and human-readable slugs for artifact files. Artifact identifiers should live inside the file content and front matter, not depend on the file name.
+Place generated indexes, matrices, and coverage reports under `/specs/generated/`.
+
+Generated outputs are derived artifacts. They are useful, but they are not source of truth.
+
+## One Specification Per File
+
+Each specification Markdown file contains one specification and one or more related requirement clauses.
+
+If a concern is narrow, the specification may be narrow. The standard uses one specification model for both broad and narrow concerns.
+
+## File Names
+
+File names should be stable and readable.
+
+- Specification file names should include the full specification artifact ID.
+- Avoid dates, sprint numbers, and owner names.
+- Keep traceability anchored on `artifact_id` and `REQ-...` identifiers inside the file, not on the file name.
 
 Recommended examples:
 
-- `/specs/requirements/payments/ach-batch-processing.md`
-- `/specs/requirements/payments/ach/duplicate-batch-processing.md`
-- `/specs/requirements/notary/template-generation.md`
-- `/specs/architecture/payments/ach/ARC-PAY-ACH-0002-duplicate-batch-detection.md`
-- `/specs/work-items/payments/ach/WI-PAY-ACH-0081-duplicate-batch-guard.md`
-- `/specs/verification/payments/ach/VER-PAY-ACH-0021-duplicate-batch-rejection.md`
+- `/specs/requirements/payments/SPEC-PAY-ACH-0001.md`
+- `/specs/requirements/arithmetic/SPEC-MATH-DIV-0001.md`
+- `/specs/requirements/spec-trace/SPEC-STD-0001.md`
 
-Avoid using dates, sprint numbers, or developer names in file names.
+## Index Files
 
-### Identifier Conventions
+`_index.md` files are optional. Use them for navigation only.
 
-Each artifact type should use a distinct identifier pattern so links are obvious and tooling can validate them.
+An index file may summarize a domain and link specifications, architecture, work items, verification artifacts, and generated outputs. It does not replace the underlying artifacts.
 
-A shared `artifact-id-policy.json` file defines the minimum sequence width and grouping token rules.
+## Traceability Loop
 
-A recommended convention is:
+The layout should make this path easy to see:
 
-- `SPEC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>` for specification documents
-- `REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>` for individual requirements
-- `ARC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>` for architecture or design artifacts
-- `ADR-<SEQUENCE:4+>` for architectural decision records
-- `WI-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>` for work items
-- `VER-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>` for verification artifacts
+1. a specification groups the requirement clauses
+2. architecture or design artifacts satisfy requirements
+3. work items address requirements and use design inputs
+4. verification artifacts prove requirements
+5. tests and code may reference requirement IDs directly
 
-Examples:
-
-- `SPEC-PAY-0001`
-- `SPEC-PAY-ACH-0001`
-- `REQ-PAY-0014`
-- `REQ-PAY-ACH-0014`
-- `ARC-PAY-0002`
-- `ARC-PAY-ACH-0002`
-- `ADR-0012`
-- `WI-PAY-0081`
-- `WI-PAY-ACH-0081`
-- `VER-PAY-0021`
-- `VER-PAY-ACH-0021`
-
-The optional grouping segments may be used to reflect multi-level organization. The identifier must still start with the artifact type prefix and domain code and end with a terminal sequence number that is at least four digits long.
-
-The domain code should be short, stable, and reused consistently across the repository. Once an identifier is assigned, it should not be reused for a different artifact.
-
-### Structure Within Markdown Files
-
-Front matter should be used at the **file level** only. It describes the document as a whole.
-
-Requirement-level metadata should be stored in the **body of the Markdown document** using fixed field labels under each requirement heading. This keeps the file readable in plain Markdown and avoids inventing nested front matter conventions that are harder to maintain.
-
-The parser should assume:
-
-- file-level front matter contains document metadata
-- requirement sections begin with a level-two heading containing the requirement ID
-- field labels inside each requirement section use exact names and exact order where practical
-- trace links reference artifact identifiers, not file paths
-
-### Organization Defaults
-
-If no other structure has been chosen, the following defaults should be assumed:
-
-- requirements are grouped by capability
-- architecture documents are grouped by the domain they affect most directly
-- work items are grouped by the domain they implement
-- verification artifacts are grouped by the capability or scenario they prove
-- decision records are shared and kept at a global level unless there is a strong reason to partition them further
-- generated reports are fully derived and may be deleted and regenerated at any time
-
-### Traceability Expectations
-
-The repository layout should make it possible to generate, at minimum, the following views:
-
-- all requirements by domain
-- all requirements by status
-- all requirements with no linked design
-- all requirements with no linked work item
-- all requirements with no linked verification
-- all work items with no linked requirement
-- all verification artifacts that reference retired or superseded requirements
-
-That traceability should come from artifact identifiers and metadata links, not from loose prose.
+If the layout makes that chain hard to follow, the structure is working against the standard.

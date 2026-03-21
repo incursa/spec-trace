@@ -1,418 +1,156 @@
-# Repository-Native Requirements and Traceability Standard
+# Overview
 
-## Purpose
+This file summarizes the standard described in `specs/requirements/spec-trace/`. It is a practical guide, not a second source of truth.
 
-This standard defines a lightweight, repository-native way to capture requirements in Markdown and keep them traceable to design, work items, implementation, and verification artifacts.
+## Core Vocabulary
 
-The goal is practical: make requirements easy to read in Git, easy to review, and easy for tools to parse. The standard is intentionally lightweight. It does not require a specialized requirements platform, a test framework convention, or a behavior-driven syntax.
+### Specification
 
-Requirements are first-class artifacts. They live in the repository alongside the related design, work, and verification content that proves them out.
+A specification is a Markdown document that groups and organizes one or more related requirements for a capability, behavior area, interface, or narrow technical concern.
 
-## Scope
+Each specification Markdown file contains exactly one specification. That specification carries document-level metadata and any shared framing prose, such as purpose, scope, or context.
 
-This standard applies to:
+### Requirement
 
-- product requirements
-- functional requirements
-- non-functional requirements
-- constraints and edge-case requirements
-- architecture and design documents that satisfy requirements
-- work items that implement requirements
-- verification artifacts that prove requirements were fulfilled
+A requirement is the smallest normative, testable statement in the system.
 
-This standard does not prescribe implementation language, test framework, or delivery tool. It only defines how artifacts are written, identified, and linked.
+Each requirement:
 
-## Conformance
+- has a stable `REQ-...` identifier
+- appears inside a specification
+- is written as a compact normative clause
+- may carry optional trace links and notes
 
-A repository conforms to this standard when it follows the required artifact structure and traceability rules below.
+A specification is not a requirement. The specification groups requirements. The requirement clause is the atomic obligation.
 
-### Required For Conformance
+### Traceability
 
-- Use Markdown as the authoring format.
-- Use file-level front matter for each artifact.
-- Use the canonical field names defined in this document and the templates.
-- Give every artifact a stable `artifact_id`.
-- Keep requirement statements atomic and verifiable.
-- Keep normative requirement text separate from explanatory text.
-- Link requirements to design, work, and verification artifacts using explicit artifact identifiers.
-- Preserve the meaning of an artifact when refining wording. If the meaning changes materially, create a new identifier.
+Traceability is the explicit link between a requirement and the artifacts that exist because of it.
 
-### Normative Content
+The standard gives first-class weight to links from a requirement to:
 
-The following parts are normative in this standard:
+- architecture or design artifacts
+- work items
+- verification artifacts
+- tests
+- code references
 
-- the required front matter fields
-- the requirement section field names
-- the requirement statement itself
-- the work-item trace-link field names and directions
-- the conformance rules above
+Tests are not the requirement. Code is not the requirement. They are artifacts that may exist because of the requirement and may reference the requirement ID directly.
 
-### Explanatory Content
+### Verification Artifact
 
-The following parts are explanatory only:
+A verification artifact describes how one or more requirements were verified and records the outcome.
 
-- examples
-- rationale
-- notes
-- layout recommendations
-- generated outputs
-- implementation guidance that does not define a required field or rule
+Verification artifacts may summarize verification at a higher level than individual tests. Tests may still reference requirement IDs directly.
 
-## Core Principles
+### Work Item
 
-This process is built on a small number of rules.
+A work item describes implementation work. It is not the requirement itself.
 
-**Requirements must be human-readable.**
-All requirements are stored in Markdown and reviewed like any other repository content.
+### Architecture or Design Artifact
 
-**Requirements must be machine-parseable.**
-Each requirement follows a predictable structure so tooling can extract identifiers, metadata, links, and status.
+An architecture or design artifact explains how one or more requirements will be satisfied. It is not the requirement itself.
 
-**Each requirement must be uniquely identifiable.**
-Every requirement gets a stable identifier that does not change unless the requirement is materially replaced.
+## Normative Keywords
 
-**Each requirement must be atomic.**
-A requirement expresses one verifiable behavior, rule, or constraint. If a statement contains multiple independent obligations, split it.
+Requirement clauses use the following normative keywords:
 
-**Traceability must be explicit.**
-Links between requirements and other artifacts must be stored in metadata, not inferred from prose.
+- `MUST` or `SHALL`: required
+- `MUST NOT` or `SHALL NOT`: prohibited
+- `SHOULD`: recommended but not strictly required
+- `MAY`: permitted or optional
 
-**Normative content must be separated from explanatory content.**
-The requirement statement is the binding portion. Rationale, examples, notes, and commentary are useful, but they are not the requirement itself.
+Every canonical requirement clause must contain exactly one approved keyword in all caps.
 
-## Artifact Model
+The keyword does not need to be the first word in the sentence, but it must appear in the normative clause, it must be uppercase, and no second approved keyword may appear in the same clause.
 
-The repository may contain several artifact types. Each artifact has its own identifier and may link to other artifacts by identifier.
+## Canonical Requirement Form
 
-Common artifact types include:
+The compact requirement clause is the canonical requirement form.
 
-- **Specification**: a Markdown document that groups related requirements
-- **Requirement**: a defined need, rule, behavior, or constraint
-- **Architecture or design**: explains how one or more requirements will be satisfied
-- **Work item**: captures a unit of planned or completed work
-- **Verification artifact**: identifies how a requirement was verified, whether by automated test, manual test, inspection, or another method
-- **Decision record**: records a significant design or product decision
+```md
+## REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+> <Short Title>
+The system MUST <direct, testable behavior>.
 
-The exact artifact names can vary outside this package. What must stay stable is the artifact identifier, the required field names, and the explicit links between artifacts. Artifact identifiers may include one or more grouping segments between the type prefix and the terminal sequence number. The shared defaults live in [artifact-id-policy.json](artifact-id-policy.json).
+Trace:
+- Satisfied By: ARC-...
+- Implemented By: WI-...
+- Verified By: VER-...
+- Test Refs:
+  - <test reference>
+- Code Refs:
+  - <code reference>
+- Related:
+  - <artifact or requirement ID>
 
-## Canonical Field Names
+Notes:
+- <clarification>
+```
 
-The following field names are canonical in compliant content.
+Canonical rules:
 
-### File-Level Front Matter
+- The heading begins with `REQ-...`.
+- The requirement clause immediately follows the heading.
+- The clause contains exactly one approved normative keyword.
+- The clause is usually a single sentence.
+- `Trace` is optional.
+- `Notes` is optional.
+- The requirement clause is the normative content.
 
-Specification documents use:
+The reference model intentionally does not require per-requirement fields such as `Type`, `Status`, `Priority`, `Source`, or `Verification` ahead of the clause.
 
-- `artifact_id`
-- `artifact_type`
-- `title`
-- `domain`
-- `capability`
-- `status`
-- `owner`
-- `tags`
-- `related_artifacts`
+Repositories may add richer management metadata if they choose, but that metadata is not the canonical requirement form and must not obscure the clause itself.
 
-Architecture documents use:
+## One Specification Per File
 
-- `artifact_id`
-- `artifact_type`
-- `title`
-- `domain`
-- `status`
-- `owner`
-- `satisfies`
-- `related_artifacts`
+Each specification file contains:
 
-Work items use:
+- one specification identified by the file's `artifact_id`
+- one or more related `REQ-...` clauses beneath it
 
-- `artifact_id`
-- `artifact_type`
-- `title`
-- `domain`
-- `status`
-- `owner`
-- `addresses`
-- `design_links`
-- `verification_links`
-- `related_artifacts`
+Narrow technical concerns are still modeled as specifications. The standard uses one specification model for both broad and narrow concerns.
 
-Verification artifacts use:
+## Trace Model
 
-- `artifact_id`
-- `artifact_type`
-- `title`
-- `domain`
-- `status`
-- `owner`
-- `verifies`
-- `related_artifacts`
+When a requirement includes a `Trace` block, the canonical labels are:
 
-### Requirement Section Fields
-
-Requirement sections use these exact field labels:
-
-- `Type`
-- `Status`
-- `Priority`
-- `Source`
-- `Verification`
-- `Derived From`
 - `Satisfied By`
 - `Implemented By`
 - `Verified By`
-- `Supersedes`
+- `Test Refs`
+- `Code Refs`
 - `Related`
-- `Requirement`
-- `Rationale`
-- `Notes`
 
-The first five fields and `Requirement` are required. The remaining fields are optional.
-Required fields must appear in every compliant requirement section. Optional fields may be omitted when they do not apply.
+These labels map to the extracted metadata validated by the schemas in `schemas/`.
 
-### Work Item Trace-Link Fields
+`Test Refs` and `Code Refs` are implementation-specific string references. The standard does not prescribe one syntax. Valid references may include:
 
-Work item documents use these exact field labels in their `Trace Links` section:
+- test IDs
+- fully qualified test names
+- repository paths
+- source-file locations
+- code symbols
+- manifest keys or metadata values used by local tooling
 
-- `Addresses`
-- `Uses Design`
-- `Verified By`
+## File-Level Metadata
 
-These labels are canonical in compliant work-item trace-link sections.
+File-level front matter remains important. It identifies the document as a whole. The schemas keep that metadata strict so tooling can classify artifacts reliably.
 
-## Artifact ID Policy
+The key distinction is this:
 
-The shared artifact ID policy is defined in [artifact-id-policy.json](artifact-id-policy.json). It is the package-level source of truth for identifier shape.
-
-Current defaults:
-
-- artifact IDs use the type prefixes `SPEC`, `ARC`, `WI`, and `VER`
-- artifact IDs begin with the domain code
-- optional multi-level grouping segments may appear after the domain
-- grouping segments use the same uppercase alphanumeric token pattern as the domain code
-- the terminal sequence number is zero-padded to at least four digits
-- decision records use the `ADR` prefix and the same four-digit minimum sequence, but are not domain-scoped in this package
-
-Tooling should treat the policy file as the canonical place to read or change the identifier shape.
-
-## Recommended Product Repository Structure
-
-The structure below is the recommended layout for product repositories that adopt the standard. The public reference package may keep the same documents at the repository root for packaging convenience.
-
-A recommended structure is:
-
-```text
-/specs
-  /requirements
-  /architecture
-  /decisions
-  /work-items
-  /verification
-  /generated
-  /templates
-```
-
-The exact folder names may vary, but the model should remain the same:
-
-- requirements define **what** is needed
-- architecture and design define **how** it will be satisfied
-- work items define **what work is being done**
-- verification artifacts define **how fulfillment is proven**
-- generated content contains indexes, traceability reports, and published documentation
-
-Requirements should be organized by business domain, feature area, or product capability rather than by date. Nested grouping levels are allowed when they help keep a domain organized, as long as the leaf artifact remains capability-level and the grouping stays stable.
-
-## Requirement Document Structure
-
-Each Markdown specification document should have file-level front matter. This front matter describes the document as a whole.
-
-A typical file-level front matter block is:
-
-```yaml
----
-artifact_id: SPEC-PAY-ACH-0001
-artifact_type: specification
-title: ACH Duplicate Batch Handling
-domain: payments
-capability: ach-duplicate-batch-handling
-status: draft
-owner: payments-platform
-tags:
-  - payments
-  - ach
-related_artifacts:
-  - ARC-PAY-ACH-0002
-  - WI-PAY-ACH-0081
-  - VER-PAY-ACH-0021
----
-```
-
-This front matter is for the document, not for an individual requirement.
-
-Inside the document, each requirement must appear in its own structured section. The section heading must begin with the requirement identifier.
-
-A requirement section must contain the following elements in a fixed order:
-
-1. Identifier and title
-2. Metadata block
-3. Requirement statement
-4. Optional rationale
-5. Optional notes
-
-A recommended requirement section format is:
-
-```md
-## REQ-PAY-ACH-0014 Reject duplicate ACH batch submission
-
-Type: functional
-Status: approved
-Priority: high
-Source: BR-PAY-0003
-Verification: manual
-Derived From:
-Satisfied By: ARC-PAY-ACH-0002
-Implemented By: WI-PAY-ACH-0081
-Verified By: VER-PAY-ACH-0021
-Supersedes:
-Related:
-
-Requirement:
-The system shall reject a submitted ACH batch when the same external batch identifier has already been accepted for the same tenant.
-
-Rationale:
-This prevents duplicate payment processing and makes the duplicate-handling rule explicit.
-
-Notes:
-A duplicate is determined by tenant and external batch identifier, not by submission timestamp.
-```
-
-This format keeps the requirement readable in plain Markdown while remaining easy to parse.
-
-## Requirement Writing Rules
-
-A valid requirement must follow these writing rules.
-
-**Use one requirement per section.**
-Do not combine multiple separate obligations into one numbered item.
-
-**Write the requirement as a single normative statement.**
-The statement should be specific enough to verify. The clearest convention is to use “shall” for normative requirements.
-
-**Keep the requirement technology-neutral unless the technology is itself a requirement.**
-Requirements should describe expected behavior or constraints, not implementation details, unless the implementation choice is mandatory.
-
-**Do not mix rationale into the requirement statement.**
-If context is needed, place it under Rationale or Notes.
-
-**Write requirements so they can be verified.**
-A requirement that cannot be meaningfully tested, inspected, or otherwise verified is not ready.
-
-**Use stable identifiers.**
-An identifier should not change because wording was refined. A new identifier should be created only when the requirement meaning materially changes or is replaced.
-
-## Traceability Model
-
-Traceability is the core of this process. The requirement is the anchor artifact. Everything else points to or from it through explicit metadata.
-
-At a minimum, the process should support these link types:
-
-- **Derived From**: this requirement came from a higher-level business or product need
-- **Satisfied By**: this design or architecture artifact explains how the requirement will be met
-- **Implemented By**: this work item, change, or implementation artifact exists to fulfill the requirement
-- **Verified By**: this verification artifact proves the requirement has been fulfilled
-- **Supersedes / Superseded By**: this requirement replaced or was replaced by another requirement
-
-The requirement-section field names above are canonical in this standard and should not be renamed in compliant artifacts. Work items use a separate `Trace Links` section with their own canonical labels.
-
-A few rules matter here:
-
-- links must reference artifact identifiers, not prose descriptions
-- links must be explicit metadata, not implied in body text
-- one requirement may be linked to many work items or verification artifacts
-- one design document may satisfy many requirements
-- one work item may address multiple requirements, but that should be deliberate rather than casual
-
-Work items use their own trace-link labels to keep the implementation trail explicit:
-
-- `Addresses`
-- `Uses Design`
-- `Verified By`
-
-## Relationship to Work Items and Architecture
-
-Requirements are not work items.
-
-A requirement states what must be true. A work item states what someone plans to do. A design document explains how the requirement will be achieved.
-
-This distinction matters because it keeps requirements stable even when implementation plans change.
-
-A healthy flow looks like this:
-
-1. A requirement is captured and approved.
-2. A design or architecture artifact links back to the requirement through `Satisfied By`.
-3. One or more work items link back through `Implemented By` and the work item's `Trace Links` section.
-4. Verification artifacts link back through `Verified By`.
-5. Generated traceability outputs show whether the requirement is approved, implemented, and verified.
-
-This model lets the team answer questions such as:
-
-- Which approved requirements have no design?
-- Which implemented requirements have no verification?
-- Which work items are not tied to a requirement?
-- Which requirements were superseded?
-- Which requirement introduced a given edge case?
-
-## Lifecycle and Change Rules
-
-Requirements should move through a simple lifecycle. A recommended set of statuses is:
-
-- draft
-- proposed
-- approved
-- implemented
-- verified
-- superseded
-- retired
-
-The workflow can be kept lightweight, but the meanings should be consistent.
-
-A requirement should only be marked **implemented** when the intended behavior exists in the product.
-A requirement should only be marked **verified** when there is an explicit verification artifact linked to it.
-A requirement should be marked **superseded** rather than silently rewritten when it has been replaced by a newer requirement.
-
-When editing a requirement, use this rule:
-
-- if the intent stays the same and the wording is only clarified, keep the same ID
-- if the expected behavior, constraint, or obligation materially changes, create a new ID and link the old one through a supersession relationship
-
-## Tooling Expectations
-
-The repository should support automation around this standard, but the standard itself should remain tooling-agnostic.
-
-At minimum, tooling should be able to:
-
-- parse Markdown files and front matter
-- discover all requirement sections and identifiers
-- validate identifier uniqueness
-- validate required metadata fields
-- resolve trace links across artifact types
-- generate a traceability report
-- generate human-readable documentation
-- flag orphaned artifacts, such as work items with no requirement or approved requirements with no verification
-
-Generated outputs should be treated as derived artifacts, not the source of truth. The source of truth remains the Markdown content in the repository.
-
-## Summary
-
-This hybrid process is a Markdown-first, repository-native requirements system. It is lightweight enough to live comfortably in Git, structured enough for tooling, and explicit enough to support real traceability.
-
-The key design choices are simple:
-
-- Markdown is the authoring format
 - front matter describes the document
-- each requirement is a structured section with a stable identifier
-- only the requirement statement is normative
-- architecture, work items, and verification artifacts link to requirements by ID
-- tooling reads these links and generates traceability views
+- requirement clauses describe the normative behavior
+- one specification file groups the related requirement clauses for that specification
 
-That gives you a practical requirements system without forcing the team into a heavyweight platform or a prescriptive test-writing style.
+## Conformance Focus
+
+A practical implementation of the standard should make these questions answerable:
+
+- Which requirements exist for this capability?
+- Which requirements have design coverage?
+- Which requirements have work items?
+- Which requirements have verification coverage?
+- Which requirements are directly referenced by tests?
+- Which requirements are directly referenced by code?
+
+If those questions cannot be answered from stable IDs and explicit links, the traceability model is too weak.

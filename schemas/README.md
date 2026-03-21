@@ -1,13 +1,22 @@
 # Schemas
 
-These are reference schemas aligned to the standard in [overview.md](../overview.md). They are intentionally strict enough to help tooling without turning into a heavyweight validation framework.
+These are reference schemas aligned to the SPEC suite under `../specs/requirements/spec-trace/`.
 
-The shared [artifact-id-policy.json](../artifact-id-policy.json) file defines the minimum sequence width and grouping token rules that these schemas reflect.
+The schemas validate extracted metadata shapes, not raw Markdown parsing behavior.
 
-Useful entry points:
+The shared [artifact-id-policy.json](../artifact-id-policy.json) file defines the identifier contract for both artifact documents and requirement clauses.
 
-- [artifact-frontmatter.schema.json](artifact-frontmatter.schema.json) validates file-level front matter for specification, architecture, work-item, and verification artifacts
-- [requirement-trace-fields.schema.json](requirement-trace-fields.schema.json) validates the canonical trace labels used inside requirement sections
-- [work-item-trace-fields.schema.json](work-item-trace-fields.schema.json) validates the canonical trace labels used in the work-item `Trace Links` section
+## Included Schemas
 
-Use the schemas together with the templates and the canonical field names in [overview.md](../overview.md). They describe extracted metadata shape, not raw Markdown parsing behavior.
+- [artifact-id-policy.schema.json](artifact-id-policy.schema.json) validates the shared identifier and grouping-key metadata catalog
+- [artifact-frontmatter.schema.json](artifact-frontmatter.schema.json) validates file-level front matter for specification, architecture, work-item, and verification documents
+- [requirement-clause.schema.json](requirement-clause.schema.json) validates extracted compact requirement clauses, including the normative keyword and optional trace block
+- [requirement-trace-fields.schema.json](requirement-trace-fields.schema.json) validates the canonical trace labels used inside a requirement `Trace` block
+- [work-item-trace-fields.schema.json](work-item-trace-fields.schema.json) validates the canonical labels used in a work-item `Trace Links` section
+
+## Mapping Notes
+
+- `artifact-frontmatter.schema.json` is for document metadata.
+- `requirement-clause.schema.json` is for the requirement itself.
+- `requirement-trace-fields.schema.json` is referenced by the requirement-clause schema.
+- `Test Refs` and `Code Refs` remain implementation-specific string references. The schema constrains the field names and value shape, not the local reference syntax.

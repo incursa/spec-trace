@@ -4,18 +4,22 @@
 
 ### Added
 
-- Public reference package for a Markdown-first requirements and traceability standard.
-- `artifact-id-policy.json` for the shared identifier policy defaults.
-- `examples/README.md` and `schemas/README.md` for lightweight navigation and field mapping.
+- Restored root reference guidance in `overview.md`, `layout.md`, and the copy-ready template files.
+- Added `examples/arithmetic/` as a narrow technical example for method-level and edge-case requirements.
+- Added `schemas/requirement-clause.schema.json` for extracted compact requirement clauses.
 
 ### Changed
 
-- Standardized the root template filenames to hyphenated names: `spec-template.md`, `architecture-template.md`, `work-item-template.md`, and `verification-template.md`.
-- Clarified that `layout.md` describes the recommended layout for product repositories that adopt the standard, not the reference package's own root layout.
-- Allowed multi-level grouping segments in artifact identifiers and repository paths.
-- Raised the minimum terminal sequence width to four digits and updated the worked example IDs accordingly.
-- Split the trace-field guidance into separate requirement and work-item schema files.
-- Tightened the artifact front-matter schema for type-specific required fields and artifact-ID patterns.
+- Reframed the standard around compact requirement clauses with stable `REQ-...` identifiers.
+- Clarified that a specification groups requirements and that a requirement is the smallest normative, testable statement.
+- Made direct traceability to design, work items, verification artifacts, tests, and code references a first-class goal.
+- Replaced the old verbose per-requirement metadata pattern with an optional `Trace` block and optional `Notes` block.
+- Formalized normative keyword usage around `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, and `MAY`.
+- Refactored the canonical self-specification suite, worked examples, and templates to use the compact clause model.
+- Extended the identifier policy to describe `REQ-...` identifiers alongside artifact identifiers.
+- Removed the `specification_role` model and returned to one specification per Markdown file.
+- Restored full specification IDs in specification filenames and kept related requirements grouped under that specification in the same file.
+- Tightened the requirement-clause rule from “at least one approved keyword” to “exactly one approved keyword” and split the self-spec clauses accordingly.
 
 ## [0.1.0] - 2026-03-20
 

@@ -7,6 +7,8 @@ status: approved
 owner: payments-platform
 satisfies:
   - REQ-PAY-ACH-0014
+  - REQ-PAY-ACH-0015
+  - REQ-PAY-ACH-0016
 related_artifacts:
   - SPEC-PAY-ACH-0001
   - WI-PAY-ACH-0081
@@ -17,43 +19,40 @@ related_artifacts:
 
 ## Purpose
 
-Describe the design used to satisfy REQ-PAY-ACH-0014 by rejecting duplicate ACH batch submissions for the same tenant and external batch identifier.
+Describe how ACH batch intake enforces the tenant-scoped duplicate rules defined in `SPEC-PAY-ACH-0001`.
 
 ## Requirements Satisfied
 
 - REQ-PAY-ACH-0014
+- REQ-PAY-ACH-0015
+- REQ-PAY-ACH-0016
 
 ## Design Summary
 
-The intake path checks a tenant-scoped batch registry before accepting a batch for processing. If the tenant and external batch identifier already exist in the accepted registry, the batch is rejected with a duplicate error and no downstream processing is started.
+The intake path computes a tenant-scoped batch identity key and checks an accepted-batch registry before any downstream work is started. A same-tenant duplicate is rejected immediately. A different tenant may reuse the same external batch identifier because the tenant is part of the identity key.
 
 ## Key Components
 
-- batch intake guard
-- tenant-scoped accepted batch registry
-- duplicate rejection response mapping
-- acceptance persistence step
+- tenant-scoped batch identity key
+- accepted-batch registry
+- duplicate guard at intake
+- downstream dispatch gate
 
 ## Data and State Considerations
 
-The design stores the tenant identifier and the external batch identifier for every accepted batch. The registry must support a deterministic existence check before the batch is admitted for processing.
+The design persists the tenant identifier and external batch identifier for each accepted batch. The duplicate decision is made against that combined key before a batch is queued or processed further.
 
 ## Edge Cases and Constraints
 
-- A batch identifier that exists for a different tenant is not a duplicate.
-- A retry of the same submitted batch after acceptance is a duplicate.
-- The duplicate check must occur before any downstream processing that could create payment side effects.
+- The same external batch identifier is not a duplicate when the tenant differs.
+- A retry after acceptance is a duplicate when the tenant and external batch identifier are unchanged.
+- Rejected duplicates must not reach downstream processing.
 
 ## Alternatives Considered
 
-- payload-hash matching alone was rejected because the duplicate rule is tenant plus external batch identifier, not payload equivalence
-- deferring duplicate detection until later in the processing flow was rejected because it allows avoidable side effects
+- Payload-hash matching alone was rejected because the rule is tenant plus external batch identifier.
+- Late duplicate detection was rejected because it allows avoidable side effects.
 
 ## Risks
 
-- registry lag or stale state could permit duplicate acceptance if persistence is not atomic
-- unclear retention rules could cause the accepted registry to grow without bound
-
-## Open Questions
-
-- What retention policy should govern accepted batch identifiers after settlement or archival?
+- Non-atomic writes to the accepted-batch registry could permit duplicate acceptance.

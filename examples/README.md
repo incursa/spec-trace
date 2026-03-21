@@ -1,13 +1,41 @@
 # Examples
 
-This folder contains the worked example set for the standard. The current example set uses the ACH duplicate batch scenario already referenced in the overview.
+This folder contains worked examples for the standard.
 
-The example artifacts are intentionally cross-linked across specification, architecture, work item, and verification records. Treat them as learning and reference material, not as mandatory wording.
+The examples are intentionally cross-linked across specifications, architecture or design, work items, verification artifacts, tests, and code references. They exist to show the model in use. They are not mandatory prose.
 
-Useful entry points:
+## Included Examples
 
-- [overview.md](../overview.md) for the canonical rules and field names
-- [payments/sample-spec.md](payments/sample-spec.md)
+### Payments
+
+`examples/payments/` is a product-style example built around ACH duplicate batch handling.
+
+It demonstrates:
+
+- a single specification file containing multiple related requirements
+- compact requirement clauses
+- traceability to architecture, work items, verification, tests, and code references
+- a product rule plus edge-case behavior
+
+### Arithmetic
+
+`examples/arithmetic/` is a narrow technical example built around a division operation.
+
+It demonstrates:
+
+- a single narrow specification file
+- method-level and edge-case requirements
+- stable requirement IDs that can be referenced directly from tests and code
+
+## Entry Points
+
+- `../specs/requirements/spec-trace/` for the canonical SPEC suite
+- [artifact-id-policy.json](../artifact-id-policy.json) for the shared identifier policy
+- [payments/SPEC-PAY-ACH-0001.md](payments/SPEC-PAY-ACH-0001.md)
 - [payments/sample-architecture.md](payments/sample-architecture.md)
 - [payments/sample-work-item.md](payments/sample-work-item.md)
 - [payments/sample-verification.md](payments/sample-verification.md)
+- [arithmetic/SPEC-MATH-DIV-0001.md](arithmetic/SPEC-MATH-DIV-0001.md)
+- [arithmetic/sample-architecture.md](arithmetic/sample-architecture.md)
+- [arithmetic/sample-work-item.md](arithmetic/sample-work-item.md)
+- [arithmetic/sample-verification.md](arithmetic/sample-verification.md)

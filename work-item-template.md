@@ -3,7 +3,7 @@ artifact_id: WI-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 artifact_type: work_item
 title: <Work Item Title>
 domain: <domain>
-status: <implementation-specific>
+status: planned
 owner: <team-or-role>
 addresses:
   - REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
@@ -12,44 +12,40 @@ design_links:
 verification_links:
   - VER-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 related_artifacts:
-  - ADR-<SEQUENCE:4+>
+  - SPEC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 ---
 
 # WI-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+> - <Work Item Title>
 
-Optional grouping segments may appear between the domain code and the terminal number, for example `WI-PAY-ACH-0081`.
-
-The `status` field is implementation-specific. Use the work-item lifecycle that fits the team or repository, and keep that vocabulary documented in the repo if it matters for tooling or reporting.
+Use one of the approved work-item statuses: `planned`, `in_progress`, `blocked`, `complete`, `cancelled`, or `superseded`.
 
 ## Summary
 
-State the unit of work to be completed in plain language.
+State the implementation work in plain language.
 
 ## Requirements Addressed
 
-- REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 - REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 
 ## Design Inputs
 
 - ARC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
-- ADR-<SEQUENCE:4+>
 
 ## Planned Changes
 
-Describe the intended implementation work at a level appropriate for planning and review. This section should describe what will change without turning into low-level code notes.
+Describe the code, configuration, or operational changes to be made.
 
 ## Out of Scope
 
-Identify related items that are not part of this work item.
+- <item>
 
 ## Verification Plan
 
-State how this work will be verified. Reference the verification artifact if one exists.
+State how the work will be proven and link the verification artifact.
 
 ## Completion Notes
 
-Optional section used after implementation to record any important deviations, follow-up work, or clarifications.
+Optional implementation notes, deviations, or follow-up items.
 
 ## Trace Links
 

@@ -7,50 +7,54 @@ status: passed
 owner: payments-platform
 verifies:
   - REQ-PAY-ACH-0014
+  - REQ-PAY-ACH-0015
+  - REQ-PAY-ACH-0016
 related_artifacts:
   - SPEC-PAY-ACH-0001
   - ARC-PAY-ACH-0002
   - WI-PAY-ACH-0081
 ---
 
-# VER-PAY-ACH-0021 - Duplicate ACH batch rejection verification
-
-The `status` field is implementation-specific. This verification record uses the team's normal outcome vocabulary.
+# VER-PAY-ACH-0021 - Duplicate ACH Batch Rejection Verification
 
 ## Scope
 
-Verify that a submitted ACH batch is rejected when the same external batch identifier has already been accepted for the same tenant.
+Verify tenant-scoped duplicate handling for ACH batch intake.
 
 ## Requirements Verified
 
 - REQ-PAY-ACH-0014
+- REQ-PAY-ACH-0015
+- REQ-PAY-ACH-0016
 
 ## Verification Method
 
-Functional verification using two submissions of the same tenant-scoped batch identifier and review of the resulting acceptance and rejection outcomes.
+Functional verification using an initial acceptance, a same-tenant repeat submission, and a cross-tenant submission that reuses the same external batch identifier.
 
 ## Preconditions
 
 - tenant `PAY-TENANT-01` exists
+- tenant `PAY-TENANT-02` exists
 - external batch identifier `ACH-2026-0319-01` is available for test use
-- the first submission path is available and functioning
 
 ## Procedure or Approach
 
-1. Submit the batch for tenant `PAY-TENANT-01` with external batch identifier `ACH-2026-0319-01`.
+1. Submit a batch for `PAY-TENANT-01` with external batch identifier `ACH-2026-0319-01`.
 2. Confirm the first submission is accepted.
-3. Submit the same batch again with the same tenant and external batch identifier.
-4. Confirm the second submission is rejected as a duplicate.
+3. Submit the same batch again for `PAY-TENANT-01`.
+4. Confirm the second submission is rejected as a duplicate and does not start downstream processing.
+5. Submit the same external batch identifier for `PAY-TENANT-02`.
+6. Confirm the cross-tenant submission is accepted.
 
 ## Expected Result
 
-The first submission is accepted and the second submission is rejected without initiating duplicate downstream processing.
+The first submission is accepted, the same-tenant repeat is rejected before downstream side effects, and the different-tenant submission is accepted.
 
 ## Evidence
 
-- acceptance record for the first submission
-- duplicate rejection record for the second submission
-- reviewer notes showing the tenant and external batch identifier match
+- tests/payments/ach/duplicate-batch.spec::rejects_second_submission_for_same_tenant
+- tests/payments/ach/duplicate-batch.spec::allows_same_identifier_for_different_tenant
+- tests/payments/ach/duplicate-batch.spec::does_not_start_processing_for_rejected_duplicate
 
 ## Status
 
