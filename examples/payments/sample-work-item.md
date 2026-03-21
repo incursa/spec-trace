@@ -1,23 +1,23 @@
 ---
-artifact_id: WI-PAY-081
+artifact_id: WI-PAY-ACH-0081
 artifact_type: work_item
 title: Add ACH duplicate batch guard
 domain: payments
 status: complete
 owner: payments-platform
 addresses:
-  - REQ-PAY-014
+  - REQ-PAY-ACH-0014
 design_links:
-  - ARC-PAY-002
+  - ARC-PAY-ACH-0002
 verification_links:
-  - VER-PAY-021
+  - VER-PAY-ACH-0021
 related_artifacts:
-  - SPEC-PAY-001
-  - ARC-PAY-002
-  - VER-PAY-021
+  - SPEC-PAY-ACH-0001
+  - ARC-PAY-ACH-0002
+  - VER-PAY-ACH-0021
 ---
 
-# WI-PAY-081 - Add ACH duplicate batch guard
+# WI-PAY-ACH-0081 - Add ACH duplicate batch guard
 
 The `status` field is implementation-specific. This work item uses the team's normal delivery vocabulary and stays traceable to the requirement, design, and verification artifacts.
 
@@ -27,11 +27,11 @@ Implement the duplicate batch guard for ACH batch intake.
 
 ## Requirements Addressed
 
-- REQ-PAY-014
+- REQ-PAY-ACH-0014
 
 ## Design Inputs
 
-- ARC-PAY-002
+- ARC-PAY-ACH-0002
 
 ## Planned Changes
 
@@ -45,7 +45,7 @@ Add a tenant-scoped duplicate check at batch intake, persist accepted batch iden
 
 ## Verification Plan
 
-Use VER-PAY-021 to confirm that a duplicate submission for the same tenant and external batch identifier is rejected after the initial acceptance path succeeds.
+Use VER-PAY-ACH-0021 to confirm that a duplicate submission for the same tenant and external batch identifier is rejected after the initial acceptance path succeeds.
 
 ## Completion Notes
 
@@ -55,12 +55,12 @@ The implementation should preserve the same acceptance path for unique batch ide
 
 Addresses:
 
-- REQ-PAY-014
+- REQ-PAY-ACH-0014
 
 Uses Design:
 
-- ARC-PAY-002
+- ARC-PAY-ACH-0002
 
 Verified By:
 
-- VER-PAY-021
+- VER-PAY-ACH-0021

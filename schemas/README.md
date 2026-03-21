@@ -2,6 +2,8 @@
 
 These are reference schemas aligned to the standard in [overview.md](../overview.md). They are intentionally strict enough to help tooling without turning into a heavyweight validation framework.
 
+The shared [artifact-id-policy.json](../artifact-id-policy.json) file defines the minimum sequence width and grouping token rules that these schemas reflect.
+
 Useful entry points:
 
 - [artifact-frontmatter.schema.json](artifact-frontmatter.schema.json) validates file-level front matter for specification, architecture, work-item, and verification artifacts

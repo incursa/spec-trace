@@ -1,10 +1,11 @@
 ## Recommended Product Repository Layout and Conventions
 
-This layout is for repositories that adopt the standard. The `incursa/spec-trace` repository is the public reference package; it keeps the standard documents at the repository root for packaging and copy convenience. Product repositories should treat the `/specs/...` tree below as the recommended layout for the live standard content. Nested grouping directories are valid between the top-level domain folder and the leaf artifact file.
+This layout is for repositories that adopt the standard. The `incursa/spec-trace` repository is the public reference package; it keeps the standard documents at the repository root for packaging and copy convenience. Product repositories should treat the `/specs/...` tree below as the recommended layout for the live standard content. Nested grouping directories are valid between the top-level domain folder and the leaf artifact file. The shared artifact ID policy lives in `artifact-id-policy.json` at the repository root.
 
 The recommended default layout is:
 
 ```text
+artifact-id-policy.json
 /specs
   /requirements
     /<domain>/
@@ -12,15 +13,15 @@ The recommended default layout is:
       <capability>.md
   /architecture
     /<domain>/
-      ARC-<DOMAIN>[-<GROUPING>...]-###-<slug>.md
+      ARC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>-<slug>.md
   /decisions
-    ADR-###-<slug>.md
+    ADR-<SEQUENCE:4+>-<slug>.md
   /work-items
     /<domain>/
-      WI-<DOMAIN>[-<GROUPING>...]-###-<slug>.md
+      WI-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>-<slug>.md
   /verification
     /<domain>/
-      VER-<DOMAIN>[-<GROUPING>...]-###-<slug>.md
+      VER-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>-<slug>.md
   /templates
     spec-template.md
     architecture-template.md
@@ -79,9 +80,9 @@ Recommended examples:
 - `/specs/requirements/payments/ach-batch-processing.md`
 - `/specs/requirements/payments/ach/duplicate-batch-processing.md`
 - `/specs/requirements/notary/template-generation.md`
-- `/specs/architecture/payments/ach/ARC-PAY-ACH-002-duplicate-batch-detection.md`
-- `/specs/work-items/payments/ach/WI-PAY-ACH-081-duplicate-batch-guard.md`
-- `/specs/verification/payments/ach/VER-PAY-ACH-021-duplicate-batch-rejection.md`
+- `/specs/architecture/payments/ach/ARC-PAY-ACH-0002-duplicate-batch-detection.md`
+- `/specs/work-items/payments/ach/WI-PAY-ACH-0081-duplicate-batch-guard.md`
+- `/specs/verification/payments/ach/VER-PAY-ACH-0021-duplicate-batch-rejection.md`
 
 Avoid using dates, sprint numbers, or developer names in file names.
 
@@ -89,29 +90,32 @@ Avoid using dates, sprint numbers, or developer names in file names.
 
 Each artifact type should use a distinct identifier pattern so links are obvious and tooling can validate them.
 
+A shared `artifact-id-policy.json` file defines the minimum sequence width and grouping token rules.
+
 A recommended convention is:
 
-- `SPEC-<DOMAIN>[-<GROUPING>...]-###` for specification documents
-- `REQ-<DOMAIN>[-<GROUPING>...]-###` for individual requirements
-- `ARC-<DOMAIN>[-<GROUPING>...]-###` for architecture or design artifacts
-- `ADR-###` for architectural decision records
-- `WI-<DOMAIN>[-<GROUPING>...]-###` for work items
-- `VER-<DOMAIN>[-<GROUPING>...]-###` for verification artifacts
+- `SPEC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>` for specification documents
+- `REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>` for individual requirements
+- `ARC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>` for architecture or design artifacts
+- `ADR-<SEQUENCE:4+>` for architectural decision records
+- `WI-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>` for work items
+- `VER-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>` for verification artifacts
 
 Examples:
 
-- `SPEC-PAY-001`
-- `SPEC-PAY-ACH-001`
-- `REQ-PAY-014`
-- `ARC-PAY-002`
-- `ARC-PAY-ACH-002`
-- `ADR-012`
-- `WI-PAY-081`
-- `WI-PAY-ACH-081`
-- `VER-PAY-021`
-- `VER-PAY-ACH-021`
+- `SPEC-PAY-0001`
+- `SPEC-PAY-ACH-0001`
+- `REQ-PAY-0014`
+- `REQ-PAY-ACH-0014`
+- `ARC-PAY-0002`
+- `ARC-PAY-ACH-0002`
+- `ADR-0012`
+- `WI-PAY-0081`
+- `WI-PAY-ACH-0081`
+- `VER-PAY-0021`
+- `VER-PAY-ACH-0021`
 
-The optional grouping segments may be used to reflect multi-level organization. The identifier must still start with the artifact type prefix and domain code and end with a terminal sequence number.
+The optional grouping segments may be used to reflect multi-level organization. The identifier must still start with the artifact type prefix and domain code and end with a terminal sequence number that is at least four digits long.
 
 The domain code should be short, stable, and reused consistently across the repository. Once an identifier is assigned, it should not be reused for a different artifact.
 

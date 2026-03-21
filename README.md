@@ -2,7 +2,7 @@
 
 This repository is the public reference package for `incursa/spec-trace`, a lightweight, Markdown-first standard for requirements and traceability.
 
-The files here define the standard, ship copy-ready templates, and provide strict reference schemas plus a worked example set. The `/specs/...` layout in [layout.md](layout.md) is the recommended structure for product repositories that adopt the standard; it is not the required layout of this reference package itself.
+The files here define the standard, ship copy-ready templates, and provide strict reference schemas plus a worked example set. The shared artifact ID policy lives in [artifact-id-policy.json](artifact-id-policy.json). The `/specs/...` layout in [layout.md](layout.md) is the recommended structure for product repositories that adopt the standard; it is not the required layout of this reference package itself.
 
 ## Repository Status
 
@@ -24,11 +24,12 @@ Actual product requirements should live in the product repository. This repo is 
 1. Read [overview.md](overview.md) for the standard rules and canonical field names.
 2. Read [layout.md](layout.md) for the recommended repository structure and naming conventions for adopting product repos, including nested grouping levels.
 3. Open [examples/README.md](examples/README.md) and [examples/payments/](examples/payments/) to see one complete worked example set.
-4. Copy the templates into a product repo, typically under `/specs/templates/`, or use them as the basis for your own internal standard.
+4. Copy the templates into `/specs/templates/` and the [artifact-id-policy.json](artifact-id-policy.json) file into the repo root, or use them as the basis for your own internal standard.
 
 ## Contents
 
 - [overview.md](overview.md) - the main standard document
+- [artifact-id-policy.json](artifact-id-policy.json) - shared artifact ID policy metadata
 - [layout.md](layout.md) - the recommended product-repository layout and naming conventions
 - [spec-template.md](spec-template.md) - copy-ready specification template
 - [architecture-template.md](architecture-template.md) - copy-ready architecture or design template

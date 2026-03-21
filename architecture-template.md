@@ -1,20 +1,20 @@
 ---
-artifact_id: ARC-<DOMAIN>[-<GROUPING>...]-###
+artifact_id: ARC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 artifact_type: architecture
 title: <Architecture or Design Title>
 domain: <domain>
 status: draft
 owner: <team-or-role>
 satisfies:
-  - REQ-<DOMAIN>[-<GROUPING>...]-###
+  - REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 related_artifacts:
-  - SPEC-<DOMAIN>[-<GROUPING>...]-###
-  - ADR-###
+  - SPEC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
+  - ADR-<SEQUENCE:4+>
 ---
 
-# ARC-<DOMAIN>[-<GROUPING>...]-### - <Architecture or Design Title>
+# ARC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+> - <Architecture or Design Title>
 
-Optional grouping segments may appear between the domain code and the terminal number.
+Optional grouping segments may appear between the domain code and the terminal number, for example `ARC-PAY-ACH-0002`.
 
 ## Purpose
 
@@ -22,7 +22,7 @@ Describe how the named requirements will be satisfied by design. Keep this focus
 
 ## Requirements Satisfied
 
-- REQ-<DOMAIN>[-<GROUPING>...]-###
+- REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 
 ## Design Summary
 

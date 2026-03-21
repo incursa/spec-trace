@@ -93,7 +93,7 @@ Common artifact types include:
 - **Verification artifact**: identifies how a requirement was verified, whether by automated test, manual test, inspection, or another method
 - **Decision record**: records a significant design or product decision
 
-The exact artifact names can vary outside this package. What must stay stable is the artifact identifier, the required field names, and the explicit links between artifacts. Artifact identifiers may include one or more grouping segments between the type prefix and the terminal sequence number.
+The exact artifact names can vary outside this package. What must stay stable is the artifact identifier, the required field names, and the explicit links between artifacts. Artifact identifiers may include one or more grouping segments between the type prefix and the terminal sequence number. The shared defaults live in [artifact-id-policy.json](artifact-id-policy.json).
 
 ## Canonical Field Names
 
@@ -180,6 +180,21 @@ Work item documents use these exact field labels in their `Trace Links` section:
 
 These labels are canonical in compliant work-item trace-link sections.
 
+## Artifact ID Policy
+
+The shared artifact ID policy is defined in [artifact-id-policy.json](artifact-id-policy.json). It is the package-level source of truth for identifier shape.
+
+Current defaults:
+
+- artifact IDs use the type prefixes `SPEC`, `ARC`, `WI`, and `VER`
+- artifact IDs begin with the domain code
+- optional multi-level grouping segments may appear after the domain
+- grouping segments use the same uppercase alphanumeric token pattern as the domain code
+- the terminal sequence number is zero-padded to at least four digits
+- decision records use the `ADR` prefix and the same four-digit minimum sequence, but are not domain-scoped in this package
+
+Tooling should treat the policy file as the canonical place to read or change the identifier shape.
+
 ## Recommended Product Repository Structure
 
 The structure below is the recommended layout for product repositories that adopt the standard. The public reference package may keep the same documents at the repository root for packaging convenience.
@@ -215,7 +230,7 @@ A typical file-level front matter block is:
 
 ```yaml
 ---
-artifact_id: SPEC-PAY-001
+artifact_id: SPEC-PAY-ACH-0001
 artifact_type: specification
 title: ACH Duplicate Batch Handling
 domain: payments
@@ -226,9 +241,9 @@ tags:
   - payments
   - ach
 related_artifacts:
-  - ARC-PAY-002
-  - WI-PAY-081
-  - VER-PAY-021
+  - ARC-PAY-ACH-0002
+  - WI-PAY-ACH-0081
+  - VER-PAY-ACH-0021
 ---
 ```
 
@@ -247,17 +262,17 @@ A requirement section must contain the following elements in a fixed order:
 A recommended requirement section format is:
 
 ```md
-## REQ-PAY-014 Reject duplicate ACH batch submission
+## REQ-PAY-ACH-0014 Reject duplicate ACH batch submission
 
 Type: functional
 Status: approved
 Priority: high
-Source: BR-PAY-003
+Source: BR-PAY-0003
 Verification: manual
 Derived From:
-Satisfied By: ARC-PAY-002
-Implemented By: WI-PAY-081
-Verified By: VER-PAY-021
+Satisfied By: ARC-PAY-ACH-0002
+Implemented By: WI-PAY-ACH-0081
+Verified By: VER-PAY-ACH-0021
 Supersedes:
 Related:
 

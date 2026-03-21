@@ -1,27 +1,27 @@
 ---
-artifact_id: ARC-PAY-002
+artifact_id: ARC-PAY-ACH-0002
 artifact_type: architecture
 title: ACH Duplicate Batch Rejection Design
 domain: payments
 status: approved
 owner: payments-platform
 satisfies:
-  - REQ-PAY-014
+  - REQ-PAY-ACH-0014
 related_artifacts:
-  - SPEC-PAY-001
-  - WI-PAY-081
-  - VER-PAY-021
+  - SPEC-PAY-ACH-0001
+  - WI-PAY-ACH-0081
+  - VER-PAY-ACH-0021
 ---
 
-# ARC-PAY-002 - ACH Duplicate Batch Rejection Design
+# ARC-PAY-ACH-0002 - ACH Duplicate Batch Rejection Design
 
 ## Purpose
 
-Describe the design used to satisfy REQ-PAY-014 by rejecting duplicate ACH batch submissions for the same tenant and external batch identifier.
+Describe the design used to satisfy REQ-PAY-ACH-0014 by rejecting duplicate ACH batch submissions for the same tenant and external batch identifier.
 
 ## Requirements Satisfied
 
-- REQ-PAY-014
+- REQ-PAY-ACH-0014
 
 ## Design Summary
 

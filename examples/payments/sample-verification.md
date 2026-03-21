@@ -1,19 +1,19 @@
 ---
-artifact_id: VER-PAY-021
+artifact_id: VER-PAY-ACH-0021
 artifact_type: verification
 title: Duplicate ACH batch rejection verification
 domain: payments
 status: passed
 owner: payments-platform
 verifies:
-  - REQ-PAY-014
+  - REQ-PAY-ACH-0014
 related_artifacts:
-  - SPEC-PAY-001
-  - ARC-PAY-002
-  - WI-PAY-081
+  - SPEC-PAY-ACH-0001
+  - ARC-PAY-ACH-0002
+  - WI-PAY-ACH-0081
 ---
 
-# VER-PAY-021 - Duplicate ACH batch rejection verification
+# VER-PAY-ACH-0021 - Duplicate ACH batch rejection verification
 
 The `status` field is implementation-specific. This verification record uses the team's normal outcome vocabulary.
 
@@ -23,7 +23,7 @@ Verify that a submitted ACH batch is rejected when the same external batch ident
 
 ## Requirements Verified
 
-- REQ-PAY-014
+- REQ-PAY-ACH-0014
 
 ## Verification Method
 
@@ -58,6 +58,6 @@ passed
 
 ## Related Artifacts
 
-- SPEC-PAY-001
-- ARC-PAY-002
-- WI-PAY-081
+- SPEC-PAY-ACH-0001
+- ARC-PAY-ACH-0002
+- WI-PAY-ACH-0081

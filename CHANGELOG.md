@@ -5,6 +5,7 @@
 ### Added
 
 - Public reference package for a Markdown-first requirements and traceability standard.
+- `artifact-id-policy.json` for the shared identifier policy defaults.
 - `examples/README.md` and `schemas/README.md` for lightweight navigation and field mapping.
 
 ### Changed
@@ -12,6 +13,7 @@
 - Standardized the root template filenames to hyphenated names: `spec-template.md`, `architecture-template.md`, `work-item-template.md`, and `verification-template.md`.
 - Clarified that `layout.md` describes the recommended layout for product repositories that adopt the standard, not the reference package's own root layout.
 - Allowed multi-level grouping segments in artifact identifiers and repository paths.
+- Raised the minimum terminal sequence width to four digits and updated the worked example IDs accordingly.
 - Split the trace-field guidance into separate requirement and work-item schema files.
 - Tightened the artifact front-matter schema for type-specific required fields and artifact-ID patterns.
 

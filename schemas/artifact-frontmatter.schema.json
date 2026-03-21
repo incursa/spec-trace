@@ -2,7 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "artifact-frontmatter.schema.json",
   "title": "Artifact Front Matter",
-  "description": "Strict reference schema for file-level YAML front matter used by the Markdown templates in this package.",
+  "description": "Strict reference schema for file-level YAML front matter used by the Markdown templates in this package. See artifact-id-policy.json for the shared identifier policy.",
+  "$comment": "The shared identifier policy lives in artifact-id-policy.json.",
   "$defs": {
     "nonEmptyString": {
       "type": "string",
@@ -33,7 +34,7 @@
       "properties": {
         "artifact_id": {
           "type": "string",
-          "pattern": "^SPEC-[A-Z0-9]+(?:-[A-Z0-9]+)*-\\d{3}$"
+          "pattern": "^SPEC-[A-Z0-9]+(?:-[A-Z0-9]+)*-\\d{4,}$"
         },
         "artifact_type": {
           "const": "specification"
@@ -77,7 +78,7 @@
       "properties": {
         "artifact_id": {
           "type": "string",
-          "pattern": "^ARC-[A-Z0-9]+(?:-[A-Z0-9]+)*-\\d{3}$"
+          "pattern": "^ARC-[A-Z0-9]+(?:-[A-Z0-9]+)*-\\d{4,}$"
         },
         "artifact_type": {
           "const": "architecture"
@@ -120,7 +121,7 @@
       "properties": {
         "artifact_id": {
           "type": "string",
-          "pattern": "^WI-[A-Z0-9]+(?:-[A-Z0-9]+)*-\\d{3}$"
+          "pattern": "^WI-[A-Z0-9]+(?:-[A-Z0-9]+)*-\\d{4,}$"
         },
         "artifact_type": {
           "const": "work_item"
@@ -167,7 +168,7 @@
       "properties": {
         "artifact_id": {
           "type": "string",
-          "pattern": "^VER-[A-Z0-9]+(?:-[A-Z0-9]+)*-\\d{3}$"
+          "pattern": "^VER-[A-Z0-9]+(?:-[A-Z0-9]+)*-\\d{4,}$"
         },
         "artifact_type": {
           "const": "verification"

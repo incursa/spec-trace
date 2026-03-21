@@ -1,0 +1,29 @@
+{
+  "name": "incursa/spec-trace artifact ID policy",
+  "version": 1,
+  "sequence": {
+    "minimum_digits": 4,
+    "pattern": "^\\d{4,}$"
+  },
+  "segments": {
+    "domain": {
+      "pattern": "^[A-Z][A-Z0-9]*$"
+    },
+    "grouping": {
+      "pattern": "^[A-Z][A-Z0-9]*$",
+      "allow_multiple": true
+    }
+  },
+  "artifact_id_templates": {
+    "specification": "SPEC-{domain}{grouping}-{sequence}",
+    "architecture": "ARC-{domain}{grouping}-{sequence}",
+    "work_item": "WI-{domain}{grouping}-{sequence}",
+    "verification": "VER-{domain}{grouping}-{sequence}",
+    "decision_record": "ADR-{sequence}"
+  },
+  "notes": [
+    "grouping expands to zero or more '-SEGMENT' tokens between domain and sequence",
+    "the terminal sequence is zero-padded to at least four digits",
+    "domain and grouping segments use the same uppercase alphanumeric token pattern"
+  ]
+}

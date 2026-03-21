@@ -1,21 +1,21 @@
 ---
-artifact_id: VER-<DOMAIN>[-<GROUPING>...]-###
+artifact_id: VER-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 artifact_type: verification
 title: <Verification Title>
 domain: <domain>
 status: <implementation-specific>
 owner: <team-or-role>
 verifies:
-  - REQ-<DOMAIN>[-<GROUPING>...]-###
+  - REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 related_artifacts:
-  - SPEC-<DOMAIN>[-<GROUPING>...]-###
-  - ARC-<DOMAIN>[-<GROUPING>...]-###
-  - WI-<DOMAIN>[-<GROUPING>...]-###
+  - SPEC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
+  - ARC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
+  - WI-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 ---
 
-# VER-<DOMAIN>[-<GROUPING>...]-### - <Verification Title>
+# VER-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+> - <Verification Title>
 
-Optional grouping segments may appear between the domain code and the terminal number.
+Optional grouping segments may appear between the domain code and the terminal number, for example `VER-PAY-ACH-0021`.
 
 The `status` field is implementation-specific. Use the repository's normal verification workflow vocabulary if one exists.
 
@@ -25,7 +25,7 @@ State what is being verified and what is out of scope.
 
 ## Requirements Verified
 
-- REQ-<DOMAIN>[-<GROUPING>...]-###
+- REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 
 ## Verification Method
 
@@ -53,6 +53,6 @@ Record the verification outcome here using the repository's chosen workflow voca
 
 ## Related Artifacts
 
-- SPEC-<DOMAIN>[-<GROUPING>...]-###
-- ARC-<DOMAIN>[-<GROUPING>...]-###
-- WI-<DOMAIN>[-<GROUPING>...]-###
+- SPEC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
+- ARC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
+- WI-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>

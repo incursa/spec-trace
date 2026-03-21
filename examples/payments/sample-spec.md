@@ -1,5 +1,5 @@
 ---
-artifact_id: SPEC-PAY-001
+artifact_id: SPEC-PAY-ACH-0001
 artifact_type: specification
 title: ACH Duplicate Batch Handling
 domain: payments
@@ -11,12 +11,12 @@ tags:
   - ach
   - duplicate-detection
 related_artifacts:
-  - ARC-PAY-002
-  - WI-PAY-081
-  - VER-PAY-021
+  - ARC-PAY-ACH-0002
+  - WI-PAY-ACH-0081
+  - VER-PAY-ACH-0021
 ---
 
-# SPEC-PAY-001 - ACH Duplicate Batch Handling
+# SPEC-PAY-ACH-0001 - ACH Duplicate Batch Handling
 
 ## Purpose
 
@@ -30,16 +30,16 @@ This specification covers duplicate detection for submitted ACH batches within a
 
 Duplicate batch submissions can create double processing risk if the same external batch identifier is accepted more than once for the same tenant.
 
-## REQ-PAY-014 Reject duplicate ACH batch submission
+## REQ-PAY-ACH-0014 Reject duplicate ACH batch submission
 
 Type: functional
 Status: approved
 Priority: high
-Source: BR-PAY-003
+Source: BR-PAY-0003
 Verification: manual
-Satisfied By: ARC-PAY-002
-Implemented By: WI-PAY-081
-Verified By: VER-PAY-021
+Satisfied By: ARC-PAY-ACH-0002
+Implemented By: WI-PAY-ACH-0081
+Verified By: VER-PAY-ACH-0021
 
 Requirement:
 The system shall reject a submitted ACH batch when the same external batch identifier has already been accepted for the same tenant.
