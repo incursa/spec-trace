@@ -44,7 +44,7 @@ The following parts are normative in this standard:
 - the required front matter fields
 - the requirement section field names
 - the requirement statement itself
-- the trace-link field names and directions
+- the work-item trace-link field names and directions
 - the conformance rules above
 
 ### Explanatory Content
@@ -170,7 +170,19 @@ Requirement sections use these exact field labels:
 The first five fields and `Requirement` are required. The remaining fields are optional.
 Required fields must appear in every compliant requirement section. Optional fields may be omitted when they do not apply.
 
-## Repository Structure
+### Work Item Trace-Link Fields
+
+Work item documents use these exact field labels in their `Trace Links` section:
+
+- `Addresses`
+- `Uses Design`
+- `Verified By`
+
+These labels are canonical in compliant work-item trace-link sections.
+
+## Recommended Product Repository Structure
+
+The structure below is the recommended layout for product repositories that adopt the standard. The public reference package may keep the same documents at the repository root for packaging convenience.
 
 A recommended structure is:
 
@@ -295,7 +307,7 @@ At a minimum, the process should support these link types:
 - **Verified By**: this verification artifact proves the requirement has been fulfilled
 - **Supersedes / Superseded By**: this requirement replaced or was replaced by another requirement
 
-The field names above are canonical in this standard and should not be renamed in compliant artifacts.
+The requirement-section field names above are canonical in this standard and should not be renamed in compliant artifacts. Work items use a separate `Trace Links` section with their own canonical labels.
 
 A few rules matter here:
 
@@ -304,6 +316,12 @@ A few rules matter here:
 - one requirement may be linked to many work items or verification artifacts
 - one design document may satisfy many requirements
 - one work item may address multiple requirements, but that should be deliberate rather than casual
+
+Work items use their own trace-link labels to keep the implementation trail explicit:
+
+- `Addresses`
+- `Uses Design`
+- `Verified By`
 
 ## Relationship to Work Items and Architecture
 
@@ -317,7 +335,7 @@ A healthy flow looks like this:
 
 1. A requirement is captured and approved.
 2. A design or architecture artifact links back to the requirement through `Satisfied By`.
-3. One or more work items link back through `Implemented By` or `Addresses`.
+3. One or more work items link back through `Implemented By` and the work item's `Trace Links` section.
 4. Verification artifacts link back through `Verified By`.
 5. Generated traceability outputs show whether the requirement is approved, implemented, and verified.
 

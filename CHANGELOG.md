@@ -5,6 +5,14 @@
 ### Added
 
 - Public reference package for a Markdown-first requirements and traceability standard.
+- `examples/README.md` and `schemas/README.md` for lightweight navigation and field mapping.
+
+### Changed
+
+- Standardized the root template filenames to hyphenated names: `spec-template.md`, `architecture-template.md`, `work-item-template.md`, and `verification-template.md`.
+- Clarified that `layout.md` describes the recommended layout for product repositories that adopt the standard, not the reference package's own root layout.
+- Split the trace-field guidance into separate requirement and work-item schema files.
+- Tightened the artifact front-matter schema for type-specific required fields and artifact-ID patterns.
 
 ## [0.1.0] - 2026-03-20
 

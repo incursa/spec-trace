@@ -1,6 +1,6 @@
-## Recommended Repository Layout and Conventions
+## Recommended Product Repository Layout and Conventions
 
-This standard assumes that requirements and related artifacts live in the same repository as the software they describe, or in a closely related repository that is versioned and reviewed the same way. The goal is to keep requirements close enough to the codebase that they evolve together, while still separating concerns between requirements, design, work planning, and verification.
+This layout is for repositories that adopt the standard. The `incursa/spec-trace` repository is the public reference package; it keeps the standard documents at the repository root for packaging and copy convenience. Product repositories should treat the `/specs/...` tree below as the recommended layout for the live standard content.
 
 The recommended default layout is:
 
@@ -9,7 +9,6 @@ The recommended default layout is:
   /requirements
     /<domain>/
       _index.md
-      <capability>.md
       <capability>.md
   /architecture
     /<domain>/
@@ -23,13 +22,14 @@ The recommended default layout is:
     /<domain>/
       VER-<DOMAIN>-###-<slug>.md
   /templates
-    specification-template.md
+    spec-template.md
     architecture-template.md
     work-item-template.md
     verification-template.md
   /schemas
     artifact-frontmatter.schema.json
-    trace-links.schema.json
+    requirement-trace-fields.schema.json
+    work-item-trace-fields.schema.json
   /generated
     requirements-index.json
     traceability-matrix.md
@@ -70,7 +70,7 @@ Generated reports, indexes, and matrices belong under `/specs/generated/` and sh
 
 ### File Naming Conventions
 
-File names should be stable, readable, and easy to scan in Git. Use human-readable slugs. Artifact identifiers should live inside the file content and front matter, not depend on the file name.
+File names should be stable, readable, and easy to scan in Git. Use hyphenated template filenames and human-readable slugs for artifact files. Artifact identifiers should live inside the file content and front matter, not depend on the file name.
 
 Recommended examples:
 

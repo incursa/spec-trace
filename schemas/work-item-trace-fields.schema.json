@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "work-item-trace-fields.schema.json",
+  "title": "Work Item Trace Fields",
+  "description": "Reference schema for the canonical trace labels used in the Trace Links section of work-item documents.",
+  "type": "object",
+  "properties": {
+    "Addresses": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "Uses Design": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "Verified By": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": false
+}

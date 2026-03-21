@@ -2,138 +2,196 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "artifact-frontmatter.schema.json",
   "title": "Artifact Front Matter",
-  "description": "Example schema for the file-level YAML front matter used by the Markdown templates.",
-  "type": "object",
-  "required": ["artifact_id", "artifact_type", "title", "domain", "status", "owner"],
-  "properties": {
-    "artifact_id": {
-      "type": "string",
-      "minLength": 3,
-      "description": "Stable artifact identifier such as SPEC-PAY-001 or ARC-PAY-002."
-    },
-    "artifact_type": {
-      "type": "string",
-      "enum": ["specification", "architecture", "work_item", "verification"]
-    },
-    "title": {
+  "description": "Strict reference schema for file-level YAML front matter used by the Markdown templates in this package.",
+  "$defs": {
+    "nonEmptyString": {
       "type": "string",
       "minLength": 1
     },
-    "domain": {
-      "type": "string",
-      "minLength": 1
-    },
-    "capability": {
-      "type": "string",
-      "minLength": 1
-    },
-    "status": {
-      "type": "string",
-      "minLength": 1
-    },
-    "owner": {
-      "type": "string",
-      "minLength": 1
-    },
-    "tags": {
+    "stringArray": {
       "type": "array",
       "items": {
-        "type": "string",
-        "minLength": 1
-      }
-    },
-    "related_artifacts": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      }
-    },
-    "satisfies": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      }
-    },
-    "addresses": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      }
-    },
-    "design_links": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      }
-    },
-    "verification_links": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      }
-    },
-    "verifies": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      }
+        "$ref": "#/$defs/nonEmptyString"
+      },
+      "minItems": 1,
+      "uniqueItems": true
     }
   },
-  "allOf": [
+  "oneOf": [
     {
-      "if": {
-        "properties": {
-          "artifact_type": {
-            "const": "specification"
-          }
+      "title": "Specification Front Matter",
+      "type": "object",
+      "required": [
+        "artifact_id",
+        "artifact_type",
+        "title",
+        "domain",
+        "capability",
+        "status",
+        "owner"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "pattern": "^SPEC-[A-Z0-9]+-\\d{3}$"
+        },
+        "artifact_type": {
+          "const": "specification"
+        },
+        "title": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "domain": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "capability": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "status": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "owner": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "tags": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "related_artifacts": {
+          "$ref": "#/$defs/stringArray"
         }
       },
-      "then": {
-        "required": ["capability"]
-      }
+      "additionalProperties": false
     },
     {
-      "if": {
-        "properties": {
-          "artifact_type": {
-            "const": "architecture"
-          }
+      "title": "Architecture Front Matter",
+      "type": "object",
+      "required": [
+        "artifact_id",
+        "artifact_type",
+        "title",
+        "domain",
+        "status",
+        "owner",
+        "satisfies"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "pattern": "^ARC-[A-Z0-9]+-\\d{3}$"
+        },
+        "artifact_type": {
+          "const": "architecture"
+        },
+        "title": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "domain": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "status": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "owner": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "satisfies": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "related_artifacts": {
+          "$ref": "#/$defs/stringArray"
         }
       },
-      "then": {
-        "required": ["satisfies"]
-      }
+      "additionalProperties": false
     },
     {
-      "if": {
-        "properties": {
-          "artifact_type": {
-            "const": "work_item"
-          }
+      "title": "Work Item Front Matter",
+      "type": "object",
+      "required": [
+        "artifact_id",
+        "artifact_type",
+        "title",
+        "domain",
+        "status",
+        "owner",
+        "addresses",
+        "design_links",
+        "verification_links"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "pattern": "^WI-[A-Z0-9]+-\\d{3}$"
+        },
+        "artifact_type": {
+          "const": "work_item"
+        },
+        "title": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "domain": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "status": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "owner": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "addresses": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "design_links": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "verification_links": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "related_artifacts": {
+          "$ref": "#/$defs/stringArray"
         }
       },
-      "then": {
-        "required": ["addresses", "design_links", "verification_links"]
-      }
+      "additionalProperties": false
     },
     {
-      "if": {
-        "properties": {
-          "artifact_type": {
-            "const": "verification"
-          }
+      "title": "Verification Front Matter",
+      "type": "object",
+      "required": [
+        "artifact_id",
+        "artifact_type",
+        "title",
+        "domain",
+        "status",
+        "owner",
+        "verifies"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "pattern": "^VER-[A-Z0-9]+-\\d{3}$"
+        },
+        "artifact_type": {
+          "const": "verification"
+        },
+        "title": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "domain": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "status": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "owner": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "verifies": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "related_artifacts": {
+          "$ref": "#/$defs/stringArray"
         }
       },
-      "then": {
-        "required": ["verifies"]
-      }
+      "additionalProperties": false
     }
-  ],
-  "additionalProperties": true
+  ]
 }

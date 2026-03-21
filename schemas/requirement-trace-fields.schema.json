@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "trace-links.schema.json",
-  "title": "Trace Links",
-  "description": "Example schema for the canonical trace-link fields used in the Markdown requirement sections.",
+  "$id": "requirement-trace-fields.schema.json",
+  "title": "Requirement Trace Fields",
+  "description": "Reference schema for the canonical trace labels used inside requirement sections in specification documents.",
   "type": "object",
   "properties": {
     "Derived From": {
@@ -41,20 +41,6 @@
       }
     },
     "Related": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      }
-    },
-    "Addresses": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      }
-    },
-    "Uses Design": {
       "type": "array",
       "items": {
         "type": "string",
