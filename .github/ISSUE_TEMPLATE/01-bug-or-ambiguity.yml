@@ -1,0 +1,37 @@
+name: Bug or ambiguity
+description: Report contradictions, unclear wording, broken examples, or schema/template mismatches.
+title: "[Bug or ambiguity]: "
+body:
+  - type: markdown
+    attributes:
+      value: Use this for contradictions, unclear wording, broken examples, or schema/template mismatches.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is wrong or unclear?
+      placeholder: Describe the problem concisely.
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: Location
+      description: File, section, or artifact ID.
+      placeholder: overview.md / REQ-PAY-014 / examples/payments/sample-spec.md
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+      description: What should the wording, example, or schema say instead?
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Why this matters.
+    validations:
+      required: false

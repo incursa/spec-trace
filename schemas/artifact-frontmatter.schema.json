@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "artifact-frontmatter.schema.json",
+  "title": "Artifact Front Matter",
+  "description": "Example schema for the file-level YAML front matter used by the Markdown templates.",
+  "type": "object",
+  "required": ["artifact_id", "artifact_type", "title", "domain", "status", "owner"],
+  "properties": {
+    "artifact_id": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Stable artifact identifier such as SPEC-PAY-001 or ARC-PAY-002."
+    },
+    "artifact_type": {
+      "type": "string",
+      "enum": ["specification", "architecture", "work_item", "verification"]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "domain": {
+      "type": "string",
+      "minLength": 1
+    },
+    "capability": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "minLength": 1
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "related_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "satisfies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "addresses": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "design_links": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "verification_links": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "verifies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "artifact_type": {
+            "const": "specification"
+          }
+        }
+      },
+      "then": {
+        "required": ["capability"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "artifact_type": {
+            "const": "architecture"
+          }
+        }
+      },
+      "then": {
+        "required": ["satisfies"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "artifact_type": {
+            "const": "work_item"
+          }
+        }
+      },
+      "then": {
+        "required": ["addresses", "design_links", "verification_links"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "artifact_type": {
+            "const": "verification"
+          }
+        }
+      },
+      "then": {
+        "required": ["verifies"]
+      }
+    }
+  ],
+  "additionalProperties": true
+}

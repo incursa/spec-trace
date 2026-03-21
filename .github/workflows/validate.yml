@@ -1,0 +1,130 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate markdown and schema files
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+
+          const root = process.cwd();
+          const requiredFiles = [
+            'README.md',
+            'CHANGELOG.md',
+            'CONTRIBUTING.md',
+            'CODE_OF_CONDUCT.md',
+            'SECURITY.md',
+            'LICENSE',
+            'overview.md',
+            'layout.md',
+            'spec_template.md',
+            'architecture_template.md',
+            'work_item_template.md',
+            'verification_template.md',
+            'schemas/artifact-frontmatter.schema.json',
+            'schemas/trace-links.schema.json',
+            'examples/payments/sample-spec.md',
+            'examples/payments/sample-architecture.md',
+            'examples/payments/sample-work-item.md',
+            'examples/payments/sample-verification.md'
+          ];
+
+          const errors = [];
+
+          for (const rel of requiredFiles) {
+            const full = path.join(root, rel);
+            if (!fs.existsSync(full)) {
+              errors.push(`missing: ${rel}`);
+              continue;
+            }
+            const content = fs.readFileSync(full, 'utf8');
+            if (!content.trim()) {
+              errors.push(`empty: ${rel}`);
+            }
+          }
+
+          const jsonFiles = [
+            'schemas/artifact-frontmatter.schema.json',
+            'schemas/trace-links.schema.json'
+          ];
+
+          for (const rel of jsonFiles) {
+            try {
+              JSON.parse(fs.readFileSync(path.join(root, rel), 'utf8'));
+            } catch (error) {
+              errors.push(`invalid json: ${rel} (${error.message})`);
+            }
+          }
+
+          const mdFiles = [];
+          const walk = (dir) => {
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+              if (entry.name === '.git') continue;
+              const full = path.join(dir, entry.name);
+              if (entry.isDirectory()) {
+                walk(full);
+              } else if (entry.isFile() && entry.name.endsWith('.md')) {
+                mdFiles.push(full);
+              }
+            }
+          };
+
+          walk(root);
+
+          for (const full of mdFiles) {
+            const rel = path.relative(root, full).split(path.sep).join('/');
+            const lines = fs.readFileSync(full, 'utf8').split(/\r?\n/);
+            const firstNonEmpty = lines.find((line) => line.trim().length > 0);
+            if (!firstNonEmpty) {
+              errors.push(`empty markdown: ${rel}`);
+              continue;
+            }
+            if (!(firstNonEmpty.startsWith('#') || firstNonEmpty === '---')) {
+              errors.push(`unexpected markdown start: ${rel}`);
+            }
+          }
+
+          const sampleSpec = fs.readFileSync(path.join(root, 'examples/payments/sample-spec.md'), 'utf8');
+          for (const id of ['SPEC-PAY-001', 'REQ-PAY-014', 'ARC-PAY-002', 'WI-PAY-081', 'VER-PAY-021']) {
+            if (!sampleSpec.includes(id)) {
+              errors.push(`example cross-link missing from sample-spec: ${id}`);
+            }
+          }
+
+          const sampleArchitecture = fs.readFileSync(path.join(root, 'examples/payments/sample-architecture.md'), 'utf8');
+          if (!sampleArchitecture.includes('REQ-PAY-014') || !sampleArchitecture.includes('ARC-PAY-002')) {
+            errors.push('sample-architecture cross-link mismatch');
+          }
+
+          const sampleWorkItem = fs.readFileSync(path.join(root, 'examples/payments/sample-work-item.md'), 'utf8');
+          if (!sampleWorkItem.includes('REQ-PAY-014') || !sampleWorkItem.includes('ARC-PAY-002') || !sampleWorkItem.includes('VER-PAY-021')) {
+            errors.push('sample-work-item cross-link mismatch');
+          }
+
+          const sampleVerification = fs.readFileSync(path.join(root, 'examples/payments/sample-verification.md'), 'utf8');
+          if (!sampleVerification.includes('REQ-PAY-014') || !sampleVerification.includes('SPEC-PAY-001')) {
+            errors.push('sample-verification cross-link mismatch');
+          }
+
+          if (errors.length) {
+            console.error(errors.join('\n'));
+            process.exit(1);
+          }
+
+          console.log(`validated ${mdFiles.length} markdown files and ${jsonFiles.length} json schemas`);
+          NODE

@@ -1,0 +1,28 @@
+name: Question
+description: Ask a usage question about the standard or the templates.
+title: "[Question]: "
+body:
+  - type: markdown
+    attributes:
+      value: Use this for usage questions about the standard, templates, examples, or schemas.
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What do you need to know?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What are you trying to do?
+    validations:
+      required: false
+  - type: textarea
+    id: tried
+    attributes:
+      label: What you tried
+      description: What have you already checked?
+    validations:
+      required: false
