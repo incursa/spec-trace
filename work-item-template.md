@@ -12,7 +12,7 @@ design_links:
 verification_links:
   - VER-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 related_artifacts:
-  - SPEC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
+  - SPEC-<DOMAIN>[-<GROUPING>...]
 ---
 
 # WI-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+> - <Work Item Title>

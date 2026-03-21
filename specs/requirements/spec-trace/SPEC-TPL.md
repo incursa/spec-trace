@@ -1,5 +1,5 @@
 ---
-artifact_id: SPEC-TPL-0001
+artifact_id: SPEC-TPL
 artifact_type: specification
 title: Templates and Compact Requirement Grammar
 domain: spec-trace
@@ -13,7 +13,7 @@ tags:
   - front-matter
 ---
 
-# SPEC-TPL-0001 - Templates and Compact Requirement Grammar
+# SPEC-TPL - Templates and Compact Requirement Grammar
 
 ## Purpose
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "SpecTrace Verification Author"
+  short_description: "Draft SpecTrace verification artifacts"
+  default_prompt: "Use $spec-trace-verification-author to draft or revise a SpecTrace verification artifact."

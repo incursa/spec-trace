@@ -1,5 +1,5 @@
 ---
-artifact_id: SPEC-LAY-0001
+artifact_id: SPEC-LAY
 artifact_type: specification
 title: Repository Layout and Artifact Placement
 domain: spec-trace
@@ -12,7 +12,7 @@ tags:
   - placement
 ---
 
-# SPEC-LAY-0001 - Repository Layout and Artifact Placement
+# SPEC-LAY - Repository Layout and Artifact Placement
 
 ## Purpose
 

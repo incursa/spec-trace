@@ -28,13 +28,16 @@ The standard is intentionally small. It does not require a requirements platform
 1. Read `specs/requirements/spec-trace/` for the canonical self-specification suite.
 2. Read [overview.md](overview.md) for the compact authoring model.
 3. Read [layout.md](layout.md) for the recommended repository structure.
-4. Copy from the root templates if you want a starting point for your own repo.
-5. Use [artifact-id-policy.json](artifact-id-policy.json) and the files under [schemas/](schemas/) for machine-readable validation targets.
-6. Open [examples/README.md](examples/README.md) for worked examples, including a product-style payments example and a narrow arithmetic example.
+4. Read [authoring.md](authoring.md) for the task-oriented authoring workflow across specifications, requirements, design, work items, and verification artifacts.
+5. Copy from the root templates if you want a starting point for your own repo.
+6. Use [artifact-id-policy.json](artifact-id-policy.json) and the files under [schemas/](schemas/) for machine-readable validation targets.
+7. Open [examples/README.md](examples/README.md) for worked examples, including a product-style payments example and a narrow arithmetic example.
+8. If you use AI-assisted authoring, point the agent at [AGENTS.md](AGENTS.md), [LOM.txt](LOM.txt), and the repo-local collection under [skills/](skills/).
 
 ## Repository Contents
 
 - `specs/requirements/spec-trace/` - canonical SPEC suite and proving ground for the standard
+- [authoring.md](authoring.md) - task-oriented authoring guide that routes to the canonical suite, templates, and examples
 - [overview.md](overview.md) - concise summary of the authoring model
 - [layout.md](layout.md) - recommended repository layout and placement guidance
 - [spec-template.md](spec-template.md) - copy-ready specification template
@@ -44,6 +47,20 @@ The standard is intentionally small. It does not require a requirements platform
 - [artifact-id-policy.json](artifact-id-policy.json) - shared identifier policy and grouping-key registry
 - [schemas/](schemas/) - reference JSON Schemas for extracted metadata
 - [examples/](examples/) - worked examples that apply the standard directly
+- [scripts/Export-SpecTraceBundle.ps1](scripts/Export-SpecTraceBundle.ps1) - PowerShell utility that bundles discovered specification files into one Markdown output
+- [AGENTS.md](AGENTS.md) - agent-oriented repository instructions that defer to the canonical SPEC suite
+- [LOM.txt](LOM.txt) - plain-text AI bootstrap for LOM-style or prompt-bootstrap workflows
+- [skills/](skills/) - repo-local authoring skills that help agents draft artifacts without re-implementing the standard
+
+## AI-Assisted Authoring
+
+This repository includes a small AI-facing convenience layer for teams that want repo-local agent instructions and reusable authoring skills.
+
+- `AGENTS.md` gives repository-specific instructions to coding and documentation agents.
+- `LOM.txt` provides a lightweight plain-text bootstrap that points tools back to the canonical suite.
+- `skills/` contains repo-local skills for drafting specifications, requirements, architecture artifacts, work items, verification artifacts, and cross-surface maintenance.
+
+Those files are ergonomic helpers only. They must remain aligned with the SPEC suite and they must not become a second source of truth.
 
 ## Why This Exists
 

@@ -1,8 +1,8 @@
 {
   "name": "incursa/spec-trace metadata catalog",
-  "version": 3,
+  "version": 4,
   "artifact_id_format": {
-    "summary": "PREFIX-DOMAIN(-GROUPING...)-SEQUENCE",
+    "summary": "PREFIX-DOMAIN(-GROUPING...)",
     "grouping_segments": {
       "minimum": 0,
       "maximum": null,
@@ -41,7 +41,7 @@
     }
   },
   "artifact_id_templates": {
-    "specification": "SPEC-{domain}{grouping}-{sequence}",
+    "specification": "SPEC-{domain}{grouping}",
     "architecture": "ARC-{domain}{grouping}-{sequence}",
     "work_item": "WI-{domain}{grouping}-{sequence}",
     "verification": "VER-{domain}{grouping}-{sequence}",
@@ -81,13 +81,15 @@
     }
   ],
   "notes": [
-    "grouping expands to zero or more '-SEGMENT' tokens between domain and sequence",
+    "specification identifiers use the SPEC-{domain}{grouping} template and stop after the optional grouping segments",
+    "architecture, work-item, verification, and decision-record identifiers continue to use terminal sequences",
+    "grouping expands to zero or more '-SEGMENT' tokens after the domain token",
     "grouping segments must start with a letter, so numeric-only grouping values are invalid",
     "the terminal sequence is zero-padded to at least four digits",
     "domain and grouping segments use the same uppercase alphanumeric token pattern",
     "the reference package allows zero or more grouping segments and does not set a hard maximum",
     "grouping-key registry entries provide the human-readable names and descriptions for the abbreviated codes used in the spec suite",
-    "requirement identifiers use the same domain, grouping, and sequence rules as artifact identifiers but use the REQ prefix because they identify clauses within specifications",
+    "requirement identifiers use the same domain and grouping rules as specification identifiers but use the REQ prefix and terminal sequence because they identify clauses within specifications",
     "tests and code may reference requirement identifiers directly"
   ]
 }

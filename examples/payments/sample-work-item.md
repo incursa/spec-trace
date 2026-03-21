@@ -14,7 +14,7 @@ design_links:
 verification_links:
   - VER-PAY-ACH-0021
 related_artifacts:
-  - SPEC-PAY-ACH-0001
+  - SPEC-PAY-ACH
   - ARC-PAY-ACH-0002
   - VER-PAY-ACH-0021
 ---

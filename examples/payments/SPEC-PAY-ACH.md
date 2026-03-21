@@ -1,5 +1,5 @@
 ---
-artifact_id: SPEC-PAY-ACH-0001
+artifact_id: SPEC-PAY-ACH
 artifact_type: specification
 title: ACH Duplicate Batch Handling
 domain: payments
@@ -16,7 +16,7 @@ related_artifacts:
   - VER-PAY-ACH-0021
 ---
 
-# SPEC-PAY-ACH-0001 - ACH Duplicate Batch Handling
+# SPEC-PAY-ACH - ACH Duplicate Batch Handling
 
 ## Purpose
 

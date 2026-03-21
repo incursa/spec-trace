@@ -10,7 +10,7 @@ verifies:
   - REQ-PAY-ACH-0015
   - REQ-PAY-ACH-0016
 related_artifacts:
-  - SPEC-PAY-ACH-0001
+  - SPEC-PAY-ACH
   - ARC-PAY-ACH-0002
   - WI-PAY-ACH-0081
 ---
@@ -62,6 +62,6 @@ passed
 
 ## Related Artifacts
 
-- SPEC-PAY-ACH-0001
+- SPEC-PAY-ACH
 - ARC-PAY-ACH-0002
 - WI-PAY-ACH-0081

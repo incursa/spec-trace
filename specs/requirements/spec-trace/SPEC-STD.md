@@ -1,5 +1,5 @@
 ---
-artifact_id: SPEC-STD-0001
+artifact_id: SPEC-STD
 artifact_type: specification
 title: Core Standard Model and Publication Rules
 domain: spec-trace
@@ -13,7 +13,7 @@ tags:
   - governance
 ---
 
-# SPEC-STD-0001 - Core Standard Model and Publication Rules
+# SPEC-STD - Core Standard Model and Publication Rules
 
 ## Purpose
 
@@ -47,11 +47,11 @@ The `spec-trace` standard MUST be expressed as the canonical SPEC suite under `s
 
 Trace:
 - Related:
-  - SPEC-ID-0001
-  - SPEC-LAY-0001
-  - SPEC-TPL-0001
-  - SPEC-SCH-0001
-  - SPEC-EXM-0001
+  - SPEC-ID
+  - SPEC-LAY
+  - SPEC-TPL
+  - SPEC-SCH
+  - SPEC-EXM
 
 ## REQ-STD-0004 Keep root guidance subordinate to the SPEC suite
 `README.md`, `overview.md`, `layout.md`, the root templates, the schemas, and the examples MUST align with the SPEC suite.

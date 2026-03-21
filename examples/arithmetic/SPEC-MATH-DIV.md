@@ -1,5 +1,5 @@
 ---
-artifact_id: SPEC-MATH-DIV-0001
+artifact_id: SPEC-MATH-DIV
 artifact_type: specification
 title: Division Operation Contract
 domain: arithmetic
@@ -16,7 +16,7 @@ related_artifacts:
   - VER-MATH-DIV-0001
 ---
 
-# SPEC-MATH-DIV-0001 - Division Operation Contract
+# SPEC-MATH-DIV - Division Operation Contract
 
 ## Purpose
 

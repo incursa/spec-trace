@@ -8,7 +8,7 @@ owner: <team-or-role>
 verifies:
   - REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 related_artifacts:
-  - SPEC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
+  - SPEC-<DOMAIN>[-<GROUPING>...]
   - ARC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
   - WI-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 ---
@@ -51,6 +51,6 @@ planned
 
 ## Related Artifacts
 
-- SPEC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
+  - SPEC-<DOMAIN>[-<GROUPING>...]
 - ARC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 - WI-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>

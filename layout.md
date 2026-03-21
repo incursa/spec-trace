@@ -10,7 +10,7 @@ artifact-id-policy.json
   /requirements
     /<domain>/
       _index.md
-      SPEC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>.md
+      SPEC-<DOMAIN>[-<GROUPING>...].md
   /architecture
     /<domain>/
       <readable-file-name>.md
@@ -93,9 +93,9 @@ File names should be stable and readable.
 
 Recommended examples:
 
-- `/specs/requirements/payments/SPEC-PAY-ACH-0001.md`
-- `/specs/requirements/arithmetic/SPEC-MATH-DIV-0001.md`
-- `/specs/requirements/spec-trace/SPEC-STD-0001.md`
+- `/specs/requirements/payments/SPEC-PAY-ACH.md`
+- `/specs/requirements/arithmetic/SPEC-MATH-DIV.md`
+- `/specs/requirements/spec-trace/SPEC-STD.md`
 
 ## Index Files
 

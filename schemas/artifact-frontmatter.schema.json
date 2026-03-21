@@ -33,7 +33,7 @@
       "properties": {
         "artifact_id": {
           "type": "string",
-          "pattern": "^SPEC-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$"
+          "pattern": "^SPEC-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*$"
         },
         "artifact_type": {
           "const": "specification"

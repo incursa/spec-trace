@@ -10,7 +10,7 @@ satisfies:
   - REQ-MATH-DIV-0002
   - REQ-MATH-DIV-0003
 related_artifacts:
-  - SPEC-MATH-DIV-0001
+  - SPEC-MATH-DIV
   - WI-MATH-DIV-0001
   - VER-MATH-DIV-0001
 ---

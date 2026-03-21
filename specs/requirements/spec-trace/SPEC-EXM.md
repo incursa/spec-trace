@@ -1,5 +1,5 @@
 ---
-artifact_id: SPEC-EXM-0001
+artifact_id: SPEC-EXM
 artifact_type: specification
 title: Worked Examples and Traceability Coverage
 domain: spec-trace
@@ -13,7 +13,7 @@ tags:
   - reference-material
 ---
 
-# SPEC-EXM-0001 - Worked Examples and Traceability Coverage
+# SPEC-EXM - Worked Examples and Traceability Coverage
 
 ## Purpose
 

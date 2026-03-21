@@ -7,9 +7,11 @@
 - Restored root reference guidance in `overview.md`, `layout.md`, and the copy-ready template files.
 - Added `examples/arithmetic/` as a narrow technical example for method-level and edge-case requirements.
 - Added `schemas/requirement-clause.schema.json` for extracted compact requirement clauses.
+- Added `authoring.md`, `AGENTS.md`, `LOM.txt`, and repo-local `skills/` to make human and AI authoring workflows easier without creating a second source of truth.
 
 ### Changed
 
+- Changed specification artifact identifiers to use `SPEC-<DOMAIN>(-<GROUPING>...)` without a terminal sequence; this is a breaking identifier-policy change and the canonical suite plus aligned examples were updated to match.
 - Reframed the standard around compact requirement clauses with stable `REQ-...` identifiers.
 - Clarified that a specification groups requirements and that a requirement is the smallest normative, testable statement.
 - Made direct traceability to design, work items, verification artifacts, tests, and code references a first-class goal.

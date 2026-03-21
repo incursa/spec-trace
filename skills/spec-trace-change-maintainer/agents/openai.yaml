@@ -1,0 +1,4 @@
+interface:
+  display_name: "SpecTrace Change Maintainer"
+  short_description: "Keep SpecTrace surfaces aligned"
+  default_prompt: "Use $spec-trace-change-maintainer to update SpecTrace canonical and supporting surfaces together when the standard changes."

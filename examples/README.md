@@ -31,11 +31,11 @@ It demonstrates:
 
 - `../specs/requirements/spec-trace/` for the canonical SPEC suite
 - [artifact-id-policy.json](../artifact-id-policy.json) for the shared identifier policy
-- [payments/SPEC-PAY-ACH-0001.md](payments/SPEC-PAY-ACH-0001.md)
+- [payments/SPEC-PAY-ACH.md](payments/SPEC-PAY-ACH.md)
 - [payments/sample-architecture.md](payments/sample-architecture.md)
 - [payments/sample-work-item.md](payments/sample-work-item.md)
 - [payments/sample-verification.md](payments/sample-verification.md)
-- [arithmetic/SPEC-MATH-DIV-0001.md](arithmetic/SPEC-MATH-DIV-0001.md)
+- [arithmetic/SPEC-MATH-DIV.md](arithmetic/SPEC-MATH-DIV.md)
 - [arithmetic/sample-architecture.md](arithmetic/sample-architecture.md)
 - [arithmetic/sample-work-item.md](arithmetic/sample-work-item.md)
 - [arithmetic/sample-verification.md](arithmetic/sample-verification.md)

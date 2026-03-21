@@ -1,0 +1,4 @@
+interface:
+  display_name: "SpecTrace Specification Author"
+  short_description: "Draft SpecTrace specification files"
+  default_prompt: "Use $spec-trace-specification-author to draft or revise a SpecTrace specification file without overriding the canonical SPEC suite."

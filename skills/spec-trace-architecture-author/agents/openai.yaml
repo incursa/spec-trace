@@ -1,0 +1,4 @@
+interface:
+  display_name: "SpecTrace Architecture Author"
+  short_description: "Draft SpecTrace architecture artifacts"
+  default_prompt: "Use $spec-trace-architecture-author to draft or revise a SpecTrace architecture or design artifact."

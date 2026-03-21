@@ -1,5 +1,5 @@
 ---
-artifact_id: SPEC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
+artifact_id: SPEC-<DOMAIN>[-<GROUPING>...]
 artifact_type: specification
 title: <Specification Title>
 domain: <domain>
@@ -12,7 +12,7 @@ related_artifacts:
   - <artifact-id>
 ---
 
-# SPEC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+> - <Specification Title>
+# SPEC-<DOMAIN>[-<GROUPING>...] - <Specification Title>
 
 ## Purpose
 

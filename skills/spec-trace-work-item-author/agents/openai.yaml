@@ -1,0 +1,4 @@
+interface:
+  display_name: "SpecTrace Work Item Author"
+  short_description: "Draft SpecTrace work items"
+  default_prompt: "Use $spec-trace-work-item-author to draft or revise a SpecTrace work-item artifact."

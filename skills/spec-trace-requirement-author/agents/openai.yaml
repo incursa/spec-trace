@@ -1,0 +1,4 @@
+interface:
+  display_name: "SpecTrace Requirement Author"
+  short_description: "Draft SpecTrace requirement clauses"
+  default_prompt: "Use $spec-trace-requirement-author to add or revise SpecTrace requirement clauses inside a specification."

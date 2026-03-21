@@ -10,7 +10,7 @@ verifies:
   - REQ-MATH-DIV-0002
   - REQ-MATH-DIV-0003
 related_artifacts:
-  - SPEC-MATH-DIV-0001
+  - SPEC-MATH-DIV
   - ARC-MATH-DIV-0001
   - WI-MATH-DIV-0001
 ---
@@ -59,6 +59,6 @@ passed
 
 ## Related Artifacts
 
-- SPEC-MATH-DIV-0001
+- SPEC-MATH-DIV
 - ARC-MATH-DIV-0001
 - WI-MATH-DIV-0001

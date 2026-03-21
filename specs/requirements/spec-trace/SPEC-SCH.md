@@ -1,5 +1,5 @@
 ---
-artifact_id: SPEC-SCH-0001
+artifact_id: SPEC-SCH
 artifact_type: specification
 title: Schemas and Validation Rules
 domain: spec-trace
@@ -13,7 +13,7 @@ tags:
   - tooling
 ---
 
-# SPEC-SCH-0001 - Schemas and Validation Rules
+# SPEC-SCH - Schemas and Validation Rules
 
 ## Purpose
 

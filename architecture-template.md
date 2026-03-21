@@ -8,7 +8,7 @@ owner: <team-or-role>
 satisfies:
   - REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 related_artifacts:
-  - SPEC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
+  - SPEC-<DOMAIN>[-<GROUPING>...]
 ---
 
 # ARC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+> - <Architecture or Design Title>

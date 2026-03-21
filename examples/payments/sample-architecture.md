@@ -10,7 +10,7 @@ satisfies:
   - REQ-PAY-ACH-0015
   - REQ-PAY-ACH-0016
 related_artifacts:
-  - SPEC-PAY-ACH-0001
+  - SPEC-PAY-ACH
   - WI-PAY-ACH-0081
   - VER-PAY-ACH-0021
 ---
@@ -19,7 +19,7 @@ related_artifacts:
 
 ## Purpose
 
-Describe how ACH batch intake enforces the tenant-scoped duplicate rules defined in `SPEC-PAY-ACH-0001`.
+Describe how ACH batch intake enforces the tenant-scoped duplicate rules defined in `SPEC-PAY-ACH`.
 
 ## Requirements Satisfied
 

@@ -14,7 +14,7 @@ design_links:
 verification_links:
   - VER-MATH-DIV-0001
 related_artifacts:
-  - SPEC-MATH-DIV-0001
+  - SPEC-MATH-DIV
   - ARC-MATH-DIV-0001
   - VER-MATH-DIV-0001
 ---
