@@ -4,7 +4,7 @@ This folder contains repo-local skills for AI-assisted authoring and maintenance
 
 ## How To Use Them
 
-1. Start from `AGENTS.md` or `LOM.txt`.
+1. Start from `AGENTS.md` or `LLMS.txt`.
 2. Pick the skill that matches the artifact you need to draft or revise.
 3. Open the authoritative SPEC files, matching root template, and nearest example before writing.
 

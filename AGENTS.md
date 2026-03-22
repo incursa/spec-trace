@@ -11,7 +11,7 @@ Follow this order when working in the repository:
 1. `specs/requirements/spec-trace/`
 2. root templates, schemas, and examples
 3. root summary documents such as `README.md`, `overview.md`, `layout.md`, and `authoring.md`
-4. AI convenience surfaces such as this file, `LOM.txt`, and `skills/`
+4. AI convenience surfaces such as this file, `LLMS.txt`, and `skills/`
 
 If you find a mismatch, follow the higher-authority source and fix the lower-authority one in the same change when appropriate.
 
@@ -33,6 +33,6 @@ If you find a mismatch, follow the higher-authority source and fix the lower-aut
 
 ## AI Assets In This Repo
 
-- `LOM.txt` is the lightweight plain-text bootstrap.
+- `LLMS.txt` is the lightweight plain-text bootstrap.
 - `skills/README.md` catalogs the repo-local authoring skills.
 - `authoring.md` is the task-oriented human guide that points back to the authoritative sources.

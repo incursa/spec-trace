@@ -4,3 +4,6 @@ node_modules/
 coverage/
 dist/
 *.log
+
+# Local export from scripts/Export-SpecTraceBundle.ps1
+/specs/generated/spec-bundle.md

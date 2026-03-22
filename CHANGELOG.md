@@ -7,7 +7,7 @@
 - Restored root reference guidance in `overview.md`, `layout.md`, and the copy-ready template files.
 - Added `examples/arithmetic/` as a narrow technical example for method-level and edge-case requirements.
 - Added `schemas/requirement-clause.schema.json` for extracted compact requirement clauses.
-- Added `authoring.md`, `AGENTS.md`, `LOM.txt`, and repo-local `skills/` to make human and AI authoring workflows easier without creating a second source of truth.
+- Added `authoring.md`, `AGENTS.md`, `LLMS.txt`, and repo-local `skills/` to make human and AI authoring workflows easier without creating a second source of truth.
 
 ### Changed
 
@@ -22,6 +22,7 @@
 - Removed the `specification_role` model and returned to one specification per Markdown file.
 - Restored full specification IDs in specification filenames and kept related requirements grouped under that specification in the same file.
 - Tightened the requirement-clause rule from “at least one approved keyword” to “exactly one approved keyword” and split the self-spec clauses accordingly.
+- Renamed the AI bootstrap surface from `LOM.txt` to `LLMS.txt` and aligned the repo guidance to match.
 
 ## [0.1.0] - 2026-03-20
 

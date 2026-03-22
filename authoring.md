@@ -8,7 +8,7 @@ Use the repository in this order:
 
 1. `specs/requirements/spec-trace/` for the authoritative model.
 2. Root templates, schemas, and examples for copy-ready support.
-3. This guide, `README.md`, `AGENTS.md`, `LOM.txt`, and `skills/` for ergonomic navigation.
+3. This guide, `README.md`, `AGENTS.md`, `LLMS.txt`, and `skills/` for ergonomic navigation.
 
 If any convenience layer disagrees with the SPEC suite, the SPEC suite wins.
 
@@ -87,7 +87,7 @@ If a change affects canonical field names, identifier rules, template shape, sch
 - the schemas
 - the examples
 - root guidance such as `README.md`, `overview.md`, and `layout.md`
-- AI convenience surfaces such as `AGENTS.md`, `LOM.txt`, and `skills/`
+- AI convenience surfaces such as `AGENTS.md`, `LLMS.txt`, and `skills/`
 
 Record notable package-level changes in `CHANGELOG.md`.
 
@@ -96,5 +96,5 @@ Record notable package-level changes in `CHANGELOG.md`.
 If you want AI tooling to work directly from this repository:
 
 - use `AGENTS.md` for repo-specific instructions
-- use `LOM.txt` for a lightweight bootstrap file
+- use `LLMS.txt` for a lightweight bootstrap file
 - use `skills/README.md` to choose a repo-local authoring skill

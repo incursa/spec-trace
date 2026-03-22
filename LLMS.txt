@@ -1,0 +1,70 @@
+# SpecTrace
+
+> AI-readable bootstrap for the `spec-trace` reference repository. This file is non-authoritative. The canonical standard lives under `./specs/requirements/spec-trace/`.
+
+`spec-trace` is a Markdown-first requirements and traceability standard. Use this file to route an LLM to the right canonical sources, templates, examples, and helper files without turning this file into a second copy of the standard.
+
+When working in this repository:
+
+- Follow this authority order: canonical SPEC suite, then root templates/schemas/examples, then root summary documents, then AI convenience surfaces.
+- Keep requirements inside specification documents.
+- Prefer the nearest template and worked example over inventing a new document shape.
+- If a change affects canonical field names, identifier rules, template shape, schema contracts, or example patterns, update the authoritative SPEC files first and propagate the change through dependent surfaces in the same change set.
+- If your tool can only ingest a single file, generate a bundled Markdown view with `./scripts/Export-SpecTraceBundle.ps1`.
+
+## Canonical Standard
+
+- [_index.md](./specs/requirements/spec-trace/_index.md): canonical entry point to the SPEC suite.
+- [SPEC-STD.md](./specs/requirements/spec-trace/SPEC-STD.md): core definitions, authority model, and publication rules.
+- [SPEC-ID.md](./specs/requirements/spec-trace/SPEC-ID.md): artifact and requirement identifier policy.
+- [SPEC-LAY.md](./specs/requirements/spec-trace/SPEC-LAY.md): repository layout and artifact placement.
+- [SPEC-TPL.md](./specs/requirements/spec-trace/SPEC-TPL.md): front matter keys, compact requirement grammar, and trace labels.
+- [SPEC-SCH.md](./specs/requirements/spec-trace/SPEC-SCH.md): schema contracts and validation scope.
+- [SPEC-EXM.md](./specs/requirements/spec-trace/SPEC-EXM.md): worked-example expectations and traceability coverage.
+
+## Task Routing
+
+- [authoring.md](./authoring.md): task-oriented entry point for choosing specification, requirement, architecture, work-item, or verification workflows.
+- [overview.md](./overview.md): concise summary of the core model and canonical requirement form.
+- [layout.md](./layout.md): recommended repository structure and placement guidance.
+- [README.md](./README.md): package overview, getting started, and tool index.
+
+## Templates And Validation
+
+- [spec-template.md](./spec-template.md): copy-ready specification template.
+- [architecture-template.md](./architecture-template.md): copy-ready architecture or design template.
+- [work-item-template.md](./work-item-template.md): copy-ready implementation work-item template.
+- [verification-template.md](./verification-template.md): copy-ready verification template.
+- [artifact-id-policy.json](./artifact-id-policy.json): shared artifact and requirement identifier policy.
+- [schemas/README.md](./schemas/README.md): schema entry point.
+- [schemas/artifact-frontmatter.schema.json](./schemas/artifact-frontmatter.schema.json): front matter schema.
+- [schemas/requirement-clause.schema.json](./schemas/requirement-clause.schema.json): extracted requirement clause schema.
+- [schemas/requirement-trace-fields.schema.json](./schemas/requirement-trace-fields.schema.json): requirement trace-block schema.
+- [schemas/work-item-trace-fields.schema.json](./schemas/work-item-trace-fields.schema.json): work-item trace-links schema.
+
+## Worked Examples
+
+- [examples/README.md](./examples/README.md): entry point to the worked examples.
+- [examples/payments/SPEC-PAY-ACH.md](./examples/payments/SPEC-PAY-ACH.md): product-style specification example.
+- [examples/payments/sample-architecture.md](./examples/payments/sample-architecture.md): linked architecture example.
+- [examples/payments/sample-work-item.md](./examples/payments/sample-work-item.md): linked work-item example.
+- [examples/payments/sample-verification.md](./examples/payments/sample-verification.md): linked verification example.
+- [examples/arithmetic/SPEC-MATH-DIV.md](./examples/arithmetic/SPEC-MATH-DIV.md): narrow technical specification example.
+- [examples/arithmetic/sample-architecture.md](./examples/arithmetic/sample-architecture.md): narrow architecture example.
+- [examples/arithmetic/sample-work-item.md](./examples/arithmetic/sample-work-item.md): narrow work-item example.
+- [examples/arithmetic/sample-verification.md](./examples/arithmetic/sample-verification.md): narrow verification example.
+
+## AI Helpers
+
+- [AGENTS.md](./AGENTS.md): repo-specific instructions for coding and documentation agents.
+- [skills/README.md](./skills/README.md): index of repo-local authoring skills.
+- [skills/spec-trace-specification-author/SKILL.md](./skills/spec-trace-specification-author/SKILL.md): draft or revise specification documents.
+- [skills/spec-trace-requirement-author/SKILL.md](./skills/spec-trace-requirement-author/SKILL.md): add or tighten requirement clauses inside a specification.
+- [skills/spec-trace-architecture-author/SKILL.md](./skills/spec-trace-architecture-author/SKILL.md): draft architecture or design artifacts.
+- [skills/spec-trace-work-item-author/SKILL.md](./skills/spec-trace-work-item-author/SKILL.md): draft work items.
+- [skills/spec-trace-verification-author/SKILL.md](./skills/spec-trace-verification-author/SKILL.md): draft verification artifacts.
+- [skills/spec-trace-change-maintainer/SKILL.md](./skills/spec-trace-change-maintainer/SKILL.md): propagate standard changes across dependent surfaces.
+
+## Bundled Context
+
+- [scripts/Export-SpecTraceBundle.ps1](./scripts/Export-SpecTraceBundle.ps1): generate a single Markdown bundle of specification files when a model cannot traverse the repository.

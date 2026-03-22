@@ -22,7 +22,7 @@ Use this skill when a request affects the standard itself or any surface that mi
 
 1. Classify the request as either a canonical change or a support-surface cleanup.
 2. If the change is canonical, update the authoritative SPEC files first.
-3. Propagate the result through templates, schemas, examples, root docs, changelog, and AI convenience surfaces such as `../../AGENTS.md`, `../../LOM.txt`, and `../../skills/`.
+3. Propagate the result through templates, schemas, examples, root docs, changelog, and AI convenience surfaces such as `../../AGENTS.md`, `../../LLMS.txt`, and `../../skills/`.
 4. Check for drift in terminology, field names, identifier shapes, trace labels, and example coverage.
 5. Call out breaking changes explicitly.
 

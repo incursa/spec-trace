@@ -32,7 +32,7 @@ The standard is intentionally small. It does not require a requirements platform
 5. Copy from the root templates if you want a starting point for your own repo.
 6. Use [artifact-id-policy.json](artifact-id-policy.json) and the files under [schemas/](schemas/) for machine-readable validation targets.
 7. Open [examples/README.md](examples/README.md) for worked examples, including a product-style payments example and a narrow arithmetic example.
-8. If you use AI-assisted authoring, point the agent at [AGENTS.md](AGENTS.md), [LOM.txt](LOM.txt), and the repo-local collection under [skills/](skills/).
+8. If you use AI-assisted authoring, point the agent at [AGENTS.md](AGENTS.md), [LLMS.txt](LLMS.txt), and the repo-local collection under [skills/](skills/).
 
 ## Repository Contents
 
@@ -49,7 +49,7 @@ The standard is intentionally small. It does not require a requirements platform
 - [examples/](examples/) - worked examples that apply the standard directly
 - [scripts/Export-SpecTraceBundle.ps1](scripts/Export-SpecTraceBundle.ps1) - PowerShell utility that bundles discovered specification files into one Markdown output
 - [AGENTS.md](AGENTS.md) - agent-oriented repository instructions that defer to the canonical SPEC suite
-- [LOM.txt](LOM.txt) - plain-text AI bootstrap for LOM-style or prompt-bootstrap workflows
+- [LLMS.txt](LLMS.txt) - plain-text AI bootstrap for llms.txt-style or prompt-bootstrap workflows
 - [skills/](skills/) - repo-local authoring skills that help agents draft artifacts without re-implementing the standard
 
 ## AI-Assisted Authoring
@@ -57,7 +57,7 @@ The standard is intentionally small. It does not require a requirements platform
 This repository includes a small AI-facing convenience layer for teams that want repo-local agent instructions and reusable authoring skills.
 
 - `AGENTS.md` gives repository-specific instructions to coding and documentation agents.
-- `LOM.txt` provides a lightweight plain-text bootstrap that points tools back to the canonical suite.
+- `LLMS.txt` provides a lightweight plain-text bootstrap that points tools back to the canonical suite.
 - `skills/` contains repo-local skills for drafting specifications, requirements, architecture artifacts, work items, verification artifacts, and cross-surface maintenance.
 
 Those files are ergonomic helpers only. They must remain aligned with the SPEC suite and they must not become a second source of truth.
