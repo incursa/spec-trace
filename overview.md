@@ -2,6 +2,8 @@
 
 This file summarizes the standard described in `specs/requirements/spec-trace/`. It is a practical guide, not a second source of truth.
 
+The core artifact families are specification, architecture, work item, and verification.
+
 ## Core Vocabulary
 
 ### Specification
@@ -35,11 +37,37 @@ The standard gives first-class weight to links from a requirement to:
 - tests
 - code references
 
+The published schemas constrain the direct link families, and repository-wide validation through `scripts/Test-SpecTraceRepository.ps1` checks duplicate IDs, unresolved direct links, reciprocal consistency, namespace alignment, and profile rules.
+
+### Conformance Profiles
+
+The standard defines three repository-level conformance profiles:
+
+- `core`: shape, identifier, and approved keyword correctness only
+- `traceable`: core plus no unresolved artifact or requirement refs, no duplicate IDs, and at least one downstream trace link for every requirement
+- `auditable`: traceable plus verification coverage for every requirement, reciprocal trace agreement where reciprocal fields exist, and no orphan ARC, WI, or VER artifacts
+
+Core is the default low-burden baseline. Stricter profiles are opt-in repository policy rather than per-artifact metadata.
+
+Use `scripts/Test-SpecTraceRepository.ps1` with `-Profile core`, `-Profile traceable`, or `-Profile auditable` to enforce those levels. Add `-JsonReportPath` when you need a machine-readable report.
+
+### Requirement Lineage And Evolution
+
+A requirement may also carry optional upstream trace:
+
+- `Derived From`: earlier `REQ-...` identifiers that the requirement refines or inherits from
+- `Supersedes`: earlier `REQ-...` identifiers that the requirement replaces or closes forward
+- `Source Refs`: free-form external references such as laws, contracts, tickets, incidents, customer asks, and policies
+
+These fields stay lightweight. They do not add per-requirement workflow states, and the repository does not need tombstone requirement records for retired IDs.
+
+Editorial clarifications keep the same `REQ-...` identifier. Semantic changes, split and merge outcomes, and other new obligations get new `REQ-...` identifiers. A moved requirement may keep the same `REQ-...` identifier if its semantics do not change. Old requirement IDs are never reused.
+
 Tests are not the requirement. Code is not the requirement. They are artifacts that may exist because of the requirement and may reference the requirement ID directly.
 
 ### Verification Artifact
 
-A verification artifact describes how one or more requirements were verified and records the outcome.
+A verification artifact describes how one or more requirements were verified and records the shared outcome. When a single verification artifact lists multiple requirements, they must all share that outcome; otherwise, split the scope into separate verification artifacts.
 
 Verification artifacts may summarize verification at a higher level than individual tests. Tests may still reference requirement IDs directly.
 
@@ -49,15 +77,20 @@ A work item describes implementation work. It is not the requirement itself.
 
 ### Architecture or Design Artifact
 
-An architecture or design artifact explains how one or more requirements will be satisfied. It is not the requirement itself.
+An architecture or design artifact explains how one or more requirements will be satisfied. It is the default place for design rationale and decision tradeoffs. It is not the requirement itself. Decision records are not part of the core standard today; a repository may add them later as an optional local extension.
 
 ## Normative Keywords
 
-Requirement clauses use the following normative keywords:
+Requirement clauses use BCP 14-style uppercase normative language inspired by RFC 2119 and RFC 8174, but spec-trace intentionally narrows the approved set.
+
+Only uppercase approved forms carry normative meaning; lowercase spellings are plain English.
+
+Requirement clauses use the following approved keywords:
 
 - `MUST` or `SHALL`: required
 - `MUST NOT` or `SHALL NOT`: prohibited
 - `SHOULD`: recommended but not strictly required
+- `SHOULD NOT`: recommended against but not strictly required
 - `MAY`: permitted or optional
 
 Every canonical requirement clause must contain exactly one approved keyword in all caps.
@@ -76,6 +109,12 @@ Trace:
 - Satisfied By: ARC-...
 - Implemented By: WI-...
 - Verified By: VER-...
+- Derived From:
+  - REQ-...
+- Supersedes:
+  - REQ-...
+- Source Refs:
+  - <external reference>
 - Test Refs:
   - <test reference>
 - Code Refs:
@@ -117,6 +156,9 @@ When a requirement includes a `Trace` block, the canonical labels are:
 - `Satisfied By`
 - `Implemented By`
 - `Verified By`
+- `Derived From`
+- `Supersedes`
+- `Source Refs`
 - `Test Refs`
 - `Code Refs`
 - `Related`
@@ -135,6 +177,7 @@ These labels map to the extracted metadata validated by the schemas in `schemas/
 ## File-Level Metadata
 
 File-level front matter remains important. It identifies the document as a whole. The schemas keep that metadata strict so tooling can classify artifacts reliably.
+Repositories may add optional namespaced `x_...` front-matter keys for local extensions without changing the core artifact family.
 
 The key distinction is this:
 
@@ -152,5 +195,6 @@ A practical implementation of the standard should make these questions answerabl
 - Which requirements have verification coverage?
 - Which requirements are directly referenced by tests?
 - Which requirements are directly referenced by code?
+- Which trace links are duplicated, unresolved, or not reciprocated?
 
 If those questions cannot be answered from stable IDs and explicit links, the traceability model is too weak.

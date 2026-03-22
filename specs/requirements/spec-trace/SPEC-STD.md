@@ -21,11 +21,11 @@ Define the core vocabulary, authority model, and publication rules for the spec-
 
 ## Scope
 
-This specification covers what a specification is, what a requirement is, where the canonical standard lives, and how the reference package keeps its support material aligned.
+This specification covers what a specification is, what a requirement is, where the canonical standard lives, how the reference package keeps its support material aligned, and how the canonical conformance profiles are named.
 
 ## Context
 
-The repository exists to make precise software requirements easy to author, review, and trace in plain Markdown. That goal only works if the requirement itself stays short and direct.
+The repository exists to make precise software requirements easy to author, review, and trace in plain Markdown. That goal only works if the requirement itself stays short and direct, and the repository also needs a low-burden baseline so teams can adopt the standard without committing to a stricter traceability policy on day one.
 
 ## REQ-STD-0001 Distinguish specifications from requirements
 A specification MUST group one or more related requirements for a capability, behavior area, interface, or narrow technical concern.
@@ -38,6 +38,8 @@ A requirement MUST be the smallest normative, testable statement in the system.
 
 Notes:
 - The requirement clause is the normative content.
+- The standard uses BCP 14-style uppercase requirement language inspired by RFC 2119 and RFC 8174, but only the approved uppercase keyword set in `SPEC-TPL` carries defined normative meaning.
+- Lowercase spellings are plain English.
 
 ## REQ-STD-0014 Give each requirement a stable identifier
 Each canonical requirement MUST have a stable `REQ-...` identifier.
@@ -48,6 +50,8 @@ The `spec-trace` standard MUST be expressed as the canonical SPEC suite under `s
 Trace:
 - Related:
   - SPEC-ID
+  - SPEC-LIN
+  - SPEC-PRF
   - SPEC-LAY
   - SPEC-TPL
   - SPEC-SCH
@@ -88,6 +92,21 @@ An architecture or design artifact MUST explain how one or more requirements are
 
 ## REQ-STD-0012 Distinguish verification artifacts and tests from requirements
 A verification artifact MUST record how one or more requirements were verified.
+
+## REQ-STD-0019 Keep verification outcomes homogeneous within one artifact
+A verification artifact MUST only list requirements in `verifies` when the artifact status applies to every listed requirement; mixed outcomes belong in separate verification artifacts.
+
+## REQ-STD-0020 Define canonical conformance profiles
+The standard MUST define `core`, `traceable`, and `auditable` as its canonical conformance profiles.
+
+Trace:
+- Related:
+  - SPEC-PRF
+
+Notes:
+- `core` is the low-burden baseline.
+- `traceable` and `auditable` are stricter optional repository profiles.
+- Profiles are repository-level enforcement targets, not per-artifact metadata.
 
 ## REQ-STD-0013 Distinguish code references from requirements
 Tests MAY reference requirement identifiers directly without becoming the requirements themselves.

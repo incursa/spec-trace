@@ -6,6 +6,7 @@ domain: payments
 status: complete
 owner: payments-platform
 addresses:
+  - REQ-PAY-ACH-0013
   - REQ-PAY-ACH-0014
   - REQ-PAY-ACH-0015
   - REQ-PAY-ACH-0016
@@ -27,6 +28,7 @@ Implement the tenant-scoped duplicate guard for ACH batch intake and prevent rej
 
 ## Requirements Addressed
 
+- REQ-PAY-ACH-0013
 - REQ-PAY-ACH-0014
 - REQ-PAY-ACH-0015
 - REQ-PAY-ACH-0016
@@ -57,6 +59,7 @@ The implementation preserves the existing success path for unique batch identifi
 
 Addresses:
 
+- REQ-PAY-ACH-0013
 - REQ-PAY-ACH-0014
 - REQ-PAY-ACH-0015
 - REQ-PAY-ACH-0016

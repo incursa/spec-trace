@@ -27,7 +27,10 @@ This specification covers the recommended `/specs` tree, placement of artifact f
 Traceability weakens when requirements, design, work, and verification are scattered according to workflow noise instead of stable product structure.
 
 ## REQ-LAY-0001 Keep live source artifacts under the /specs tree
-A repository using the standard MUST keep live source artifacts under `/specs` with dedicated areas for requirements, architecture, decisions, work-items, verification, generated outputs, templates, and schemas.
+A repository using the standard MUST keep live source artifacts under `/specs` with dedicated areas for requirements, architecture, work-items, verification, generated outputs, templates, and schemas.
+
+Notes:
+- Decision records are not part of the core layout today; repositories that need them may add an optional local extension.
 
 ## REQ-LAY-0002 Organize specifications by stable domain and concern
 Specifications MUST be organized by stable domain first and by capability, behavior area, interface, or technical concern second.

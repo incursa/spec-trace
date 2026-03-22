@@ -14,8 +14,6 @@ artifact-id-policy.json
   /architecture
     /<domain>/
       <readable-file-name>.md
-  /decisions
-    ADR-<SEQUENCE:4+>-<slug>.md
   /work-items
     /<domain>/
       <readable-file-name>.md
@@ -57,7 +55,7 @@ Good grouping dimensions are stable technical or business concepts. Dates, sprin
 
 Place architecture and design artifacts under `/specs/architecture/`.
 
-These documents explain how requirements are satisfied. They do not redefine the requirements.
+These documents explain how requirements are satisfied. They are the default place for design rationale and decision tradeoffs. Decision records are not part of the core layout today, but a repository may add them through an optional local extension if needed.
 
 ### Work Items
 
@@ -69,7 +67,7 @@ Work items describe implementation work and should trace back to requirement IDs
 
 Place verification artifacts under `/specs/verification/`.
 
-Verification artifacts prove requirements. They may summarize verification at a scenario level while tests reference requirement IDs directly.
+Verification artifacts prove requirements. They may summarize verification at a scenario level when all covered requirements share one outcome. Mixed outcomes belong in separate verification artifacts.
 
 ### Generated Outputs
 

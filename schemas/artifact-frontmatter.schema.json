@@ -2,16 +2,84 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "artifact-frontmatter.schema.json",
   "title": "Artifact Front Matter",
-  "description": "Strict reference schema for file-level YAML front matter used by the Markdown artifacts in this package.",
+  "description": "Strict reference schema for file-level YAML front matter used by the specification, architecture, work-item, and verification Markdown artifacts in this package. Core fields stay strict, and optional namespaced x_ extension keys are allowed for local metadata.",
   "$defs": {
     "nonEmptyString": {
       "type": "string",
       "minLength": 1
     },
+    "specificationId": {
+      "type": "string",
+      "pattern": "^SPEC-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*$"
+    },
+    "requirementId": {
+      "type": "string",
+      "pattern": "^REQ-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$"
+    },
+    "architectureId": {
+      "type": "string",
+      "pattern": "^ARC-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$"
+    },
+    "workItemId": {
+      "type": "string",
+      "pattern": "^WI-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$"
+    },
+    "verificationId": {
+      "type": "string",
+      "pattern": "^VER-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$"
+    },
+    "traceArtifactId": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/specificationId"
+        },
+        {
+          "$ref": "#/$defs/architectureId"
+        },
+        {
+          "$ref": "#/$defs/workItemId"
+        },
+        {
+          "$ref": "#/$defs/verificationId"
+        }
+      ]
+    },
     "stringArray": {
       "type": "array",
       "items": {
         "$ref": "#/$defs/nonEmptyString"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "requirementReferenceArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/requirementId"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "architectureReferenceArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/architectureId"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "verificationReferenceArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/verificationId"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "traceArtifactReferenceArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/traceArtifactId"
       },
       "minItems": 1,
       "uniqueItems": true
@@ -68,8 +136,11 @@
         },
         "related_artifacts": {
           "description": "Optional direct artifact IDs for documents materially related to this specification.",
-          "$ref": "#/$defs/stringArray"
+          "$ref": "#/$defs/traceArtifactReferenceArray"
         }
+      },
+      "patternProperties": {
+        "^x_[a-z][a-z0-9_]*$": {}
       },
       "additionalProperties": false
     },
@@ -115,12 +186,15 @@
         },
         "satisfies": {
           "description": "Requirement IDs satisfied by this architecture or design artifact.",
-          "$ref": "#/$defs/stringArray"
+          "$ref": "#/$defs/requirementReferenceArray"
         },
         "related_artifacts": {
           "description": "Optional direct artifact IDs for documents materially related to this architecture.",
-          "$ref": "#/$defs/stringArray"
+          "$ref": "#/$defs/traceArtifactReferenceArray"
         }
+      },
+      "patternProperties": {
+        "^x_[a-z][a-z0-9_]*$": {}
       },
       "additionalProperties": false
     },
@@ -167,20 +241,23 @@
         },
         "addresses": {
           "description": "Requirement IDs addressed by this work item.",
-          "$ref": "#/$defs/stringArray"
+          "$ref": "#/$defs/requirementReferenceArray"
         },
         "design_links": {
           "description": "Architecture artifact IDs used as design inputs for this work item.",
-          "$ref": "#/$defs/stringArray"
+          "$ref": "#/$defs/architectureReferenceArray"
         },
         "verification_links": {
           "description": "Verification artifact IDs associated with this work item.",
-          "$ref": "#/$defs/stringArray"
+          "$ref": "#/$defs/verificationReferenceArray"
         },
         "related_artifacts": {
           "description": "Optional direct artifact IDs for documents materially related to this work item.",
-          "$ref": "#/$defs/stringArray"
+          "$ref": "#/$defs/traceArtifactReferenceArray"
         }
+      },
+      "patternProperties": {
+        "^x_[a-z][a-z0-9_]*$": {}
       },
       "additionalProperties": false
     },
@@ -225,12 +302,15 @@
         },
         "verifies": {
           "description": "Requirement IDs verified by this verification artifact.",
-          "$ref": "#/$defs/stringArray"
+          "$ref": "#/$defs/requirementReferenceArray"
         },
         "related_artifacts": {
           "description": "Optional direct artifact IDs for documents materially related to this verification artifact.",
-          "$ref": "#/$defs/stringArray"
+          "$ref": "#/$defs/traceArtifactReferenceArray"
         }
+      },
+      "patternProperties": {
+        "^x_[a-z][a-z0-9_]*$": {}
       },
       "additionalProperties": false
     }

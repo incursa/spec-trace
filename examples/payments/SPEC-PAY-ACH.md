@@ -30,10 +30,28 @@ This specification covers tenant-scoped duplicate detection and the point in the
 
 The same external batch identifier can appear in more than one tenant. The system needs a rule that blocks duplicates within a tenant without creating cross-tenant false positives or downstream side effects.
 
+## REQ-PAY-ACH-0013 Scope duplicate detection to the tenant and batch identifier
+The batch intake flow MUST treat duplicate detection as tenant-scoped and keyed by the external batch identifier.
+
+Trace:
+- Supersedes:
+  - REQ-PAY-ACH-0012
+- Satisfied By:
+  - ARC-PAY-ACH-0002
+- Implemented By:
+  - WI-PAY-ACH-0081
+- Verified By:
+  - VER-PAY-ACH-0021
+- Source Refs:
+  - ACH Operating Rules, duplicate batch handling
+  - Payments platform intake policy
+
 ## REQ-PAY-ACH-0014 Reject duplicate ACH batch submission
 The batch intake flow MUST reject a submitted ACH batch when the same external batch identifier has already been accepted for the same tenant.
 
 Trace:
+- Derived From:
+  - REQ-PAY-ACH-0013
 - Satisfied By:
   - ARC-PAY-ACH-0002
 - Implemented By:
@@ -52,6 +70,8 @@ Notes:
 The batch intake flow MAY accept the same external batch identifier for a different tenant.
 
 Trace:
+- Derived From:
+  - REQ-PAY-ACH-0013
 - Satisfied By:
   - ARC-PAY-ACH-0002
 - Implemented By:
@@ -67,6 +87,8 @@ Trace:
 The duplicate check MUST complete before downstream processing begins for the submitted batch.
 
 Trace:
+- Derived From:
+  - REQ-PAY-ACH-0013
 - Satisfied By:
   - ARC-PAY-ACH-0002
 - Implemented By:

@@ -20,8 +20,13 @@ If you find a mismatch, follow the higher-authority source and fix the lower-aut
 - To understand the standard, read `specs/requirements/spec-trace/_index.md` and the relevant `SPEC-...` files first.
 - To draft or revise a specification, start from `spec-template.md` and use `skills/spec-trace-specification-author/`.
 - To add or tighten a requirement, work inside the owning `SPEC-...` file and use `skills/spec-trace-requirement-author/`.
+- To change requirement evolution or upstream trace semantics, work inside `specs/requirements/spec-trace/SPEC-LIN.md` and use `skills/spec-trace-change-maintainer/`.
+- To define or revise conformance profiles, work inside `specs/requirements/spec-trace/SPEC-PRF.md` and use `skills/spec-trace-change-maintainer/`.
 - To draft architecture, work-item, or verification artifacts, use the matching root template plus the corresponding skill under `skills/`.
 - To change canonical field names, identifier rules, templates, schemas, or example patterns, use `skills/spec-trace-change-maintainer/` and propagate the change across all affected surfaces.
+- To run repository-wide validation, use `scripts/Test-SpecTraceRepository.ps1` with `-Profile core`, `-Profile traceable`, or `-Profile auditable`; use `-JsonReportPath` when you need machine-readable output.
+- Requirement clauses use the approved BCP 14-style uppercase keyword set only; lowercase spellings are plain English.
+- Verification artifacts use one artifact-scoped status for every requirement listed in `verifies`; if the requirements do not share one outcome, split the scope into separate artifacts.
 
 ## Working Rules
 
@@ -36,3 +41,5 @@ If you find a mismatch, follow the higher-authority source and fix the lower-aut
 - `LLMS.txt` is the lightweight plain-text bootstrap.
 - `skills/README.md` catalogs the repo-local authoring skills.
 - `authoring.md` is the task-oriented human guide that points back to the authoritative sources.
+- `scripts/Test-SpecTraceRepository.ps1` is the repository-level validation entry point for duplicate IDs, unresolved direct links, reciprocal consistency, namespace alignment, and profile enforcement.
+- `scripts/Validate-SpecTrace.ps1` remains a narrower compatibility check for the canonical bundle.

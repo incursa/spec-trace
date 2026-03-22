@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "requirement-clause.schema.json",
   "title": "Requirement Clause",
-  "description": "Reference schema for extracted metadata from a compact requirement clause in a specification document.",
+  "description": "Reference schema for extracted metadata from a compact requirement clause in a specification document, using the narrowed BCP 14-style uppercase keyword set defined by the standard.",
   "$defs": {
     "nonEmptyString": {
       "type": "string",
@@ -33,28 +33,29 @@
       "$ref": "#/$defs/nonEmptyString"
     },
     "clause": {
-      "description": "Normative requirement sentence or short paragraph that appears immediately after the requirement heading and contains exactly one approved all-caps normative keyword.",
+      "description": "Normative requirement sentence or short paragraph that appears immediately after the requirement heading and contains exactly one approved all-caps normative keyword phrase from the closed set.",
       "type": "string",
       "minLength": 1,
       "allOf": [
         {
-          "pattern": "\\b(?:MUST NOT|SHALL NOT|MUST|SHALL|SHOULD|MAY)\\b"
+          "pattern": "\\b(?:MUST NOT|SHALL NOT|SHOULD NOT|MUST|SHALL|SHOULD|MAY)\\b"
         },
         {
           "not": {
-            "pattern": "\\b(?:MUST NOT|SHALL NOT|MUST|SHALL|SHOULD|MAY)\\b[\\s\\S]*\\b(?:MUST NOT|SHALL NOT|MUST|SHALL|SHOULD|MAY)\\b"
+            "pattern": "\\b(?:MUST NOT|SHALL NOT|SHOULD NOT|MUST|SHALL|SHOULD|MAY)\\b[\\s\\S]*\\b(?:MUST NOT|SHALL NOT|SHOULD NOT|MUST|SHALL|SHOULD|MAY)\\b"
           }
         }
       ]
     },
     "normative_keyword": {
-      "description": "Approved all-caps normative keyword extracted from the clause.",
+      "description": "Approved all-caps normative keyword phrase extracted from the clause.",
       "enum": [
         "MUST",
         "MUST NOT",
         "SHALL",
         "SHALL NOT",
         "SHOULD",
+        "SHOULD NOT",
         "MAY"
       ]
     },

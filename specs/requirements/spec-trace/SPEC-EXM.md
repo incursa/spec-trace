@@ -44,3 +44,6 @@ Examples MUST stay aligned with the current templates, schemas, and identifier p
 
 ## REQ-EXM-0006 Keep example prose illustrative rather than canonical
 Example prose MUST remain illustrative rather than become hidden normative content outside the SPEC suite.
+
+## REQ-EXM-0007 Demonstrate upstream trace when it is part of the example
+Example specifications SHOULD use `Derived From`, `Supersedes`, or `Source Refs` when the worked example includes requirement evolution or upstream source material.

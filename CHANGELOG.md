@@ -5,12 +5,19 @@
 ### Added
 
 - Restored root reference guidance in `overview.md`, `layout.md`, and the copy-ready template files.
+- Added canonical conformance profiles (`core`, `traceable`, and `auditable`) and the `SPEC-PRF` canonical spec.
 - Added `examples/arithmetic/` as a narrow technical example for method-level and edge-case requirements.
 - Added `schemas/requirement-clause.schema.json` for extracted compact requirement clauses.
 - Added `authoring.md`, `AGENTS.md`, `LLMS.txt`, and repo-local `skills/` to make human and AI authoring workflows easier without creating a second source of truth.
 
 ### Changed
 
+- Made the normative keyword model explicit: BCP 14-style uppercase requirement language inspired by RFC 2119 and RFC 8174 now uses the narrowed approved set `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, and `MAY`; lowercase forms are plain English.
+- Tightened trace-bearing schemas to constrain identifier families instead of accepting generic non-empty strings, and added repository-level validation for duplicate IDs, unresolved references, reciprocal consistency, and namespace alignment. This is a breaking validation-contract change.
+- Reworded `REQ-STD-0019` to keep the clause at exactly one approved normative keyword.
+- Removed ADR/decision-record identifiers from the core artifact catalog and layout model; decision records are now treated as an optional local extension outside the core standard.
+- Reserved `profile` for conformance levels and simplified decision-record wording to optional local extensions.
+- Clarified that a verification artifact status applies to every requirement listed in `verifies`; mixed outcomes now belong in separate verification artifacts.
 - Changed specification artifact identifiers to use `SPEC-<DOMAIN>(-<GROUPING>...)` without a terminal sequence; this is a breaking identifier-policy change and the canonical suite plus aligned examples were updated to match.
 - Reframed the standard around compact requirement clauses with stable `REQ-...` identifiers.
 - Clarified that a specification groups requirements and that a requirement is the smallest normative, testable statement.

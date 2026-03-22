@@ -17,10 +17,15 @@ When working in this repository:
 - [_index.md](./specs/requirements/spec-trace/_index.md): canonical entry point to the SPEC suite.
 - [SPEC-STD.md](./specs/requirements/spec-trace/SPEC-STD.md): core definitions, authority model, and publication rules.
 - [SPEC-ID.md](./specs/requirements/spec-trace/SPEC-ID.md): artifact and requirement identifier policy.
+- [SPEC-LIN.md](./specs/requirements/spec-trace/SPEC-LIN.md): trace lineage and requirement evolution.
+- [SPEC-PRF.md](./specs/requirements/spec-trace/SPEC-PRF.md): conformance profiles and enforcement levels.
 - [SPEC-LAY.md](./specs/requirements/spec-trace/SPEC-LAY.md): repository layout and artifact placement.
 - [SPEC-TPL.md](./specs/requirements/spec-trace/SPEC-TPL.md): front matter keys, compact requirement grammar, and trace labels.
 - [SPEC-SCH.md](./specs/requirements/spec-trace/SPEC-SCH.md): schema contracts and validation scope.
 - [SPEC-EXM.md](./specs/requirements/spec-trace/SPEC-EXM.md): worked-example expectations and traceability coverage.
+- Requirement clauses use the approved BCP 14-style uppercase keyword set only; lowercase spellings are plain English.
+- The standard defines three conformance profiles: `core`, `traceable`, and `auditable`. `core` is the low-burden baseline.
+- Decision records are not part of the core standard today; if a repository adopts them, treat them as an optional local extension rather than a core artifact family.
 
 ## Task Routing
 
@@ -34,13 +39,15 @@ When working in this repository:
 - [spec-template.md](./spec-template.md): copy-ready specification template.
 - [architecture-template.md](./architecture-template.md): copy-ready architecture or design template.
 - [work-item-template.md](./work-item-template.md): copy-ready implementation work-item template.
-- [verification-template.md](./verification-template.md): copy-ready verification template.
+- [verification-template.md](./verification-template.md): copy-ready verification template with one artifact-scoped status.
 - [artifact-id-policy.json](./artifact-id-policy.json): shared artifact and requirement identifier policy.
 - [schemas/README.md](./schemas/README.md): schema entry point.
 - [schemas/artifact-frontmatter.schema.json](./schemas/artifact-frontmatter.schema.json): front matter schema.
 - [schemas/requirement-clause.schema.json](./schemas/requirement-clause.schema.json): extracted requirement clause schema.
 - [schemas/requirement-trace-fields.schema.json](./schemas/requirement-trace-fields.schema.json): requirement trace-block schema.
 - [schemas/work-item-trace-fields.schema.json](./schemas/work-item-trace-fields.schema.json): work-item trace-links schema.
+- [scripts/Test-SpecTraceRepository.ps1](./scripts/Test-SpecTraceRepository.ps1): repository-wide validator for duplicate IDs, unresolved direct links, reciprocal consistency, namespace alignment, and profile enforcement; use `-Profile core|traceable|auditable`, `-InputPath`, and `-JsonReportPath`.
+- [scripts/Validate-SpecTrace.ps1](./scripts/Validate-SpecTrace.ps1): narrower compatibility validator for the canonical bundle.
 
 ## Worked Examples
 

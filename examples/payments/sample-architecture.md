@@ -6,6 +6,7 @@ domain: payments
 status: approved
 owner: payments-platform
 satisfies:
+  - REQ-PAY-ACH-0013
   - REQ-PAY-ACH-0014
   - REQ-PAY-ACH-0015
   - REQ-PAY-ACH-0016
@@ -23,6 +24,7 @@ Describe how ACH batch intake enforces the tenant-scoped duplicate rules defined
 
 ## Requirements Satisfied
 
+- REQ-PAY-ACH-0013
 - REQ-PAY-ACH-0014
 - REQ-PAY-ACH-0015
 - REQ-PAY-ACH-0016

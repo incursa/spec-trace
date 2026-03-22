@@ -55,6 +55,8 @@ The operation requires both operands, returns the quotient for non-zero denomina
 
 ## Status
 
+This `passed` status applies to every requirement listed in `verifies`.
+
 passed
 
 ## Related Artifacts

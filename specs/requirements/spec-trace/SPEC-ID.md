@@ -27,7 +27,10 @@ This specification covers artifact identifiers, specification identifiers, requi
 Stable identifiers are the backbone of traceability. The standard cannot answer coverage questions if requirement IDs and artifact IDs drift or collapse into file-name conventions.
 
 ## REQ-ID-0001 Use approved identifier prefixes
-Artifact documents MUST use `SPEC`, `ARC`, `WI`, `VER`, or `ADR` as applicable.
+Artifact documents MUST use `SPEC`, `ARC`, `WI`, or `VER` as applicable.
+
+Notes:
+- Decision records are not part of the core standard today; if a repository adds them, it should do so through an optional local extension.
 
 ## REQ-ID-0010 Use the REQ prefix for requirement clauses
 Requirement clauses MUST use the `REQ` prefix.

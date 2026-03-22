@@ -10,6 +10,8 @@ This folder contains repo-local skills for AI-assisted authoring and maintenance
 
 If your AI tool only auto-discovers skills from a separate home directory, point it at these folders explicitly or mirror them into that environment.
 
+For repository changes that affect traceability, run `scripts/Test-SpecTraceRepository.ps1` after editing the canonical files, schemas, or examples. Use `-Profile traceable` or `-Profile auditable` when you need the stricter repository policies.
+
 ## Included Skills
 
 - `spec-trace-specification-author` drafts or revises `SPEC-...` files.

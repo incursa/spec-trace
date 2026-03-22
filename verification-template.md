@@ -47,10 +47,13 @@ Describe the expected outcome in plain language.
 
 ## Status
 
+The status below applies to every requirement listed in `verifies`. If the requirements do not share one outcome, split them into separate verification artifacts.
+Repositories that need richer per-requirement evidence MAY add local extension fields outside the core template, but the core standard remains artifact-scoped and does not define a nested result matrix.
+
 planned
 
 ## Related Artifacts
 
-  - SPEC-<DOMAIN>[-<GROUPING>...]
+- SPEC-<DOMAIN>[-<GROUPING>...]
 - ARC-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 - WI-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>

@@ -157,8 +157,7 @@
         "specification",
         "architecture",
         "work_item",
-        "verification",
-        "decision_record"
+        "verification"
       ],
       "properties": {
         "specification": {
@@ -171,9 +170,6 @@
           "$ref": "#/$defs/nonEmptyString"
         },
         "verification": {
-          "$ref": "#/$defs/nonEmptyString"
-        },
-        "decision_record": {
           "$ref": "#/$defs/nonEmptyString"
         }
       },

@@ -30,17 +30,31 @@ Read first:
 ### Requirement
 
 Use a requirement when you need one atomic normative statement. Requirements do not stand alone; they live inside a specification.
+Requirement clauses use the approved BCP 14-style uppercase keyword set only. Lowercase spellings are plain English.
 
 Read first:
 
 - the owning `SPEC-...` file
+- `specs/requirements/spec-trace/SPEC-LIN.md` when the task changes requirement lineage, split/merge behavior, or upstream sources
 - `specs/requirements/spec-trace/SPEC-STD.md`
 - `specs/requirements/spec-trace/SPEC-TPL.md`
 - `spec-template.md`
 
+### Conformance Profile
+
+Use the profiles spec when you need to decide how strict a repository's traceability policy should be.
+
+Read first:
+
+- `specs/requirements/spec-trace/SPEC-PRF.md`
+- `specs/requirements/spec-trace/SPEC-STD.md`
+- `specs/requirements/spec-trace/SPEC-SCH.md`
+
+Core keeps the authoring burden low. `traceable` and `auditable` are stricter repository policies, not new artifact families.
+
 ### Architecture Or Design Artifact
 
-Use an architecture artifact when you need to explain how requirements will be satisfied without redefining them.
+Use an architecture artifact when you need to explain how requirements will be satisfied, including rationale and tradeoffs, without redefining them. Decision records are not part of the core standard today; if a repository adopts them, treat them as an optional local extension rather than a replacement for architecture artifacts.
 
 Read first:
 
@@ -61,7 +75,7 @@ Read first:
 
 ### Verification Artifact
 
-Use a verification artifact when you need to record how requirements were proven and what the outcome was.
+Use a verification artifact when you need to record how requirements were proven and what the shared outcome was. If the requirements do not share one outcome, split the verification scope across multiple artifacts.
 
 Read first:
 
@@ -76,7 +90,7 @@ Read first:
 2. Open the matching template.
 3. Open the closest example in `examples/`.
 4. Draft or revise the artifact.
-5. Check that trace links point at stable IDs rather than loose prose.
+5. Run `scripts/Test-SpecTraceRepository.ps1` and check that trace links point at stable IDs rather than loose prose, with no duplicate IDs, unresolved references, reciprocal mismatches, or namespace drift. Use `-Profile traceable` or `-Profile auditable` when you want the stricter repository policies, and `-JsonReportPath` when you need a machine-readable report.
 
 ## When The Standard Changes
 
@@ -87,7 +101,10 @@ If a change affects canonical field names, identifier rules, template shape, sch
 - the schemas
 - the examples
 - root guidance such as `README.md`, `overview.md`, and `layout.md`
+- repository validation such as `scripts/Test-SpecTraceRepository.ps1`
 - AI convenience surfaces such as `AGENTS.md`, `LLMS.txt`, and `skills/`
+
+If a repository needs extra front matter metadata, prefer namespaced `x_...` keys so the core field set stays stable.
 
 Record notable package-level changes in `CHANGELOG.md`.
 

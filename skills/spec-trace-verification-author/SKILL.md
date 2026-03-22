@@ -21,7 +21,7 @@ Use this skill to author proof-oriented artifacts that show how requirements wer
 1. Start from the requirement IDs being verified.
 2. Use `../../verification-template.md` as the base shape.
 3. Describe the verification method, preconditions, approach, expected result, evidence, and status in tooling-agnostic language unless local tooling names are the evidence itself.
-4. Keep `verifies` and related-artifact links accurate as the verification scope changes.
+4. Keep `verifies` and related-artifact links accurate as the verification scope changes. If covered requirements do not share one outcome, split the scope into separate verification artifacts.
 5. If verification exposes a requirement gap or design ambiguity, fix the upstream artifact rather than encoding the missing rule here.
 
 ## Guardrails

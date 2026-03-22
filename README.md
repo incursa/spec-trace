@@ -12,20 +12,29 @@ The standard is optimized for compact requirement clauses with stable IDs and di
 
 The canonical standard lives in `specs/requirements/spec-trace/`. The root documents are practical summaries and copy-ready templates. If a root document and the SPEC suite ever disagree, the SPEC suite wins.
 
+The reference package also includes repository-wide validation through `scripts/Test-SpecTraceRepository.ps1`, which checks identifier families, duplicate IDs, unresolved direct links, reciprocal trace consistency, namespace alignment, and profile-specific graph rules.
+
 ## Core Model
 
 - A specification is a document that groups related requirements for one capability, behavior area, interface, or narrow technical concern.
 - A requirement is the smallest normative, testable statement in the system.
 - The requirement clause is the normative content.
+- The standard uses BCP 14-style uppercase requirement language inspired by RFC 2119 and RFC 8174. The approved set is `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, and `MAY`. Only uppercase forms are normative; lowercase spellings are plain English.
 - Traceability is explicit. Related artifacts are linked by stable IDs or implementation-specific string references, not by loose prose.
-- Verification proves a requirement. Tests may reference requirement IDs directly. Code may reference requirement IDs directly.
+- File-level front matter stays strict for the core keys, and repositories may add optional namespaced `x_...` keys for local extensions.
+- Optional upstream lineage can record `Derived From`, `Supersedes`, and `Source Refs` when requirement history or external sources matter.
+- The standard defines three conformance profiles: `core`, `traceable`, and `auditable`. `core` is the low-burden baseline; stricter profiles are opt-in repository policy.
+- The core artifact families are specification, architecture, work item, and verification.
+- Architecture artifacts are the default place for design rationale and decision tradeoffs.
+- Decision records are not part of the core standard today; they may be added later as an optional local extension.
+- Verification proves a requirement. A verification artifact has one status that applies to every requirement it lists. Tests may reference requirement IDs directly. Code may reference requirement IDs directly.
 - Each specification Markdown file contains one specification and one or more related `REQ-...` clauses under it.
 
 The standard is intentionally small. It does not require a requirements platform, a workflow tool, Gherkin, or a test-framework abstraction layer.
 
 ## Getting Started
 
-1. Read `specs/requirements/spec-trace/` for the canonical self-specification suite.
+1. Read `specs/requirements/spec-trace/` for the canonical self-specification suite; if you are revising requirement evolution or upstream trace, also read `specs/requirements/spec-trace/SPEC-LIN.md`; if you are choosing a conformance profile, also read `specs/requirements/spec-trace/SPEC-PRF.md`.
 2. Read [overview.md](overview.md) for the compact authoring model.
 3. Read [layout.md](layout.md) for the recommended repository structure.
 4. Read [authoring.md](authoring.md) for the task-oriented authoring workflow across specifications, requirements, design, work items, and verification artifacts.
@@ -48,6 +57,8 @@ The standard is intentionally small. It does not require a requirements platform
 - [schemas/](schemas/) - reference JSON Schemas for extracted metadata
 - [examples/](examples/) - worked examples that apply the standard directly
 - [scripts/Export-SpecTraceBundle.ps1](scripts/Export-SpecTraceBundle.ps1) - PowerShell utility that bundles discovered specification files into one Markdown output
+- [scripts/Test-SpecTraceRepository.ps1](scripts/Test-SpecTraceRepository.ps1) - repository-wide validator for Markdown, schema, and cross-file trace rules; use `-Profile core|traceable|auditable`, `-InputPath`, and `-JsonReportPath`
+- [scripts/Validate-SpecTrace.ps1](scripts/Validate-SpecTrace.ps1) - narrower reference-package validator kept for compatibility and bundle-aligned checks
 - [AGENTS.md](AGENTS.md) - agent-oriented repository instructions that defer to the canonical SPEC suite
 - [LLMS.txt](LLMS.txt) - plain-text AI bootstrap for llms.txt-style or prompt-bootstrap workflows
 - [skills/](skills/) - repo-local authoring skills that help agents draft artifacts without re-implementing the standard
@@ -72,7 +83,7 @@ The standard is meant to answer practical software questions with minimal ceremo
 - Which tests exist because of which requirements?
 - Which code paths were introduced to satisfy which rules or edge cases?
 
-That only works if requirement IDs are stable, requirement clauses are compact, and trace links are explicit.
+That only works if requirement IDs are stable, requirement clauses are compact, trace links use the right identifier families, and repository-wide validation keeps the graph consistent.
 
 ## Self-Application
 

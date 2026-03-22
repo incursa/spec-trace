@@ -4,8 +4,8 @@ Bundles discovered specification documents into one Markdown file.
 
 .DESCRIPTION
 Scans a target folder recursively for Markdown files with SpecTrace-style
-front matter, keeps only real specification artifacts with concrete
-`SPEC-...` identifiers, and writes a single Markdown bundle containing a
+front matter, keeps only real specification artifacts with terminal-free
+`SPEC-<DOMAIN>(-<GROUPING>...)` identifiers, and writes a single Markdown bundle containing a
 summary table plus the grouped requirement content for each specification.
 
 .PARAMETER InputPath
@@ -42,154 +42,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-function Remove-YamlQuotes {
-    param(
-        [AllowNull()]
-        [string]$Value
-    )
-
-    if ($null -eq $Value) {
-        return $null
-    }
-
-    $trimmed = $Value.Trim()
-
-    if ($trimmed.Length -ge 2) {
-        $first = $trimmed[0]
-        $last = $trimmed[$trimmed.Length - 1]
-
-        if (($first -eq '"' -and $last -eq '"') -or ($first -eq "'" -and $last -eq "'")) {
-            return $trimmed.Substring(1, $trimmed.Length - 2)
-        }
-    }
-
-    return $trimmed
-}
-
-function Get-FrontMatter {
-    param(
-        [string]$Content
-    )
-
-    $match = [regex]::Match(
-        $Content,
-        '^(?<full>---\r?\n(?<yaml>.*?)\r?\n---\r?\n?)(?<body>[\s\S]*)$',
-        [System.Text.RegularExpressions.RegexOptions]::Singleline
-    )
-
-    if (-not $match.Success) {
-        return $null
-    }
-
-    [pscustomobject]@{
-        Raw  = $match.Groups['yaml'].Value
-        Body = $match.Groups['body'].Value
-    }
-}
-
-function ConvertFrom-SimpleFrontMatter {
-    param(
-        [string]$Yaml
-    )
-
-    $result = [ordered]@{}
-    $currentListKey = $null
-
-    foreach ($line in ($Yaml -split "\r?\n")) {
-        if ([string]::IsNullOrWhiteSpace($line)) {
-            continue
-        }
-
-        if ($line -match '^(?<key>[A-Za-z_][A-Za-z0-9_]*)\s*:\s*(?<value>.*)$') {
-            $key = $Matches['key']
-            $value = $Matches['value']
-
-            if ([string]::IsNullOrWhiteSpace($value)) {
-                $result[$key] = @()
-                $currentListKey = $key
-            }
-            else {
-                $result[$key] = Remove-YamlQuotes $value
-                $currentListKey = $null
-            }
-
-            continue
-        }
-
-        if ($line -match '^\s*-\s*(?<item>.+?)\s*$' -and $null -ne $currentListKey) {
-            $currentValue = $result[$currentListKey]
-
-            if ($currentValue -isnot [System.Collections.IList]) {
-                $currentValue = @($currentValue)
-            }
-
-            $result[$currentListKey] = @($currentValue) + @(Remove-YamlQuotes $Matches['item'])
-        }
-    }
-
-    return $result
-}
-
-function Get-MarkdownSections {
-    param(
-        [string]$Body
-    )
-
-    $normalizedBody = $Body.Trim()
-    $normalizedBody = [regex]::Replace($normalizedBody, '^#\s+[^\r\n]+\r?\n*', '', 1)
-
-    $matches = [regex]::Matches(
-        $normalizedBody,
-        '(?ms)^##\s+(?<heading>[^\r\n]+)\r?\n(?<content>.*?)(?=^##\s+[^\r\n]+\r?\n|\z)'
-    )
-
-    $sections = @()
-    $intro = ''
-
-    if ($matches.Count -gt 0) {
-        $intro = $normalizedBody.Substring(0, $matches[0].Index).Trim()
-    }
-    else {
-        $intro = $normalizedBody
-    }
-
-    foreach ($match in $matches) {
-        $sections += [pscustomobject]@{
-            Heading = $match.Groups['heading'].Value.Trim()
-            Content = $match.Groups['content'].Value.Trim()
-        }
-    }
-
-    [pscustomobject]@{
-        Intro    = $intro
-        Sections = $sections
-    }
-}
-
-function ConvertTo-MarkdownAnchor {
-    param(
-        [string]$Text
-    )
-
-    $anchor = $Text.ToLowerInvariant()
-    $anchor = [regex]::Replace($anchor, '[^\w\s-]', '')
-    $anchor = [regex]::Replace($anchor, '\s+', '-')
-    $anchor = [regex]::Replace($anchor, '-+', '-')
-    return $anchor.Trim('-')
-}
-
-function Test-SpecificationArtifactId {
-    param(
-        [AllowNull()]
-        [string]$ArtifactId
-    )
-
-    if ([string]::IsNullOrWhiteSpace($ArtifactId)) {
-        return $false
-    }
-
-    return $ArtifactId -match '^SPEC-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\d{4,}$'
-}
+Import-Module (Join-Path $PSScriptRoot 'SpecTrace.Helpers.psm1') -Force -DisableNameChecking
 
 function Get-SpecificationDocument {
     param(

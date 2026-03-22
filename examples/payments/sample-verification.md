@@ -6,6 +6,7 @@ domain: payments
 status: passed
 owner: payments-platform
 verifies:
+  - REQ-PAY-ACH-0013
   - REQ-PAY-ACH-0014
   - REQ-PAY-ACH-0015
   - REQ-PAY-ACH-0016
@@ -23,6 +24,7 @@ Verify tenant-scoped duplicate handling for ACH batch intake.
 
 ## Requirements Verified
 
+- REQ-PAY-ACH-0013
 - REQ-PAY-ACH-0014
 - REQ-PAY-ACH-0015
 - REQ-PAY-ACH-0016
@@ -57,6 +59,8 @@ The first submission is accepted, the same-tenant repeat is rejected before down
 - tests/payments/ach/duplicate-batch.spec::does_not_start_processing_for_rejected_duplicate
 
 ## Status
+
+This `passed` status applies to every requirement listed in `verifies`.
 
 passed
 

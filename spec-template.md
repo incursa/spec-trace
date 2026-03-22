@@ -36,6 +36,12 @@ Trace:
   - WI-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 - Verified By:
   - VER-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
+- Derived From:
+  - REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
+- Supersedes:
+  - REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
+- Source Refs:
+  - <external reference>
 - Test Refs:
   - <test reference>
 - Code Refs:
@@ -55,11 +61,13 @@ The system SHOULD <recommended behavior>.
 
 ## Authoring Rules
 
-- Every requirement clause must contain exactly one approved normative keyword in all caps: `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, or `MAY`.
+- Every requirement clause must contain exactly one approved normative keyword in all caps: `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, or `MAY`.
+- The standard uses BCP 14-style uppercase requirement language inspired by RFC 2119 and RFC 8174; only uppercase approved forms carry normative meaning, and lowercase forms are plain English.
 - The keyword does not need to be the first word, but it must appear in the clause and it must be the only approved keyword in that clause.
 - The clause should express one obligation, rule, or constraint and should usually be a single sentence.
 - Each specification Markdown file contains one specification and one or more related requirement clauses.
 - `Trace` and `Notes` are optional.
+- `Derived From` and `Supersedes` capture requirement lineage; `Source Refs` captures external upstream material.
 - The clause is the normative content. Do not bury it under a required metadata block.
 - If you add richer local metadata, keep it clearly optional and do not place it between the requirement heading and the clause.
 - Front matter describes the document as a whole, not individual requirements.
