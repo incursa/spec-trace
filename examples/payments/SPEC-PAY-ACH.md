@@ -30,6 +30,8 @@ This specification covers tenant-scoped duplicate detection and the point in the
 
 The same external batch identifier can appear in more than one tenant. The system needs a rule that blocks duplicates within a tenant without creating cross-tenant false positives or downstream side effects.
 
+This specification builds on `SPEC-STD` and `SPEC-TPL`.
+
 ## REQ-PAY-ACH-0013 Scope duplicate detection to the tenant and batch identifier
 The batch intake flow MUST treat duplicate detection as tenant-scoped and keyed by the external batch identifier.
 
@@ -64,6 +66,7 @@ Trace:
   - payments.ach.BatchIntakeGuard.rejectDuplicateBatch
 
 Notes:
+- This rule depends on `REQ-PAY-ACH-0013`.
 - Duplicate means same tenant plus external batch identifier.
 
 ## REQ-PAY-ACH-0015 Allow the same external batch identifier across tenants

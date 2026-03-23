@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "requirement-trace-fields.schema.json",
   "title": "Requirement Trace Fields",
-  "description": "Reference schema for the canonical labels used inside a requirement Trace block, including family-typed direct links, optional lineage, and free-form upstream source fields.",
+  "description": "Reference schema for the canonical labels used inside a requirement Trace block. The trace block carries structured downstream links, lineage, source citations, implementation-specific references, and loose associations. Inline identifier references in prose are handled separately and are not modeled here.",
   "$defs": {
     "requirementId": {
       "type": "string",
@@ -132,7 +132,7 @@
       "$ref": "#/$defs/freeFormStringArray"
     },
     "Related": {
-      "description": "Requirement IDs or artifact IDs materially related to this requirement.",
+      "description": "Requirement IDs or artifact IDs loosely related to this requirement.",
       "$ref": "#/$defs/traceArtifactIdArray"
     }
   },

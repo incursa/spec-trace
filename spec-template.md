@@ -68,6 +68,10 @@ The system SHOULD <recommended behavior>.
 - Each specification Markdown file contains one specification and one or more related requirement clauses.
 - `Trace` and `Notes` are optional.
 - `Derived From` and `Supersedes` capture requirement lineage; `Source Refs` captures external upstream material.
+- Inline identifier references use backticks around stable artifact IDs in clauses, `Notes`, and descriptive text. Use them for lightweight cross-links; use `Trace` when the relationship should be structured and machine-extracted.
+- The short title should name the obligation or concern in a few words, not repeat the whole clause.
+- The clause should state the required behavior, rule, or constraint. Put rationale, examples, and caveats in `Notes`.
+- `Trace` labels have typed semantics: `Satisfied By`, `Implemented By`, and `Verified By` are downstream links; `Derived From` and `Supersedes` are lineage; `Source Refs` are source citations; `Test Refs` and `Code Refs` are implementation-specific references; `Related` is a loose association.
 - The clause is the normative content. Do not bury it under a required metadata block.
 - If you add richer local metadata, keep it clearly optional and do not place it between the requirement heading and the clause.
 - Front matter describes the document as a whole, not individual requirements.

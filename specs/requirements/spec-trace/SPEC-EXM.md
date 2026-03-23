@@ -21,7 +21,7 @@ Define what the worked examples must demonstrate so the standard feels concrete 
 
 ## Scope
 
-This specification covers the example sets, the traceability chain they demonstrate, and the requirement that the examples stay aligned with the canonical templates and schemas.
+This specification covers the example sets, the traceability chain they demonstrate, inline identifier reference examples, and the requirement that the examples stay aligned with the canonical templates and schemas.
 
 ## Context
 
@@ -47,3 +47,16 @@ Example prose MUST remain illustrative rather than become hidden normative conte
 
 ## REQ-EXM-0007 Demonstrate upstream trace when it is part of the example
 Example specifications SHOULD use `Derived From`, `Supersedes`, or `Source Refs` when the worked example includes requirement evolution or upstream source material.
+
+## REQ-EXM-0008 Demonstrate inline identifier references
+Worked examples SHOULD show inline identifier references to a requirement, a specification, and a requirement that governs clause grammar or token usage.
+
+Trace:
+- Related:
+  - SPEC-STD
+  - SPEC-TPL
+  - SPEC-SCH
+
+Notes:
+- In this repository, concrete examples can use `REQ-PAY-ACH-0013`, `REQ-TPL-0006`, `REQ-TPL-0007`, and `SPEC-TPL`.
+- The examples demonstrate the pattern in requirement clauses, `Notes`, and descriptive prose without turning the example set into hidden normative content outside the SPEC suite.

@@ -52,6 +52,9 @@ Trace:
 - Code Refs:
   - arithmetic.divide
 
+Notes:
+- This clause follows `REQ-TPL-0006` and `REQ-TPL-0007`.
+
 ## REQ-MATH-DIV-0003 Reject a zero denominator
 The divide operation MUST reject `denominator = 0` with a divide-by-zero error.
 

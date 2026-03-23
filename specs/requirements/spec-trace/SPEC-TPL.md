@@ -21,7 +21,7 @@ Define the canonical file-level metadata and the compact requirement clause gram
 
 ## Scope
 
-This specification covers front matter keys, specification roles, requirement headings, normative keyword usage, optional trace blocks, lineage and upstream source labels, and the reference structure for architecture, work-item, and verification documents.
+This specification covers front matter keys, specification roles, requirement headings, normative keyword usage, optional trace blocks, requirement title guidance, trace label semantics, lineage and upstream source labels, inline identifier reference syntax, and the reference structure for architecture, work-item, and verification documents.
 
 ## Context
 
@@ -82,6 +82,48 @@ The canonical requirement form MAY follow the normative clause with optional `Tr
 
 Notes:
 - When lineage matters, prefer `Derived From`, `Supersedes`, and `Source Refs` over prose history.
+
+## REQ-TPL-0027 Use backticks for inline identifier references
+Any inline reference to a canonical artifact identifier MUST use backticks.
+
+Trace:
+- Related:
+  - SPEC-STD
+  - SPEC-SCH
+  - SPEC-EXM
+
+Notes:
+- Inline identifier references can appear in requirement clauses, `Notes`, and other descriptive sections.
+- Use them for lightweight, human-readable cross-links such as component conformance, token usage, and cross-spec relationships.
+- Prefer structured trace fields when the relationship needs to be captured as explicit trace metadata.
+
+## REQ-TPL-0028 Constrain inline identifier references to canonical artifact identifiers
+An inline identifier reference MUST identify a valid artifact identifier defined by the standard.
+
+Trace:
+- Related:
+  - SPEC-ID
+  - SPEC-STD
+  - SPEC-SCH
+
+Notes:
+- The standard currently defines the `REQ-...`, `SPEC-...`, `ARC-...`, `WI-...`, and `VER-...` artifact families.
+- The identifier begins with the known prefix for its family and otherwise satisfies the identifier policy.
+- Inline identifier references are not file names, URLs, or loose prose labels.
+
+## REQ-TPL-0029 Give requirement titles descriptive meaning
+The requirement title SHOULD name the obligation or concern in a short human-readable phrase rather than repeat the full clause or encode implementation detail.
+
+Notes:
+- Requirement titles are scan aids, not the normative statement.
+- A title should help a reader recognize the subject of the requirement quickly.
+
+## REQ-TPL-0030 Define trace label semantics by family
+A requirement `Trace` block MUST treat `Satisfied By`, `Implemented By`, and `Verified By` as typed downstream trace links; `Derived From` and `Supersedes` as lineage; `Source Refs` as upstream source citations; `Test Refs` and `Code Refs` as implementation-specific string references; and `Related` as a loose association.
+
+Notes:
+- The trace block records explicit relationships, while the surrounding prose may add context.
+- Inline identifier references stay separate from the trace block and do not change the meaning of its labels.
 
 ## REQ-TPL-0009 Keep one specification and its requirements in the same file
 A specification document MUST represent one specification in one Markdown file.

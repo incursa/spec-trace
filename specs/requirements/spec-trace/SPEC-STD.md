@@ -21,7 +21,7 @@ Define the core vocabulary, authority model, and publication rules for the spec-
 
 ## Scope
 
-This specification covers what a specification is, what a requirement is, where the canonical standard lives, how the reference package keeps its support material aligned, and how the canonical conformance profiles are named.
+This specification covers what a specification is, what a requirement is, where the canonical standard lives, how the reference package keeps its support material aligned, how the canonical conformance profiles are named, and how inline identifier references and structured trace differ.
 
 ## Context
 
@@ -68,6 +68,30 @@ The standard MUST support explicit links from each requirement to relevant desig
 
 Notes:
 - Test and code references may be curated inline, derived by tooling, or both.
+
+## REQ-STD-0021 Treat inline identifier references as lightweight links
+The standard MUST treat a backtick-delimited canonical artifact identifier in prose as a lightweight, human-readable, machine-detectable inline identifier reference.
+
+Trace:
+- Related:
+  - SPEC-TPL
+  - SPEC-SCH
+  - SPEC-EXM
+
+Notes:
+- An inline identifier reference can indicate that the current artifact, requirement, or descriptive passage depends on, complies with, is constrained by, or otherwise explicitly relates to the referenced artifact.
+- Inline identifier references do not imply inheritance or copying.
+- Inline identifier references do not replace `Trace` fields or lineage labels such as `Derived From` and `Supersedes`.
+- Inline identifier references can appear in requirement clauses, `Notes`, and other descriptive sections.
+- They are useful for component conformance, token usage, and cross-spec relationships when a full trace block would be heavier than necessary.
+
+## REQ-STD-0022 Keep inline identifier references separate from structured trace
+The standard MUST treat an inline identifier reference as a prose reference rather than a structured trace edge, lineage record, or inferred relationship type.
+
+Notes:
+- The surrounding prose carries any additional meaning.
+- A backtick-delimited identifier alone does not encode dependency, inheritance, satisfaction, implementation, or verification.
+- Inline identifier references do not replace `Trace` fields.
 
 ## REQ-STD-0006 Treat generated outputs as derived material
 Generated indexes, traceability matrices, and coverage reports MUST be treated as derived outputs rather than canonical requirements.

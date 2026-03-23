@@ -64,3 +64,12 @@ Notes:
 - `Supersedes` records forward replacement lineage.
 - `Source Refs` records free-form external references such as laws, contracts, tickets, incidents, customer asks, and policies.
 - The repository does not require tombstone requirement records for old identifiers.
+
+## REQ-LIN-0007 Keep inline references separate from Trace
+Inline references MUST NOT be treated as `Derived From`, `Supersedes`, or `Source Refs` entries.
+
+Notes:
+- Requirements can still mention other artifact identifiers in prose using backtick-delimited inline references.
+- Such mentions are lightweight links and do not establish lineage or upstream material on their own.
+- Use Trace fields when the relationship needs typed, toolable semantics.
+- Inline references do not imply copying, inheritance, or replacement.

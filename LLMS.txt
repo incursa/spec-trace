@@ -25,6 +25,9 @@ When working in this repository:
 - [SPEC-EXM.md](./specs/requirements/spec-trace/SPEC-EXM.md): worked-example expectations and traceability coverage.
 - Requirement clauses use the approved BCP 14-style uppercase keyword set only; lowercase spellings are plain English.
 - The standard defines three conformance profiles: `core`, `traceable`, and `auditable`. `core` is the low-burden baseline.
+- Inline identifier references use backticks around stable artifact IDs in prose. They are prose mentions, not trace edges, and they complement structured trace fields rather than replacing them.
+- Requirement titles are short descriptive labels; the clause carries the normative behavior and `Notes` carry rationale and examples.
+- Structured `Trace` fields have typed semantics by label family: downstream links, lineage, source citations, implementation-specific references, and loose associations.
 - Decision records are not part of the core standard today; if a repository adopts them, treat them as an optional local extension rather than a core artifact family.
 
 ## Task Routing

@@ -21,7 +21,7 @@ Define the machine-readable contracts that support the standard without prescrib
 
 ## Scope
 
-This specification covers the reference schemas, the extracted metadata shapes they validate, and the validation capabilities expected from tooling.
+This specification covers the reference schemas, the extracted metadata shapes they validate, the inline identifier reference convention as documented schema guidance, and the validation capabilities expected from tooling.
 
 ## Context
 
@@ -86,3 +86,29 @@ Validation tooling MUST report when a document's front matter domain value or id
 
 ## REQ-SCH-0017 Allow lineage references without tombstones
 Validation tooling MUST accept `Derived From` and `Supersedes` references even when the referenced requirement IDs are not present as active documents in the repository.
+
+## REQ-SCH-0018 Document inline identifier references in schema contracts
+The reference schemas MUST document inline identifier references as backtick-delimited canonical artifact identifiers whose full resolution may require repository-level validation beyond JSON Schema.
+
+Trace:
+- Related:
+  - SPEC-STD
+  - SPEC-TPL
+  - SPEC-EXM
+
+Notes:
+- Inline identifier references are prose links, not `Trace`-block fields.
+- JSON Schema can describe the extracted clause shape, but it cannot fully resolve cross-file links by itself.
+- Repository-level tooling can extract and validate inline references against the repository's known artifact IDs.
+
+## REQ-SCH-0019 Prevent trace inference from inline identifier references
+Validation tooling MUST NOT infer typed trace edges from inline identifier references alone.
+
+Notes:
+- Inline references can be reported as mentions, but they are not a substitute for structured trace data.
+
+## REQ-SCH-0020 Extract inline identifier references when practical
+Validation tooling SHOULD extract inline identifier references separately from structured trace fields when it can do so.
+
+Notes:
+- Separate extraction supports lightweight mention reporting without promoting prose references into graph edges.

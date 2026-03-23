@@ -5,6 +5,8 @@
 ### Added
 
 - Restored root reference guidance in `overview.md`, `layout.md`, and the copy-ready template files.
+- Formalized inline identifier references as backtick-delimited, human-readable links to stable artifact IDs, with cross-file resolution left to repository-level tooling.
+- Added guidance that requirement titles are short descriptive labels, requirement clauses carry the normative behavior, and `Trace` blocks have typed semantics by label family.
 - Added canonical conformance profiles (`core`, `traceable`, and `auditable`) and the `SPEC-PRF` canonical spec.
 - Added `examples/arithmetic/` as a narrow technical example for method-level and edge-case requirements.
 - Added `schemas/requirement-clause.schema.json` for extracted compact requirement clauses.

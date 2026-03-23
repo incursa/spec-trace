@@ -109,6 +109,6 @@ The layout should make this path easy to see:
 2. architecture or design artifacts satisfy requirements
 3. work items address requirements and use design inputs
 4. verification artifacts prove requirements
-5. tests and code may reference requirement IDs directly
+5. tests, code, and prose may reference stable artifact IDs directly, with prose using inline backticks for lightweight links
 
 If the layout makes that chain hard to follow, the structure is working against the standard.

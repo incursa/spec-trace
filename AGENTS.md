@@ -26,6 +26,9 @@ If you find a mismatch, follow the higher-authority source and fix the lower-aut
 - To change canonical field names, identifier rules, templates, schemas, or example patterns, use `skills/spec-trace-change-maintainer/` and propagate the change across all affected surfaces.
 - To run repository-wide validation, use `scripts/Test-SpecTraceRepository.ps1` with `-Profile core`, `-Profile traceable`, or `-Profile auditable`; use `-JsonReportPath` when you need machine-readable output.
 - Requirement clauses use the approved BCP 14-style uppercase keyword set only; lowercase spellings are plain English.
+- Inline identifier references use backticks around stable artifact IDs and are allowed in clauses, Notes, and descriptive sections. They are prose mentions, not trace edges, so keep structured `Trace` fields for explicit machine-readable relationships.
+- Requirement titles are short descriptive labels; the clause carries the normative behavior and `Notes` carry rationale and examples.
+- Structured `Trace` fields have typed semantics by label family: downstream links, lineage, source citations, implementation-specific references, and loose associations.
 - Verification artifacts use one artifact-scoped status for every requirement listed in `verifies`; if the requirements do not share one outcome, split the scope into separate artifacts.
 
 ## Working Rules

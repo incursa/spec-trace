@@ -17,10 +17,12 @@ The reference package also includes repository-wide validation through `scripts/
 ## Core Model
 
 - A specification is a document that groups related requirements for one capability, behavior area, interface, or narrow technical concern.
-- A requirement is the smallest normative, testable statement in the system.
-- The requirement clause is the normative content.
+- A requirement has a short descriptive title, a compact normative clause, and optional `Trace` and `Notes` sections.
+- The requirement title is a scan aid; the clause is the normative content.
+- The clause should describe the required behavior, rule, or constraint. `Notes` carry rationale, clarification, and examples.
 - The standard uses BCP 14-style uppercase requirement language inspired by RFC 2119 and RFC 8174. The approved set is `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, and `MAY`. Only uppercase forms are normative; lowercase spellings are plain English.
-- Traceability is explicit. Related artifacts are linked by stable IDs or implementation-specific string references, not by loose prose.
+- Traceability is explicit. Related artifacts are linked by stable IDs in structured `Trace` fields, by inline backtick references in prose when a lightweight cross-link is enough, or by implementation-specific string references. Inline references are prose mentions, not trace edges.
+- Structured `Trace` fields have typed semantics by family: `Satisfied By`, `Implemented By`, and `Verified By` are downstream links; `Derived From` and `Supersedes` are lineage; `Source Refs` are upstream source citations; `Test Refs` and `Code Refs` are implementation-specific string references; `Related` is a loose association.
 - File-level front matter stays strict for the core keys, and repositories may add optional namespaced `x_...` keys for local extensions.
 - Optional upstream lineage can record `Derived From`, `Supersedes`, and `Source Refs` when requirement history or external sources matter.
 - The standard defines three conformance profiles: `core`, `traceable`, and `auditable`. `core` is the low-burden baseline; stricter profiles are opt-in repository policy.

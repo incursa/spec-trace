@@ -31,6 +31,11 @@ Read first:
 
 Use a requirement when you need one atomic normative statement. Requirements do not stand alone; they live inside a specification.
 Requirement clauses use the approved BCP 14-style uppercase keyword set only. Lowercase spellings are plain English.
+Requirement clauses may also use backtick-delimited inline identifier references to stable artifact IDs when a lightweight cross-link is helpful. Inline references are allowed in the clause, `Notes`, and other descriptive sections, but they do not replace `Trace` fields or lineage labels.
+Common uses include requirement-to-requirement links, requirement-to-specification links, and inline references in architecture, work-item, or verification prose.
+
+Use the title as a short descriptive label for the obligation or concern. Use the clause for the required behavior. Use `Notes` for rationale, clarifications, caveats, and examples.
+Use `Trace` for typed downstream links, lineage, source citations, implementation-specific references, and loose associations.
 
 Read first:
 
@@ -91,6 +96,7 @@ Read first:
 3. Open the closest example in `examples/`.
 4. Draft or revise the artifact.
 5. Run `scripts/Test-SpecTraceRepository.ps1` and check that trace links point at stable IDs rather than loose prose, with no duplicate IDs, unresolved references, reciprocal mismatches, or namespace drift. Use `-Profile traceable` or `-Profile auditable` when you want the stricter repository policies, and `-JsonReportPath` when you need a machine-readable report.
+   Also check that any inline identifier references are backtick-delimited stable IDs rather than loose prose.
 
 ## When The Standard Changes
 

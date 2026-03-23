@@ -18,12 +18,15 @@ A requirement is the smallest normative, testable statement in the system.
 
 Each requirement:
 
+- has a short descriptive title
 - has a stable `REQ-...` identifier
 - appears inside a specification
 - is written as a compact normative clause
 - may carry optional trace links and notes
 
 A specification is not a requirement. The specification groups requirements. The requirement clause is the atomic obligation.
+
+The title is a scan aid for the obligation. The clause states the obligation, rule, or constraint. `Notes` carry rationale, caveats, and examples.
 
 ### Traceability
 
@@ -38,6 +41,17 @@ The standard gives first-class weight to links from a requirement to:
 - code references
 
 The published schemas constrain the direct link families, and repository-wide validation through `scripts/Test-SpecTraceRepository.ps1` checks duplicate IDs, unresolved direct links, reciprocal consistency, namespace alignment, and profile rules.
+Inline identifier references are prose mentions, not trace edges. They live outside the structured `Trace` block even when they point at canonical artifact IDs.
+
+### Inline Identifier References
+
+An inline identifier reference is a backtick-delimited stable artifact ID inside prose.
+
+Inline identifier references are lightweight, human-readable, machine-detectable links. They may indicate dependency, compliance, constraint, or another explicit relation, but they do not imply inheritance or copying.
+
+Inline identifier references are allowed in requirement clauses, `Notes`, and other descriptive sections. Use them for component conformance, token usage, and cross-spec relationships. Avoid overuse when a structured `Trace` block is a better fit.
+
+Requirements may reference other requirements and specifications inline; architecture, work-item, and verification prose may also use inline references when the relationship is lightweight and the stable ID is enough.
 
 ### Conformance Profiles
 
@@ -173,6 +187,10 @@ These labels map to the extracted metadata validated by the schemas in `schemas/
 - source-file locations
 - code symbols
 - manifest keys or metadata values used by local tooling
+
+Inline identifier references are separate from the `Trace` block. They use backticks around stable artifact IDs in prose, while `Trace` captures the structured relationships that tooling can extract directly.
+
+Within `Trace`, the label families have typed meanings: `Satisfied By`, `Implemented By`, and `Verified By` are downstream links; `Derived From` and `Supersedes` are lineage; `Source Refs` are upstream source citations; `Test Refs` and `Code Refs` are implementation-specific string references; `Related` is a loose association.
 
 ## File-Level Metadata
 
