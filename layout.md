@@ -91,13 +91,13 @@ File names should be stable and readable.
 
 Recommended examples:
 
-- `/specs/requirements/payments/SPEC-PAY-ACH.md`
-- `/specs/requirements/arithmetic/SPEC-MATH-DIV.md`
-- `/specs/requirements/spec-trace/SPEC-STD.md`
+- [`/specs/requirements/payments/SPEC-PAY-ACH.md`](./specs/requirements/payments/SPEC-PAY-ACH.md)
+- [`/specs/requirements/arithmetic/SPEC-MATH-DIV.md`](./specs/requirements/arithmetic/SPEC-MATH-DIV.md)
+- [`/specs/requirements/spec-trace/SPEC-STD.md`](./specs/requirements/spec-trace/SPEC-STD.md)
 
 ## Index Files
 
-`_index.md` files are optional. Use them for navigation only.
+[`_index.md`](./_index.md) files are optional. Use them for navigation only.
 
 An index file may summarize a domain and link specifications, architecture, work items, verification artifacts, and generated outputs. It does not replace the underlying artifacts.
 
@@ -109,6 +109,6 @@ The layout should make this path easy to see:
 2. architecture or design artifacts satisfy requirements
 3. work items address requirements and use design inputs
 4. verification artifacts prove requirements
-5. tests, code, and prose may reference stable artifact IDs directly, with prose using inline backticks for lightweight links
+5. tests, code, and prose may reference stable artifact IDs directly, with prose using inline backticks for lightweight links or relative Markdown links for repo-local files and folders
 
 If the layout makes that chain hard to follow, the structure is working against the standard.

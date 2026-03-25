@@ -1,24 +1,24 @@
 # Schemas
 
-These are reference schemas aligned to the SPEC suite under `../specs/requirements/spec-trace/`.
+These are reference schemas aligned to the SPEC suite under [`../specs/requirements/spec-trace/`](../specs/requirements/spec-trace/).
 
 The schemas validate extracted metadata shapes and the identifier families used by direct trace-bearing lists. They do not prescribe one Markdown parser.
 
-The shared [artifact-id-policy.json](../artifact-id-policy.json) file defines the identifier contract for both artifact documents and requirement clauses.
+The shared [`artifact-id-policy.json`](../artifact-id-policy.json) file defines the identifier contract for both artifact documents and requirement clauses.
 
 ## Included Schemas
 
-- [artifact-id-policy.schema.json](artifact-id-policy.schema.json) validates the shared identifier and grouping-key metadata catalog
-- [artifact-frontmatter.schema.json](artifact-frontmatter.schema.json) validates file-level front matter for specification, architecture, work-item, and verification documents, including family-specific trace-link lists and optional namespaced `x_` extension keys
-- [requirement-clause.schema.json](requirement-clause.schema.json) validates extracted compact requirement clauses, including the short descriptive title, normative keyword phrase, optional trace block, notes, and backtick-delimited inline identifier references in prose
-- [requirement-trace-fields.schema.json](requirement-trace-fields.schema.json) validates the canonical trace labels used inside a requirement `Trace` block, including structured downstream links, lineage, source citations, implementation-specific references, and loose associations; inline identifier references are outside this schema
-- [work-item-trace-fields.schema.json](work-item-trace-fields.schema.json) validates the canonical labels used in a work-item `Trace Links` section and constrains requirement, design, and verification links to their expected identifier families
+- [`artifact-id-policy.schema.json`](artifact-id-policy.schema.json) validates the shared identifier and grouping-key metadata catalog
+- [`artifact-frontmatter.schema.json`](artifact-frontmatter.schema.json) validates file-level front matter for specification, architecture, work-item, and verification documents, including family-specific trace-link lists and optional namespaced `x_` extension keys
+- [`requirement-clause.schema.json`](requirement-clause.schema.json) validates extracted compact requirement clauses, including the short descriptive title, normative keyword phrase, optional trace block, notes, and backtick-delimited inline identifier references in prose
+- [`requirement-trace-fields.schema.json`](requirement-trace-fields.schema.json) validates the canonical trace labels used inside a requirement `Trace` block, including structured downstream links, lineage, source citations, implementation-specific references, and loose associations; inline identifier references are outside this schema
+- [`work-item-trace-fields.schema.json`](work-item-trace-fields.schema.json) validates the canonical labels used in a work-item `Trace Links` section and constrains requirement, design, and verification links to their expected identifier families
 
 ## Mapping Notes
 
-- `artifact-frontmatter.schema.json` is for document metadata.
-- `requirement-clause.schema.json` is for the requirement itself.
-- `requirement-trace-fields.schema.json` is referenced by the requirement-clause schema.
+- [`artifact-frontmatter.schema.json`](artifact-frontmatter.schema.json) is for document metadata.
+- [`requirement-clause.schema.json`](requirement-clause.schema.json) is for the requirement itself.
+- [`requirement-trace-fields.schema.json`](requirement-trace-fields.schema.json) is referenced by the requirement-clause schema.
 - Verification front matter uses one artifact-scoped status for every requirement ID listed in `verifies`; mixed outcomes belong in separate artifacts.
 - `Test Refs` and `Code Refs` remain implementation-specific string references. The schema constrains the field names and value shape, not the local reference syntax.
 - Inline identifier references are allowed in clauses, `Notes`, and other descriptive prose. They are backtick-delimited stable IDs, and repository-level tooling may need to resolve them across files because JSON Schema alone cannot fully enforce the cross-file link graph.

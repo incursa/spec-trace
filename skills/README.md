@@ -1,16 +1,18 @@
 # SpecTrace Skills
 
-This folder contains repo-local skills for AI-assisted authoring and maintenance. They are convenience helpers only. The authoritative requirements model remains the SPEC suite under `specs/requirements/spec-trace/`.
+This folder contains repo-local skills for AI-assisted authoring and maintenance. They are convenience helpers only. The authoritative requirements model remains the SPEC suite under [`specs/requirements/spec-trace/`](../specs/requirements/spec-trace/).
 
 ## How To Use Them
 
-1. Start from `AGENTS.md` or `LLMS.txt`.
+1. Start from [`AGENTS.md`](../AGENTS.md) or [`LLMS.txt`](../LLMS.txt).
 2. Pick the skill that matches the artifact you need to draft or revise.
 3. Open the authoritative SPEC files, matching root template, and nearest example before writing.
 
 If your AI tool only auto-discovers skills from a separate home directory, point it at these folders explicitly or mirror them into that environment.
 
-For repository changes that affect traceability, run `scripts/Test-SpecTraceRepository.ps1` after editing the canonical files, schemas, or examples. Use `-Profile traceable` or `-Profile auditable` when you need the stricter repository policies.
+For repository changes that affect traceability, run [`scripts/Test-SpecTraceRepository.ps1`](../scripts/Test-SpecTraceRepository.ps1) after editing the canonical files, schemas, or examples. Use `-Profile traceable` or `-Profile auditable` when you need the stricter repository policies.
+
+When these skills draft Markdown for the repository, they should use relative links for repo-local targets and keep backticks inside the link text when monospace styling should remain.
 
 ## Included Skills
 

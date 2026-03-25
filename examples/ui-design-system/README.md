@@ -11,9 +11,9 @@ It shows:
 
 How to read it:
 
-- `SPEC-UI-CONVENTIONS` defines the class-name contract.
-- `SPEC-UI-TOKENS` defines the reusable token identifiers.
-- `SPEC-UI-FOUNDATION` defines the shared focus-visible, disabled, and interaction rules.
-- `SPEC-UI-BUTTON` and `SPEC-UI-INPUT` point back to the shared requirements with inline references like `REQ-UI-CONVENTIONS-0001`.
+- [`SPEC-UI-CONVENTIONS`](./SPEC-UI-CONVENTIONS.md) defines the class-name contract.
+- [`SPEC-UI-TOKENS`](./SPEC-UI-TOKENS.md) defines the reusable token identifiers.
+- [`SPEC-UI-FOUNDATION`](./SPEC-UI-FOUNDATION.md) defines the shared focus-visible, disabled, and interaction rules.
+- [`SPEC-UI-BUTTON`](./SPEC-UI-BUTTON.md) and [`SPEC-UI-INPUT`](./SPEC-UI-INPUT.md) point back to the shared requirements with inline references like [`REQ-UI-CONVENTIONS-0001`](./SPEC-UI-CONVENTIONS.md).
 
 The example stays within specification files only. It does not add architecture, work-item, or verification artifacts.

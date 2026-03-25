@@ -14,11 +14,11 @@ It demonstrates:
 
 How to read it:
 
-- `SPEC-BEM-CONCEPTS` defines the shared terms and the reusable semantic contract.
-- `SPEC-BEM-NAMING` defines the class-name grammar and negative rules.
-- `SPEC-BEM-CSS` defines selector, nesting, and mix behavior.
-- `sample-architecture.md` shows how those requirements are satisfied in a BEM implementation.
-- `sample-verification.md` records the review used to verify the requirement set.
+- [`SPEC-BEM-CONCEPTS`](./SPEC-BEM-CONCEPTS.md) defines the shared terms and the reusable semantic contract.
+- [`SPEC-BEM-NAMING`](./SPEC-BEM-NAMING.md) defines the class-name grammar and negative rules.
+- [`SPEC-BEM-CSS`](./SPEC-BEM-CSS.md) defines selector, nesting, and mix behavior.
+- [`sample-architecture.md`](./sample-architecture.md) shows how those requirements are satisfied in a BEM implementation.
+- [`sample-verification.md`](./sample-verification.md) records the review used to verify the requirement set.
 - Each requirement is atomic and can be referenced directly by ID.
 - The `Trace` blocks use `Satisfied By` and `Verified By` for downstream links, plus `Source Refs` and `Related` where useful.
 

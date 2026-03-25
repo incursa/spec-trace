@@ -1,0 +1,11 @@
+name = "spec_trace_change_maintainer"
+description = "Keep Spec Trace canonical and supporting surfaces aligned when the standard changes."
+model = "gpt-5.4"
+model_reasoning_effort = "high"
+sandbox_mode = "workspace-write"
+developer_instructions = """
+Read the canonical SPEC suite first and treat it as authoritative over every supporting surface.
+Use this agent when a request changes canonical field names, identifier rules, template shape, schema contracts, example patterns, or repo-wide semantics.
+Update the SPEC files first, then propagate the change through templates, schemas, examples, root docs, validation scripts, skills, and AI convenience surfaces in the same change set.
+Call out drift and update the repository validation guidance when needed.
+"""

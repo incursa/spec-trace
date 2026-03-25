@@ -6,16 +6,16 @@ domain: arithmetic
 status: passed
 owner: platform-core
 verifies:
-  - REQ-MATH-DIV-0001
-  - REQ-MATH-DIV-0002
-  - REQ-MATH-DIV-0003
+  - [REQ-MATH-DIV-0001](./SPEC-MATH-DIV.md)
+  - [REQ-MATH-DIV-0002](./SPEC-MATH-DIV.md)
+  - [REQ-MATH-DIV-0003](./SPEC-MATH-DIV.md)
 related_artifacts:
-  - SPEC-MATH-DIV
-  - ARC-MATH-DIV-0001
-  - WI-MATH-DIV-0001
+  - [SPEC-MATH-DIV](./SPEC-MATH-DIV.md)
+  - [ARC-MATH-DIV-0001](./sample-architecture.md)
+  - [WI-MATH-DIV-0001](./sample-work-item.md)
 ---
 
-# VER-MATH-DIV-0001 - Division Operation Verification
+# [`VER-MATH-DIV-0001`](./sample-verification.md) - Division Operation Verification
 
 ## Scope
 
@@ -23,9 +23,9 @@ Verify the narrow contract for the division operation.
 
 ## Requirements Verified
 
-- REQ-MATH-DIV-0001
-- REQ-MATH-DIV-0002
-- REQ-MATH-DIV-0003
+- [REQ-MATH-DIV-0001](./SPEC-MATH-DIV.md)
+- [REQ-MATH-DIV-0002](./SPEC-MATH-DIV.md)
+- [REQ-MATH-DIV-0003](./SPEC-MATH-DIV.md)
 
 ## Verification Method
 
@@ -61,6 +61,6 @@ passed
 
 ## Related Artifacts
 
-- SPEC-MATH-DIV
-- ARC-MATH-DIV-0001
-- WI-MATH-DIV-0001
+- [SPEC-MATH-DIV](./SPEC-MATH-DIV.md)
+- [ARC-MATH-DIV-0001](./sample-architecture.md)
+- [WI-MATH-DIV-0001](./sample-work-item.md)

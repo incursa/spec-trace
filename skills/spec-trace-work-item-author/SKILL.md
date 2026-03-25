@@ -11,15 +11,15 @@ Use this skill to author implementation-facing work items that stay linked to re
 
 - the relevant `SPEC-...` file
 - the relevant architecture artifact, if one exists
-- `../../specs/requirements/spec-trace/SPEC-STD.md`
-- `../../specs/requirements/spec-trace/SPEC-TPL.md`
-- `../../work-item-template.md`
-- the closest example work item under `../../examples/`
+- [`../../specs/requirements/spec-trace/SPEC-STD.md`](../../specs/requirements/spec-trace/SPEC-STD.md)
+- [`../../specs/requirements/spec-trace/SPEC-TPL.md`](../../specs/requirements/spec-trace/SPEC-TPL.md)
+- [`../../work-item-template.md`](../../work-item-template.md)
+- the closest example work item under [`../../examples/`](../../examples/)
 
 ## Workflow
 
 1. Start from the requirement IDs being addressed and the design inputs being used.
-2. Use `../../work-item-template.md` as the base shape.
+2. Use [`../../work-item-template.md`](../../work-item-template.md) as the base shape.
 3. Describe the planned changes, out-of-scope items, and verification plan in implementation terms rather than normative requirement language.
 4. Keep front matter and the `Trace Links` section aligned with the same IDs.
 5. If the work item reveals a missing requirement or missing design decision, fix that upstream artifact instead of burying it here.

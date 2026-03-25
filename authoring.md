@@ -1,14 +1,14 @@
 # Authoring Guide
 
-This guide is a practical entry point for people and agents working with `spec-trace`. It is not normative. The canonical standard lives under `specs/requirements/spec-trace/`.
+This guide is a practical entry point for people and agents working with `spec-trace`. It is not normative. The canonical standard lives under [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/).
 
 ## Authority Model
 
 Use the repository in this order:
 
-1. `specs/requirements/spec-trace/` for the authoritative model.
-2. Root templates, schemas, and examples for copy-ready support.
-3. This guide, `README.md`, `AGENTS.md`, `LLMS.txt`, and `skills/` for ergonomic navigation.
+1. [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/) for the authoritative model.
+2. Root templates such as [`spec-template.md`](./spec-template.md), [`architecture-template.md`](./architecture-template.md), [`work-item-template.md`](./work-item-template.md), and [`verification-template.md`](./verification-template.md), plus schemas and examples for copy-ready support.
+3. This guide, [`README.md`](./README.md), [`AGENTS.md`](./AGENTS.md), [`LLMS.txt`](./LLMS.txt), and [`skills/`](./skills/) for ergonomic navigation.
 
 If any convenience layer disagrees with the SPEC suite, the SPEC suite wins.
 
@@ -20,12 +20,12 @@ Use a specification when you need to define one or more related requirements for
 
 Read first:
 
-- `specs/requirements/spec-trace/_index.md`
-- `specs/requirements/spec-trace/SPEC-STD.md`
-- `specs/requirements/spec-trace/SPEC-TPL.md`
-- `specs/requirements/spec-trace/SPEC-LAY.md`
-- `spec-template.md`
-- a nearby example specification in `examples/`
+- [`specs/requirements/spec-trace/_index.md`](./specs/requirements/spec-trace/_index.md)
+- [`specs/requirements/spec-trace/SPEC-STD.md`](./specs/requirements/spec-trace/SPEC-STD.md)
+- [`specs/requirements/spec-trace/SPEC-TPL.md`](./specs/requirements/spec-trace/SPEC-TPL.md)
+- [`specs/requirements/spec-trace/SPEC-LAY.md`](./specs/requirements/spec-trace/SPEC-LAY.md)
+- [`spec-template.md`](./spec-template.md)
+- a nearby example specification in [`examples/`](./examples/)
 
 ### Requirement
 
@@ -37,13 +37,19 @@ Common uses include requirement-to-requirement links, requirement-to-specificati
 Use the title as a short descriptive label for the obligation or concern. Use the clause for the required behavior. Use `Notes` for rationale, clarifications, caveats, and examples.
 Use `Trace` for typed downstream links, lineage, source citations, implementation-specific references, and loose associations.
 
+### Markdown Linking Conventions
+
+When you are writing Markdown in this repository, prefer relative links for repo-local files, folders, specifications, requirements, and other concrete local artifacts. If the visible text should stay monospace, put backticks inside the link text, for example [`README.md`](./README.md) or [`SPEC-STD.md`](./specs/requirements/spec-trace/SPEC-STD.md).
+
+Use absolute URLs only when the target must stay external, such as vendor documentation or package pages. Keep generic placeholders such as `REQ-...` as plain code spans when there is no single canonical destination.
+
 Read first:
 
 - the owning `SPEC-...` file
-- `specs/requirements/spec-trace/SPEC-LIN.md` when the task changes requirement lineage, split/merge behavior, or upstream sources
-- `specs/requirements/spec-trace/SPEC-STD.md`
-- `specs/requirements/spec-trace/SPEC-TPL.md`
-- `spec-template.md`
+- [`specs/requirements/spec-trace/SPEC-LIN.md`](./specs/requirements/spec-trace/SPEC-LIN.md) when the task changes requirement lineage, split/merge behavior, or upstream sources
+- [`specs/requirements/spec-trace/SPEC-STD.md`](./specs/requirements/spec-trace/SPEC-STD.md)
+- [`specs/requirements/spec-trace/SPEC-TPL.md`](./specs/requirements/spec-trace/SPEC-TPL.md)
+- [`spec-template.md`](./spec-template.md)
 
 ### Conformance Profile
 
@@ -51,9 +57,9 @@ Use the profiles spec when you need to decide how strict a repository's traceabi
 
 Read first:
 
-- `specs/requirements/spec-trace/SPEC-PRF.md`
-- `specs/requirements/spec-trace/SPEC-STD.md`
-- `specs/requirements/spec-trace/SPEC-SCH.md`
+- [`specs/requirements/spec-trace/SPEC-PRF.md`](./specs/requirements/spec-trace/SPEC-PRF.md)
+- [`specs/requirements/spec-trace/SPEC-STD.md`](./specs/requirements/spec-trace/SPEC-STD.md)
+- [`specs/requirements/spec-trace/SPEC-SCH.md`](./specs/requirements/spec-trace/SPEC-SCH.md)
 
 Core keeps the authoring burden low. `traceable` and `auditable` are stricter repository policies, not new artifact families.
 
@@ -64,8 +70,8 @@ Use an architecture artifact when you need to explain how requirements will be s
 Read first:
 
 - the relevant `SPEC-...` file
-- `architecture-template.md`
-- a nearby example architecture artifact in `examples/`
+- [`architecture-template.md`](./architecture-template.md)
+- a nearby example architecture artifact in [`examples/`](./examples/)
 
 ### Work Item
 
@@ -75,8 +81,8 @@ Read first:
 
 - the relevant `SPEC-...` file
 - the relevant architecture artifact, if one exists
-- `work-item-template.md`
-- a nearby example work item in `examples/`
+- [`work-item-template.md`](./work-item-template.md)
+- a nearby example work item in [`examples/`](./examples/)
 
 ### Verification Artifact
 
@@ -86,16 +92,16 @@ Read first:
 
 - the relevant `SPEC-...` file
 - the relevant architecture and work-item artifacts, if they exist
-- `verification-template.md`
-- a nearby example verification artifact in `examples/`
+- [`verification-template.md`](./verification-template.md)
+- a nearby example verification artifact in [`examples/`](./examples/)
 
 ## Recommended Workflow
 
 1. Start with the authoritative SPEC files for the task.
 2. Open the matching template.
-3. Open the closest example in `examples/`.
+3. Open the closest example in [`examples/`](./examples/).
 4. Draft or revise the artifact.
-5. Run `scripts/Test-SpecTraceRepository.ps1` and check that trace links point at stable IDs rather than loose prose, with no duplicate IDs, unresolved references, reciprocal mismatches, or namespace drift. Use `-Profile traceable` or `-Profile auditable` when you want the stricter repository policies, and `-JsonReportPath` when you need a machine-readable report.
+5. Run [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1) and check that trace links point at stable IDs rather than loose prose, with no duplicate IDs, unresolved references, reciprocal mismatches, or namespace drift. Use `-Profile traceable` or `-Profile auditable` when you want the stricter repository policies, and `-JsonReportPath` when you need a machine-readable report.
    Also check that any inline identifier references are backtick-delimited stable IDs rather than loose prose.
 
 ## When The Standard Changes
@@ -106,18 +112,18 @@ If a change affects canonical field names, identifier rules, template shape, sch
 - the root templates
 - the schemas
 - the examples
-- root guidance such as `README.md`, `overview.md`, and `layout.md`
-- repository validation such as `scripts/Test-SpecTraceRepository.ps1`
-- AI convenience surfaces such as `AGENTS.md`, `LLMS.txt`, and `skills/`
+- root guidance such as [`README.md`](./README.md), [`overview.md`](./overview.md), and [`layout.md`](./layout.md)
+- repository validation such as [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1)
+- AI convenience surfaces such as [`AGENTS.md`](./AGENTS.md), [`LLMS.txt`](./LLMS.txt), and [`skills/`](./skills/)
 
 If a repository needs extra front matter metadata, prefer namespaced `x_...` keys so the core field set stays stable.
 
-Record notable package-level changes in `CHANGELOG.md`.
+Record notable package-level changes in [`CHANGELOG.md`](./CHANGELOG.md).
 
 ## AI Entry Points
 
 If you want AI tooling to work directly from this repository:
 
-- use `AGENTS.md` for repo-specific instructions
+- use [`AGENTS.md`](./AGENTS.md) for repo-specific instructions
 - use `LLMS.txt` for a lightweight bootstrap file
-- use `skills/README.md` to choose a repo-local authoring skill
+- use [`skills/README.md`](./skills/README.md) to choose a repo-local authoring skill

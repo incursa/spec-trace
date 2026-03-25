@@ -6,20 +6,20 @@ domain: arithmetic
 status: complete
 owner: platform-core
 addresses:
-  - REQ-MATH-DIV-0001
-  - REQ-MATH-DIV-0002
-  - REQ-MATH-DIV-0003
+  - [REQ-MATH-DIV-0001](./SPEC-MATH-DIV.md)
+  - [REQ-MATH-DIV-0002](./SPEC-MATH-DIV.md)
+  - [REQ-MATH-DIV-0003](./SPEC-MATH-DIV.md)
 design_links:
-  - ARC-MATH-DIV-0001
+  - [ARC-MATH-DIV-0001](./sample-architecture.md)
 verification_links:
-  - VER-MATH-DIV-0001
+  - [VER-MATH-DIV-0001](./sample-verification.md)
 related_artifacts:
-  - SPEC-MATH-DIV
-  - ARC-MATH-DIV-0001
-  - VER-MATH-DIV-0001
+  - [SPEC-MATH-DIV](./SPEC-MATH-DIV.md)
+  - [ARC-MATH-DIV-0001](./sample-architecture.md)
+  - [VER-MATH-DIV-0001](./sample-verification.md)
 ---
 
-# WI-MATH-DIV-0001 - Implement Division Operation Guard And Tests
+# [`WI-MATH-DIV-0001`](./sample-work-item.md) - Implement Division Operation Guard And Tests
 
 ## Summary
 
@@ -27,13 +27,13 @@ Implement the division operation, add a zero-denominator guard, and verify the n
 
 ## Requirements Addressed
 
-- REQ-MATH-DIV-0001
-- REQ-MATH-DIV-0002
-- REQ-MATH-DIV-0003
+- [REQ-MATH-DIV-0001](./SPEC-MATH-DIV.md)
+- [REQ-MATH-DIV-0002](./SPEC-MATH-DIV.md)
+- [REQ-MATH-DIV-0003](./SPEC-MATH-DIV.md)
 
 ## Design Inputs
 
-- ARC-MATH-DIV-0001
+- [ARC-MATH-DIV-0001](./sample-architecture.md)
 
 ## Planned Changes
 
@@ -46,7 +46,7 @@ Add the two-operand entry point, return the quotient for non-zero denominators, 
 
 ## Verification Plan
 
-Use `VER-MATH-DIV-0001` and direct test references to confirm the operation contract.
+Use [`VER-MATH-DIV-0001`](./sample-verification.md) and direct test references to confirm the operation contract.
 
 ## Completion Notes
 
@@ -56,14 +56,14 @@ The implementation keeps the code reference stable at `arithmetic.divide`.
 
 Addresses:
 
-- REQ-MATH-DIV-0001
-- REQ-MATH-DIV-0002
-- REQ-MATH-DIV-0003
+- [REQ-MATH-DIV-0001](./SPEC-MATH-DIV.md)
+- [REQ-MATH-DIV-0002](./SPEC-MATH-DIV.md)
+- [REQ-MATH-DIV-0003](./SPEC-MATH-DIV.md)
 
 Uses Design:
 
-- ARC-MATH-DIV-0001
+- [ARC-MATH-DIV-0001](./sample-architecture.md)
 
 Verified By:
 
-- VER-MATH-DIV-0001
+- [VER-MATH-DIV-0001](./sample-verification.md)

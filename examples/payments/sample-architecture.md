@@ -6,28 +6,28 @@ domain: payments
 status: approved
 owner: payments-platform
 satisfies:
-  - REQ-PAY-ACH-0013
-  - REQ-PAY-ACH-0014
-  - REQ-PAY-ACH-0015
-  - REQ-PAY-ACH-0016
+  - [REQ-PAY-ACH-0013](./SPEC-PAY-ACH.md)
+  - [REQ-PAY-ACH-0014](./SPEC-PAY-ACH.md)
+  - [REQ-PAY-ACH-0015](./SPEC-PAY-ACH.md)
+  - [REQ-PAY-ACH-0016](./SPEC-PAY-ACH.md)
 related_artifacts:
-  - SPEC-PAY-ACH
-  - WI-PAY-ACH-0081
-  - VER-PAY-ACH-0021
+  - [SPEC-PAY-ACH](./SPEC-PAY-ACH.md)
+  - [WI-PAY-ACH-0081](./sample-work-item.md)
+  - [VER-PAY-ACH-0021](./sample-verification.md)
 ---
 
-# ARC-PAY-ACH-0002 - ACH Duplicate Batch Rejection Design
+# [`ARC-PAY-ACH-0002`](./sample-architecture.md) - ACH Duplicate Batch Rejection Design
 
 ## Purpose
 
-Describe how ACH batch intake enforces the tenant-scoped duplicate rules defined in `SPEC-PAY-ACH`.
+Describe how ACH batch intake enforces the tenant-scoped duplicate rules defined in [`SPEC-PAY-ACH`](./SPEC-PAY-ACH.md).
 
 ## Requirements Satisfied
 
-- REQ-PAY-ACH-0013
-- REQ-PAY-ACH-0014
-- REQ-PAY-ACH-0015
-- REQ-PAY-ACH-0016
+- [REQ-PAY-ACH-0013](./SPEC-PAY-ACH.md)
+- [REQ-PAY-ACH-0014](./SPEC-PAY-ACH.md)
+- [REQ-PAY-ACH-0015](./SPEC-PAY-ACH.md)
+- [REQ-PAY-ACH-0016](./SPEC-PAY-ACH.md)
 
 ## Design Summary
 

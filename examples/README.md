@@ -4,7 +4,7 @@ This folder contains worked examples for the standard.
 
 The examples are intentionally cross-linked across specifications, architecture or design, work items, verification artifacts, tests, and code references. They exist to show the model in use. They are not mandatory prose.
 
-The example set is also used as a validation target for `scripts/Test-SpecTraceRepository.ps1`, including duplicate IDs, unresolved direct links, reciprocal trace consistency, namespace alignment, and profile checks.
+The example set is also used as a validation target for [`scripts/Test-SpecTraceRepository.ps1`](../scripts/Test-SpecTraceRepository.ps1), including duplicate IDs, unresolved direct links, reciprocal trace consistency, namespace alignment, and profile checks.
 
 Where it helps the narrative, the examples also show optional upstream lineage through `Derived From`, `Supersedes`, and `Source Refs`, plus inline identifier references in prose and notes.
 
@@ -17,18 +17,18 @@ Inline identifier references use backticks around stable IDs. They are lightweig
 Illustrative patterns:
 
 ```md
-The button component MUST comply with `REQ-UI-CONVENTIONS-0001`.
-Primary button styling MUST use `REQ-UI-TOKENS-0001`.
-This specification builds on `SPEC-UI-TOKENS`.
+The button component MUST comply with [`REQ-UI-CONVENTIONS-0001`](./ui-design-system/SPEC-UI-CONVENTIONS.md).
+Primary button styling MUST use [`REQ-UI-TOKENS-0001`](./ui-design-system/SPEC-UI-TOKENS.md).
+This specification builds on [`SPEC-UI-TOKENS`](./ui-design-system/SPEC-UI-TOKENS.md).
 ```
 
-This repository's worked examples use the same pattern with real IDs such as `REQ-PAY-ACH-0013`, `REQ-TPL-0006`, `REQ-TPL-0007`, and `SPEC-TPL`.
+This repository's worked examples use the same pattern with real IDs such as [`REQ-PAY-ACH-0013`](./payments/SPEC-PAY-ACH.md), [`REQ-TPL-0006`](../specs/requirements/spec-trace/SPEC-TPL.md), [`REQ-TPL-0007`](../specs/requirements/spec-trace/SPEC-TPL.md), and [`SPEC-TPL`](../specs/requirements/spec-trace/SPEC-TPL.md).
 
 ## Included Examples
 
 ### Payments
 
-`examples/payments/` is a product-style example built around ACH duplicate batch handling.
+[`examples/payments/`](./payments/) is a product-style example built around ACH duplicate batch handling.
 
 It demonstrates:
 
@@ -42,7 +42,7 @@ It demonstrates:
 
 ### Arithmetic
 
-`examples/arithmetic/` is a narrow technical example built around a division operation.
+[`examples/arithmetic/`](./arithmetic/) is a narrow technical example built around a division operation.
 
 It demonstrates:
 
@@ -54,7 +54,7 @@ It demonstrates:
 
 ### UI Design System
 
-`examples/ui-design-system/` is a compact design-system example built around shared conventions, tokens, and foundation rules for button and input components.
+[`examples/ui-design-system/`](./ui-design-system/) is a compact design-system example built around shared conventions, tokens, and foundation rules for button and input components.
 
 It demonstrates:
 
@@ -66,7 +66,7 @@ It demonstrates:
 
 ### BEM CSS
 
-`examples/bem-css/` is a real BEM methodology specification set derived from the official BEM documentation.
+[`examples/bem-css/`](./bem-css/) is a real BEM methodology specification set derived from the official BEM documentation.
 
 It demonstrates:
 
@@ -80,25 +80,25 @@ It demonstrates:
 
 ## Entry Points
 
-- `../specs/requirements/spec-trace/` for the canonical SPEC suite
-- [artifact-id-policy.json](../artifact-id-policy.json) for the shared identifier policy
-- [payments/SPEC-PAY-ACH.md](payments/SPEC-PAY-ACH.md)
-- [payments/sample-architecture.md](payments/sample-architecture.md)
-- [payments/sample-work-item.md](payments/sample-work-item.md)
-- [payments/sample-verification.md](payments/sample-verification.md)
-- [arithmetic/SPEC-MATH-DIV.md](arithmetic/SPEC-MATH-DIV.md)
-- [arithmetic/sample-architecture.md](arithmetic/sample-architecture.md)
-- [arithmetic/sample-work-item.md](arithmetic/sample-work-item.md)
-- [arithmetic/sample-verification.md](arithmetic/sample-verification.md)
-- [ui-design-system/README.md](ui-design-system/README.md)
-- [ui-design-system/SPEC-UI-CONVENTIONS.md](ui-design-system/SPEC-UI-CONVENTIONS.md)
-- [ui-design-system/SPEC-UI-TOKENS.md](ui-design-system/SPEC-UI-TOKENS.md)
-- [ui-design-system/SPEC-UI-FOUNDATION.md](ui-design-system/SPEC-UI-FOUNDATION.md)
-- [ui-design-system/SPEC-UI-BUTTON.md](ui-design-system/SPEC-UI-BUTTON.md)
-- [ui-design-system/SPEC-UI-INPUT.md](ui-design-system/SPEC-UI-INPUT.md)
-- [bem-css/README.md](bem-css/README.md)
-- [bem-css/SPEC-BEM-CONCEPTS.md](bem-css/SPEC-BEM-CONCEPTS.md)
-- [bem-css/SPEC-BEM-NAMING.md](bem-css/SPEC-BEM-NAMING.md)
-- [bem-css/SPEC-BEM-CSS.md](bem-css/SPEC-BEM-CSS.md)
-- [bem-css/sample-architecture.md](bem-css/sample-architecture.md)
-- [bem-css/sample-verification.md](bem-css/sample-verification.md)
+- [`../specs/requirements/spec-trace/`](../specs/requirements/spec-trace/) for the canonical SPEC suite
+- [`artifact-id-policy.json`](../artifact-id-policy.json) for the shared identifier policy
+- [`payments/SPEC-PAY-ACH.md`](./payments/SPEC-PAY-ACH.md)
+- [`payments/sample-architecture.md`](./payments/sample-architecture.md)
+- [`payments/sample-work-item.md`](./payments/sample-work-item.md)
+- [`payments/sample-verification.md`](./payments/sample-verification.md)
+- [`arithmetic/SPEC-MATH-DIV.md`](./arithmetic/SPEC-MATH-DIV.md)
+- [`arithmetic/sample-architecture.md`](./arithmetic/sample-architecture.md)
+- [`arithmetic/sample-work-item.md`](./arithmetic/sample-work-item.md)
+- [`arithmetic/sample-verification.md`](./arithmetic/sample-verification.md)
+- [`ui-design-system/README.md`](./ui-design-system/README.md)
+- [`ui-design-system/SPEC-UI-CONVENTIONS.md`](./ui-design-system/SPEC-UI-CONVENTIONS.md)
+- [`ui-design-system/SPEC-UI-TOKENS.md`](./ui-design-system/SPEC-UI-TOKENS.md)
+- [`ui-design-system/SPEC-UI-FOUNDATION.md`](./ui-design-system/SPEC-UI-FOUNDATION.md)
+- [`ui-design-system/SPEC-UI-BUTTON.md`](./ui-design-system/SPEC-UI-BUTTON.md)
+- [`ui-design-system/SPEC-UI-INPUT.md`](./ui-design-system/SPEC-UI-INPUT.md)
+- [`bem-css/README.md`](./bem-css/README.md)
+- [`bem-css/SPEC-BEM-CONCEPTS.md`](./bem-css/SPEC-BEM-CONCEPTS.md)
+- [`bem-css/SPEC-BEM-NAMING.md`](./bem-css/SPEC-BEM-NAMING.md)
+- [`bem-css/SPEC-BEM-CSS.md`](./bem-css/SPEC-BEM-CSS.md)
+- [`bem-css/sample-architecture.md`](./bem-css/sample-architecture.md)
+- [`bem-css/sample-verification.md`](./bem-css/sample-verification.md)

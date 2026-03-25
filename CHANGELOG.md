@@ -7,16 +7,17 @@
 - Restored root reference guidance in `overview.md`, `layout.md`, and the copy-ready template files.
 - Formalized inline identifier references as backtick-delimited, human-readable links to stable artifact IDs, with cross-file resolution left to repository-level tooling.
 - Added guidance that requirement titles are short descriptive labels, requirement clauses carry the normative behavior, and `Trace` blocks have typed semantics by label family.
-- Added canonical conformance profiles (`core`, `traceable`, and `auditable`) and the `SPEC-PRF` canonical spec.
+- Added canonical conformance profiles (`core`, `traceable`, and `auditable`) and the [`SPEC-PRF`](./specs/requirements/spec-trace/SPEC-PRF.md) canonical spec.
 - Added `examples/arithmetic/` as a narrow technical example for method-level and edge-case requirements.
 - Added `schemas/requirement-clause.schema.json` for extracted compact requirement clauses.
 - Added `authoring.md`, `AGENTS.md`, `LLMS.txt`, and repo-local `skills/` to make human and AI authoring workflows easier without creating a second source of truth.
 
 ### Changed
 
+- Clarified repository documentation guidance so repo-local references use relative Markdown links, with backticks kept inside link text when monospace styling is desired.
 - Made the normative keyword model explicit: BCP 14-style uppercase requirement language inspired by RFC 2119 and RFC 8174 now uses the narrowed approved set `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, and `MAY`; lowercase forms are plain English.
 - Tightened trace-bearing schemas to constrain identifier families instead of accepting generic non-empty strings, and added repository-level validation for duplicate IDs, unresolved references, reciprocal consistency, and namespace alignment. This is a breaking validation-contract change.
-- Reworded `REQ-STD-0019` to keep the clause at exactly one approved normative keyword.
+- Reworded [`REQ-STD-0019`](./specs/requirements/spec-trace/SPEC-STD.md) to keep the clause at exactly one approved normative keyword.
 - Removed ADR/decision-record identifiers from the core artifact catalog and layout model; decision records are now treated as an optional local extension outside the core standard.
 - Reserved `profile` for conformance levels and simplified decision-record wording to optional local extensions.
 - Clarified that a verification artifact status applies to every requirement listed in `verifies`; mixed outcomes now belong in separate verification artifacts.

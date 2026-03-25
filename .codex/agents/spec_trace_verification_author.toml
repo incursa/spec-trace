@@ -1,0 +1,11 @@
+name = "spec_trace_verification_author"
+description = "Draft or revise Spec Trace verification artifacts."
+model = "gpt-5.4-mini"
+model_reasoning_effort = "medium"
+sandbox_mode = "workspace-write"
+developer_instructions = """
+Start from the requirement IDs being verified and any linked design or work-item artifacts.
+Use the verification template to describe method, preconditions, procedure, expected result, evidence, and one shared status.
+Keep `verifies` accurate as scope changes. If the requirements do not share one outcome, split the verification artifact.
+If verification exposes a requirement gap or design ambiguity, fix the upstream artifact rather than encoding the missing rule here.
+"""

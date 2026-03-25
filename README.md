@@ -10,9 +10,9 @@ The standard is optimized for compact requirement clauses with stable IDs and di
 - tests
 - code references
 
-The canonical standard lives in `specs/requirements/spec-trace/`. The root documents are practical summaries and copy-ready templates. If a root document and the SPEC suite ever disagree, the SPEC suite wins.
+The canonical standard lives in [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/). The root documents are practical summaries and copy-ready templates. If a root document and the SPEC suite ever disagree, the SPEC suite wins.
 
-The reference package also includes repository-wide validation through `scripts/Test-SpecTraceRepository.ps1`, which checks identifier families, duplicate IDs, unresolved direct links, reciprocal trace consistency, namespace alignment, and profile-specific graph rules.
+The reference package also includes repository-wide validation through [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1), which checks identifier families, duplicate IDs, unresolved direct links, reciprocal trace consistency, namespace alignment, and profile-specific graph rules.
 
 ## Core Model
 
@@ -36,42 +36,42 @@ The standard is intentionally small. It does not require a requirements platform
 
 ## Getting Started
 
-1. Read `specs/requirements/spec-trace/` for the canonical self-specification suite; if you are revising requirement evolution or upstream trace, also read `specs/requirements/spec-trace/SPEC-LIN.md`; if you are choosing a conformance profile, also read `specs/requirements/spec-trace/SPEC-PRF.md`.
-2. Read [overview.md](overview.md) for the compact authoring model.
-3. Read [layout.md](layout.md) for the recommended repository structure.
-4. Read [authoring.md](authoring.md) for the task-oriented authoring workflow across specifications, requirements, design, work items, and verification artifacts.
-5. Copy from the root templates if you want a starting point for your own repo.
-6. Use [artifact-id-policy.json](artifact-id-policy.json) and the files under [schemas/](schemas/) for machine-readable validation targets.
-7. Open [examples/README.md](examples/README.md) for worked examples, including a product-style payments example and a narrow arithmetic example.
-8. If you use AI-assisted authoring, point the agent at [AGENTS.md](AGENTS.md), [LLMS.txt](LLMS.txt), and the repo-local collection under [skills/](skills/).
+1. Read [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/) for the canonical self-specification suite; if you are revising requirement evolution or upstream trace, also read [`specs/requirements/spec-trace/SPEC-LIN.md`](./specs/requirements/spec-trace/SPEC-LIN.md); if you are choosing a conformance profile, also read [`specs/requirements/spec-trace/SPEC-PRF.md`](./specs/requirements/spec-trace/SPEC-PRF.md).
+2. Read [`overview.md`](./overview.md) for the compact authoring model.
+3. Read [`layout.md`](./layout.md) for the recommended repository structure.
+4. Read [`authoring.md`](./authoring.md) for the task-oriented authoring workflow across specifications, requirements, design, work items, and verification artifacts.
+5. Copy from the root templates, such as [`spec-template.md`](./spec-template.md), [`architecture-template.md`](./architecture-template.md), [`work-item-template.md`](./work-item-template.md), and [`verification-template.md`](./verification-template.md), if you want a starting point for your own repo.
+6. Use [`artifact-id-policy.json`](./artifact-id-policy.json) and the files under [`schemas/`](./schemas/) for machine-readable validation targets.
+7. Open [`examples/README.md`](./examples/README.md) for worked examples, including a product-style payments example and a narrow arithmetic example.
+8. If you use AI-assisted authoring, point the agent at [`AGENTS.md`](./AGENTS.md), [`LLMS.txt`](./LLMS.txt), and the repo-local collection under [`skills/`](./skills/).
 
 ## Repository Contents
 
-- `specs/requirements/spec-trace/` - canonical SPEC suite and proving ground for the standard
-- [authoring.md](authoring.md) - task-oriented authoring guide that routes to the canonical suite, templates, and examples
-- [overview.md](overview.md) - concise summary of the authoring model
-- [layout.md](layout.md) - recommended repository layout and placement guidance
-- [spec-template.md](spec-template.md) - copy-ready specification template
-- [architecture-template.md](architecture-template.md) - copy-ready architecture or design template
-- [work-item-template.md](work-item-template.md) - copy-ready work-item template
-- [verification-template.md](verification-template.md) - copy-ready verification template
-- [artifact-id-policy.json](artifact-id-policy.json) - shared identifier policy and grouping-key registry
-- [schemas/](schemas/) - reference JSON Schemas for extracted metadata
-- [examples/](examples/) - worked examples that apply the standard directly
-- [scripts/Export-SpecTraceBundle.ps1](scripts/Export-SpecTraceBundle.ps1) - PowerShell utility that bundles discovered specification files into one Markdown output
-- [scripts/Test-SpecTraceRepository.ps1](scripts/Test-SpecTraceRepository.ps1) - repository-wide validator for Markdown, schema, and cross-file trace rules; use `-Profile core|traceable|auditable`, `-InputPath`, and `-JsonReportPath`
-- [scripts/Validate-SpecTrace.ps1](scripts/Validate-SpecTrace.ps1) - narrower reference-package validator kept for compatibility and bundle-aligned checks
-- [AGENTS.md](AGENTS.md) - agent-oriented repository instructions that defer to the canonical SPEC suite
-- [LLMS.txt](LLMS.txt) - plain-text AI bootstrap for llms.txt-style or prompt-bootstrap workflows
-- [skills/](skills/) - repo-local authoring skills that help agents draft artifacts without re-implementing the standard
+- [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/) - canonical SPEC suite and proving ground for the standard
+- [`authoring.md`](./authoring.md) - task-oriented authoring guide that routes to the canonical suite, templates, and examples
+- [`overview.md`](./overview.md) - concise summary of the authoring model
+- [`layout.md`](./layout.md) - recommended repository layout and placement guidance
+- [`spec-template.md`](./spec-template.md) - copy-ready specification template
+- [`architecture-template.md`](./architecture-template.md) - copy-ready architecture or design template
+- [`work-item-template.md`](./work-item-template.md) - copy-ready work-item template
+- [`verification-template.md`](./verification-template.md) - copy-ready verification template
+- [`artifact-id-policy.json`](./artifact-id-policy.json) - shared identifier policy and grouping-key registry
+- [`schemas/`](./schemas/) - reference JSON Schemas for extracted metadata
+- [`examples/`](./examples/) - worked examples that apply the standard directly
+- [`scripts/Export-SpecTraceBundle.ps1`](./scripts/Export-SpecTraceBundle.ps1) - PowerShell utility that bundles discovered specification files into one Markdown output
+- [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1) - repository-wide validator for Markdown, schema, and cross-file trace rules; use `-Profile core|traceable|auditable`, `-InputPath`, and `-JsonReportPath`
+- [`scripts/Validate-SpecTrace.ps1`](./scripts/Validate-SpecTrace.ps1) - narrower reference-package validator kept for compatibility and bundle-aligned checks
+- [`AGENTS.md`](./AGENTS.md) - agent-oriented repository instructions that defer to the canonical SPEC suite
+- [`LLMS.txt`](./LLMS.txt) - plain-text AI bootstrap for llms.txt-style or prompt-bootstrap workflows
+- [`skills/`](./skills/) - repo-local authoring skills that help agents draft artifacts without re-implementing the standard
 
 ## AI-Assisted Authoring
 
 This repository includes a small AI-facing convenience layer for teams that want repo-local agent instructions and reusable authoring skills.
 
-- `AGENTS.md` gives repository-specific instructions to coding and documentation agents.
-- `LLMS.txt` provides a lightweight plain-text bootstrap that points tools back to the canonical suite.
-- `skills/` contains repo-local skills for drafting specifications, requirements, architecture artifacts, work items, verification artifacts, and cross-surface maintenance.
+- [`AGENTS.md`](./AGENTS.md) gives repository-specific instructions to coding and documentation agents.
+- [`LLMS.txt`](./LLMS.txt) provides a lightweight plain-text bootstrap that points tools back to the canonical suite.
+- [`skills/`](./skills/) contains repo-local skills for drafting specifications, requirements, architecture artifacts, work items, verification artifacts, and cross-surface maintenance.
 
 Those files are ergonomic helpers only. They must remain aligned with the SPEC suite and they must not become a second source of truth.
 
@@ -89,7 +89,7 @@ That only works if requirement IDs are stable, requirement clauses are compact, 
 
 ## Self-Application
 
-This repository uses the standard to specify itself under `specs/requirements/spec-trace/`. That recursive self-application is intentional. The SPEC suite is not an example pasted beside the standard; it is the standard expressed in its own form.
+This repository uses the standard to specify itself under [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/). That recursive self-application is intentional. The SPEC suite is not an example pasted beside the standard; it is the standard expressed in its own form.
 
 ## Versioning
 
@@ -97,18 +97,18 @@ This repository uses a simple public-reference versioning approach.
 
 - `0.1.x` tracks the early public reference package while the standard settles.
 - Changes to canonical field names, identifier rules, or required structures are breaking changes and should be documented.
-- `CHANGELOG.md` records package-level changes to the reference standard.
+- [`CHANGELOG.md`](./CHANGELOG.md) records package-level changes to the reference standard.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the rules for proposing changes and keeping the SPEC suite, templates, schemas, and examples aligned.
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the rules for proposing changes and keeping the SPEC suite, templates, schemas, and examples aligned.
 
 ## License
 
-This repository is licensed under Apache-2.0. See `LICENSE`.
+This repository is licensed under Apache-2.0. See [`LICENSE`](./LICENSE).
 
 ## Security
 
 This repository is primarily documentation, schemas, examples, and policy files. Most issues should go through the normal issue or pull-request flow.
 
-If you believe you found a security-sensitive problem in the repository contents or release process, follow `SECURITY.md`.
+If you believe you found a security-sensitive problem in the repository contents or release process, follow [`SECURITY.md`](./SECURITY.md).

@@ -13,13 +13,13 @@ tags:
   - selectors
   - mixes
 related_artifacts:
-  - ARC-BEM-CSS-0001
-  - VER-BEM-CSS-0001
-  - SPEC-BEM-CONCEPTS
-  - SPEC-BEM-NAMING
+  - [ARC-BEM-CSS-0001](./sample-architecture.md)
+  - [VER-BEM-CSS-0001](./sample-verification.md)
+  - [SPEC-BEM-CONCEPTS](./SPEC-BEM-CONCEPTS.md)
+  - [SPEC-BEM-NAMING](./SPEC-BEM-NAMING.md)
 ---
 
-# SPEC-BEM-CSS - BEM CSS Selector and Layout Contract
+# [`SPEC-BEM-CSS`](./SPEC-BEM-CSS.md) - BEM CSS Selector and Layout Contract
 
 ## Purpose
 
@@ -33,144 +33,144 @@ This specification covers class-based selectors, nested selector limits, mixes, 
 
 The official BEM documentation presents BEM as a reusable component methodology with class-based selector rules and mix-based composition. This example translates those rules into requirement form so the repository can show a real, useful specification instead of a synthetic one.
 
-## REQ-BEM-CSS-0001 Use class selectors for BEM entities
+## [`REQ-BEM-CSS-0001`](./SPEC-BEM-CSS.md) Use class selectors for BEM entities
 BEM entity styling MUST use class selectors.
 
 Trace:
 - Satisfied By:
-  - ARC-BEM-CSS-0001
+  - [ARC-BEM-CSS-0001](./sample-architecture.md)
 - Verified By:
-  - VER-BEM-CSS-0001
+  - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
-  - REQ-BEM-NAMING-0001
-  - REQ-BEM-NAMING-0003
-  - REQ-BEM-NAMING-0005
-  - REQ-BEM-NAMING-0006
+  - [REQ-BEM-NAMING-0001](./SPEC-BEM-NAMING.md)
+  - [REQ-BEM-NAMING-0003](./SPEC-BEM-NAMING.md)
+  - [REQ-BEM-NAMING-0005](./SPEC-BEM-NAMING.md)
+  - [REQ-BEM-NAMING-0006](./SPEC-BEM-NAMING.md)
 - Source Refs:
   - https://en.bem.info/methodology/css/
 
-## REQ-BEM-CSS-0002 Avoid tag and ID selectors
+## [`REQ-BEM-CSS-0002`](./SPEC-BEM-CSS.md) Avoid tag and ID selectors
 BEM entity styling MUST NOT use tag or ID selectors.
 
 Trace:
 - Satisfied By:
-  - ARC-BEM-CSS-0001
+  - [ARC-BEM-CSS-0001](./sample-architecture.md)
 - Verified By:
-  - VER-BEM-CSS-0001
+  - [VER-BEM-CSS-0001](./sample-verification.md)
 - Source Refs:
   - https://en.bem.info/methodology/css/
   - https://en.bem.info/methodology/quick-start/
 
-## REQ-BEM-CSS-0003 Avoid tag-and-class selectors
+## [`REQ-BEM-CSS-0003`](./SPEC-BEM-CSS.md) Avoid tag-and-class selectors
 BEM entity styling SHOULD NOT combine tags and classes in a selector.
 
 Trace:
 - Satisfied By:
-  - ARC-BEM-CSS-0001
+  - [ARC-BEM-CSS-0001](./sample-architecture.md)
 - Verified By:
-  - VER-BEM-CSS-0001
+  - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
-  - REQ-BEM-CSS-0001
+  - [REQ-BEM-CSS-0001](./SPEC-BEM-CSS.md)
 - Source Refs:
   - https://en.bem.info/methodology/css/
   - https://en.bem.info/methodology/faq/?lang=en
 
-## REQ-BEM-CSS-0004 Minimize nested selectors
+## [`REQ-BEM-CSS-0004`](./SPEC-BEM-CSS.md) Minimize nested selectors
 Nested selectors SHOULD be minimized.
 
 Trace:
 - Satisfied By:
-  - ARC-BEM-CSS-0001
+  - [ARC-BEM-CSS-0001](./sample-architecture.md)
 - Verified By:
-  - VER-BEM-CSS-0001
+  - [VER-BEM-CSS-0001](./sample-verification.md)
 - Source Refs:
   - https://en.bem.info/methodology/css/
 
-## REQ-BEM-CSS-0005 Limit nested selectors to block state or theme set changes
+## [`REQ-BEM-CSS-0005`](./SPEC-BEM-CSS.md) Limit nested selectors to block state or theme set changes
 Nested selectors MAY change element styles relative to a block state or theme set.
 
 Trace:
 - Satisfied By:
-  - ARC-BEM-CSS-0001
+  - [ARC-BEM-CSS-0001](./sample-architecture.md)
 - Verified By:
-  - VER-BEM-CSS-0001
+  - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
-  - REQ-BEM-CSS-0004
-  - REQ-BEM-CONCEPTS-0003
+  - [REQ-BEM-CSS-0004](./SPEC-BEM-CSS.md)
+  - [REQ-BEM-CONCEPTS-0003](./SPEC-BEM-CONCEPTS.md)
 - Source Refs:
   - https://en.bem.info/methodology/css/
 
-## REQ-BEM-CSS-0006 Avoid combined selectors
+## [`REQ-BEM-CSS-0006`](./SPEC-BEM-CSS.md) Avoid combined selectors
 Combined selectors SHOULD NOT be used.
 
 Trace:
 - Satisfied By:
-  - ARC-BEM-CSS-0001
+  - [ARC-BEM-CSS-0001](./sample-architecture.md)
 - Verified By:
-  - VER-BEM-CSS-0001
+  - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
-  - REQ-BEM-CSS-0001
+  - [REQ-BEM-CSS-0001](./SPEC-BEM-CSS.md)
 - Source Refs:
   - https://en.bem.info/methodology/css/
   - https://en.bem.info/methodology/faq/?lang=en
 
-## REQ-BEM-CSS-0007 Allow mixes to combine entities on one node
+## [`REQ-BEM-CSS-0007`](./SPEC-BEM-CSS.md) Allow mixes to combine entities on one node
 A mix MAY combine multiple BEM entities on the same DOM node.
 
 Trace:
 - Satisfied By:
-  - ARC-BEM-CSS-0001
+  - [ARC-BEM-CSS-0001](./sample-architecture.md)
 - Verified By:
-  - VER-BEM-CSS-0001
+  - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
-  - REQ-BEM-CONCEPTS-0006
+  - [REQ-BEM-CONCEPTS-0006](./SPEC-BEM-CONCEPTS.md)
 - Source Refs:
   - https://en.bem.info/methodology/quick-start/
   - https://en.bem.info/methodology/html/
   - https://en.bem.info/methodology/css/
 
-## REQ-BEM-CSS-0008 Use mixes for external geometry and positioning
+## [`REQ-BEM-CSS-0008`](./SPEC-BEM-CSS.md) Use mixes for external geometry and positioning
 External geometry and positioning SHOULD be set via the parent block or a mix.
 
 Trace:
 - Satisfied By:
-  - ARC-BEM-CSS-0001
+  - [ARC-BEM-CSS-0001](./sample-architecture.md)
 - Verified By:
-  - VER-BEM-CSS-0001
+  - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
-  - REQ-BEM-CONCEPTS-0007
+  - [REQ-BEM-CONCEPTS-0007](./SPEC-BEM-CONCEPTS.md)
 - Source Refs:
   - https://en.bem.info/methodology/quick-start/
   - https://en.bem.info/methodology/html/
   - https://en.bem.info/methodology/css/
 
-## REQ-BEM-CSS-0009 Avoid wrapper-heavy positioning
+## [`REQ-BEM-CSS-0009`](./SPEC-BEM-CSS.md) Avoid wrapper-heavy positioning
 Implementations SHOULD use mixes instead of wrapper blocks when positioning one block relative to another.
 
 Trace:
 - Satisfied By:
-  - ARC-BEM-CSS-0001
+  - [ARC-BEM-CSS-0001](./sample-architecture.md)
 - Verified By:
-  - VER-BEM-CSS-0001
+  - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
-  - REQ-BEM-CSS-0008
-  - REQ-BEM-CONCEPTS-0006
+  - [REQ-BEM-CSS-0008](./SPEC-BEM-CSS.md)
+  - [REQ-BEM-CONCEPTS-0006](./SPEC-BEM-CONCEPTS.md)
 - Source Refs:
   - https://en.bem.info/methodology/html/
   - https://en.bem.info/methodology/css/
 
-## REQ-BEM-CSS-0010 Use selector names that accurately describe the entity
+## [`REQ-BEM-CSS-0010`](./SPEC-BEM-CSS.md) Use selector names that accurately describe the entity
 The name of a selector SHOULD fully and accurately describe the BEM entity it represents.
 
 Trace:
 - Satisfied By:
-  - ARC-BEM-CSS-0001
+  - [ARC-BEM-CSS-0001](./sample-architecture.md)
 - Verified By:
-  - VER-BEM-CSS-0001
+  - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
-  - REQ-BEM-CONCEPTS-0001
-  - REQ-BEM-CONCEPTS-0002
-  - REQ-BEM-CONCEPTS-0003
+  - [REQ-BEM-CONCEPTS-0001](./SPEC-BEM-CONCEPTS.md)
+  - [REQ-BEM-CONCEPTS-0002](./SPEC-BEM-CONCEPTS.md)
+  - [REQ-BEM-CONCEPTS-0003](./SPEC-BEM-CONCEPTS.md)
 - Source Refs:
   - https://en.bem.info/methodology/css/
 

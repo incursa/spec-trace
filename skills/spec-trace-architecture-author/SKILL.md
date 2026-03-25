@@ -10,15 +10,15 @@ Use this skill to author design documents that explain how requirements are sati
 ## Read First
 
 - the relevant `SPEC-...` file
-- `../../specs/requirements/spec-trace/SPEC-STD.md`
-- `../../specs/requirements/spec-trace/SPEC-TPL.md`
-- `../../architecture-template.md`
-- the closest example architecture artifact under `../../examples/`
+- [`../../specs/requirements/spec-trace/SPEC-STD.md`](../../specs/requirements/spec-trace/SPEC-STD.md)
+- [`../../specs/requirements/spec-trace/SPEC-TPL.md`](../../specs/requirements/spec-trace/SPEC-TPL.md)
+- [`../../architecture-template.md`](../../architecture-template.md)
+- the closest example architecture artifact under [`../../examples/`](../../examples/)
 
 ## Workflow
 
 1. Start from the requirements being satisfied and keep those IDs visible throughout the document.
-2. Use `../../architecture-template.md` as the base shape unless the repo already has a stronger local pattern.
+2. Use [`../../architecture-template.md`](../../architecture-template.md) as the base shape unless the repo already has a stronger local pattern.
 3. Explain the chosen mechanism, state and data considerations, edge cases, constraints, rejected alternatives, and risks.
 4. Keep the `satisfies` links accurate and update related artifacts when the design scope changes.
 5. If the design introduces or changes normative behavior, update the specification instead of hiding the rule inside the architecture artifact.

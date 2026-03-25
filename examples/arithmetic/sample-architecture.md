@@ -6,16 +6,16 @@ domain: arithmetic
 status: approved
 owner: platform-core
 satisfies:
-  - REQ-MATH-DIV-0001
-  - REQ-MATH-DIV-0002
-  - REQ-MATH-DIV-0003
+  - [REQ-MATH-DIV-0001](./SPEC-MATH-DIV.md)
+  - [REQ-MATH-DIV-0002](./SPEC-MATH-DIV.md)
+  - [REQ-MATH-DIV-0003](./SPEC-MATH-DIV.md)
 related_artifacts:
-  - SPEC-MATH-DIV
-  - WI-MATH-DIV-0001
-  - VER-MATH-DIV-0001
+  - [SPEC-MATH-DIV](./SPEC-MATH-DIV.md)
+  - [WI-MATH-DIV-0001](./sample-work-item.md)
+  - [VER-MATH-DIV-0001](./sample-verification.md)
 ---
 
-# ARC-MATH-DIV-0001 - Division Operation Design
+# [`ARC-MATH-DIV-0001`](./sample-architecture.md) - Division Operation Design
 
 ## Purpose
 
@@ -23,9 +23,9 @@ Describe the minimal design used to satisfy the division contract.
 
 ## Requirements Satisfied
 
-- REQ-MATH-DIV-0001
-- REQ-MATH-DIV-0002
-- REQ-MATH-DIV-0003
+- [REQ-MATH-DIV-0001](./SPEC-MATH-DIV.md)
+- [REQ-MATH-DIV-0002](./SPEC-MATH-DIV.md)
+- [REQ-MATH-DIV-0003](./SPEC-MATH-DIV.md)
 
 ## Design Summary
 

@@ -9,23 +9,23 @@ Use this skill when a request affects the standard itself or any surface that mi
 
 ## Read First
 
-- `../../specs/requirements/spec-trace/_index.md`
-- `../../specs/requirements/spec-trace/SPEC-STD.md`
-- `../../specs/requirements/spec-trace/SPEC-TPL.md`
-- `../../specs/requirements/spec-trace/SPEC-SCH.md`
-- `../../specs/requirements/spec-trace/SPEC-EXM.md`
-- `../../specs/requirements/spec-trace/SPEC-PRF.md`
-- `../../CONTRIBUTING.md`
-- `../../schemas/README.md`
+- [`../../specs/requirements/spec-trace/_index.md`](../../specs/requirements/spec-trace/_index.md)
+- [`../../specs/requirements/spec-trace/SPEC-STD.md`](../../specs/requirements/spec-trace/SPEC-STD.md)
+- [`../../specs/requirements/spec-trace/SPEC-TPL.md`](../../specs/requirements/spec-trace/SPEC-TPL.md)
+- [`../../specs/requirements/spec-trace/SPEC-SCH.md`](../../specs/requirements/spec-trace/SPEC-SCH.md)
+- [`../../specs/requirements/spec-trace/SPEC-EXM.md`](../../specs/requirements/spec-trace/SPEC-EXM.md)
+- [`../../specs/requirements/spec-trace/SPEC-PRF.md`](../../specs/requirements/spec-trace/SPEC-PRF.md)
+- [`../../CONTRIBUTING.md`](../../CONTRIBUTING.md)
+- [`../../schemas/README.md`](../../schemas/README.md)
 - the affected root templates, examples, and summary docs
 
 ## Workflow
 
 1. Classify the request as either a canonical change or a support-surface cleanup.
 2. If the change is canonical, update the authoritative SPEC files first.
-3. Propagate the result through templates, schemas, examples, root docs, changelog, and AI convenience surfaces such as `../../AGENTS.md`, `../../LLMS.txt`, and `../../skills/`.
+3. Propagate the result through templates, schemas, examples, root docs, changelog, and AI convenience surfaces such as [`../../AGENTS.md`](../../AGENTS.md), [`../../LLMS.txt`](../../LLMS.txt), and [`../../skills/`](../../skills/).
 4. Check for drift in terminology, field names, identifier shapes, trace labels, and example coverage.
-5. Run `../../scripts/Test-SpecTraceRepository.ps1` and call out duplicate IDs, unresolved links, reciprocal mismatches, namespace drift, or profile failures explicitly.
+5. Run [`../../scripts/Test-SpecTraceRepository.ps1`](../../scripts/Test-SpecTraceRepository.ps1) and call out duplicate IDs, unresolved links, reciprocal mismatches, namespace drift, or profile failures explicitly.
 
 ## Guardrails
 

@@ -1,0 +1,12 @@
+name = "spec_trace_specification_author"
+description = "Draft or regroup Spec Trace specification files."
+model = "gpt-5.4-mini"
+model_reasoning_effort = "medium"
+sandbox_mode = "workspace-write"
+developer_instructions = """
+Start from the canonical SPEC suite and the nearest example specification.
+Create or extend the owning `SPEC-...` document when the capability or concern already fits an existing specification.
+Keep Purpose, Scope, and Context document-level; keep normative behavior in `REQ-...` clauses inside the file.
+Do not bury design, work, or verification content inside the specification.
+If the request exposes a missing requirement or unresolved gap, hand it back to the gap tracker before expanding the spec.
+"""

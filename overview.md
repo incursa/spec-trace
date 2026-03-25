@@ -1,6 +1,6 @@
 # Overview
 
-This file summarizes the standard described in `specs/requirements/spec-trace/`. It is a practical guide, not a second source of truth.
+This file summarizes the standard described in [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/). It is a practical guide, not a second source of truth.
 
 The core artifact families are specification, architecture, work item, and verification.
 
@@ -40,7 +40,7 @@ The standard gives first-class weight to links from a requirement to:
 - tests
 - code references
 
-The published schemas constrain the direct link families, and repository-wide validation through `scripts/Test-SpecTraceRepository.ps1` checks duplicate IDs, unresolved direct links, reciprocal consistency, namespace alignment, and profile rules.
+The published schemas constrain the direct link families, and repository-wide validation through [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1) checks duplicate IDs, unresolved direct links, reciprocal consistency, namespace alignment, and profile rules.
 Inline identifier references are prose mentions, not trace edges. They live outside the structured `Trace` block even when they point at canonical artifact IDs.
 
 ### Inline Identifier References
@@ -50,6 +50,8 @@ An inline identifier reference is a backtick-delimited stable artifact ID inside
 Inline identifier references are lightweight, human-readable, machine-detectable links. They may indicate dependency, compliance, constraint, or another explicit relation, but they do not imply inheritance or copying.
 
 Inline identifier references are allowed in requirement clauses, `Notes`, and other descriptive sections. Use them for component conformance, token usage, and cross-spec relationships. Avoid overuse when a structured `Trace` block is a better fit.
+
+When the target is a repo-local file or folder, use a relative Markdown link instead of a bare code span. If the link text should stay monospace, put backticks inside the link text.
 
 Requirements may reference other requirements and specifications inline; architecture, work-item, and verification prose may also use inline references when the relationship is lightweight and the stable ID is enough.
 
@@ -63,7 +65,7 @@ The standard defines three repository-level conformance profiles:
 
 Core is the default low-burden baseline. Stricter profiles are opt-in repository policy rather than per-artifact metadata.
 
-Use `scripts/Test-SpecTraceRepository.ps1` with `-Profile core`, `-Profile traceable`, or `-Profile auditable` to enforce those levels. Add `-JsonReportPath` when you need a machine-readable report.
+Use [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1) with `-Profile core`, `-Profile traceable`, or `-Profile auditable` to enforce those levels. Add `-JsonReportPath` when you need a machine-readable report.
 
 ### Requirement Lineage And Evolution
 
@@ -109,7 +111,7 @@ Requirement clauses use the following approved keywords:
 
 Every canonical requirement clause must contain exactly one approved keyword in all caps.
 
-The keyword does not need to be the first word in the sentence, but it must appear in the normative clause, it must be uppercase, and no second approved keyword may appear in the same clause.
+The keyword does not need to be the first word in the sentence, but it must appear in the normative clause, it must be uppercase, and no second approved keyword may appear in the same clause. The approved keyword set is defined in [`SPEC-TPL`](./specs/requirements/spec-trace/SPEC-TPL.md).
 
 ## Canonical Requirement Form
 
@@ -177,7 +179,7 @@ When a requirement includes a `Trace` block, the canonical labels are:
 - `Code Refs`
 - `Related`
 
-These labels map to the extracted metadata validated by the schemas in `schemas/`.
+These labels map to the extracted metadata validated by the schemas in [`schemas/`](./schemas/).
 
 `Test Refs` and `Code Refs` are implementation-specific string references. The standard does not prescribe one syntax. Valid references may include:
 

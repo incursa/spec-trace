@@ -12,11 +12,11 @@ tags:
   - bem
   - conventions
 related_artifacts:
-  - SPEC-UI-BUTTON
-  - SPEC-UI-INPUT
+  - [SPEC-UI-BUTTON](./SPEC-UI-BUTTON.md)
+  - [SPEC-UI-INPUT](./SPEC-UI-INPUT.md)
 ---
 
-# SPEC-UI-CONVENTIONS - UI Naming Conventions
+# [`SPEC-UI-CONVENTIONS`](./SPEC-UI-CONVENTIONS.md) - UI Naming Conventions
 
 ## Purpose
 
@@ -30,35 +30,35 @@ This specification covers the block, element, and modifier forms used by the but
 
 The component specs reuse the same naming contract so the example can show shared requirements without repeating the class-name rules in each component file.
 
-## REQ-UI-CONVENTIONS-0001 Use a UI block namespace
+## [`REQ-UI-CONVENTIONS-0001`](./SPEC-UI-CONVENTIONS.md) Use a UI block namespace
 Shared UI block classes MUST use a `ui-` namespace prefix.
 
 Trace:
 - Related:
-  - REQ-UI-BUTTON-0001
-  - REQ-UI-INPUT-0001
+  - [REQ-UI-BUTTON-0001](./SPEC-UI-BUTTON.md)
+  - [REQ-UI-INPUT-0001](./SPEC-UI-INPUT.md)
 
-## REQ-UI-CONVENTIONS-0002 Use BEM element classes
+## [`REQ-UI-CONVENTIONS-0002`](./SPEC-UI-CONVENTIONS.md) Use BEM element classes
 UI element classes MUST use the `block__element` form.
 
 Trace:
 - Related:
-  - REQ-UI-INPUT-0002
+  - [REQ-UI-INPUT-0002](./SPEC-UI-INPUT.md)
 
-## REQ-UI-CONVENTIONS-0003 Use BEM modifier classes
+## [`REQ-UI-CONVENTIONS-0003`](./SPEC-UI-CONVENTIONS.md) Use BEM modifier classes
 UI modifier classes MUST use the `block--modifier` or `block__element--modifier` form.
 
 Trace:
 - Related:
-  - REQ-UI-BUTTON-0002
-  - REQ-UI-BUTTON-0003
-  - REQ-UI-BUTTON-0004
-  - REQ-UI-BUTTON-0005
-  - REQ-UI-BUTTON-0006
-  - REQ-UI-INPUT-0003
-  - REQ-UI-INPUT-0004
-  - REQ-UI-INPUT-0005
-  - REQ-UI-INPUT-0006
+  - [REQ-UI-BUTTON-0002](./SPEC-UI-BUTTON.md)
+  - [REQ-UI-BUTTON-0003](./SPEC-UI-BUTTON.md)
+  - [REQ-UI-BUTTON-0004](./SPEC-UI-BUTTON.md)
+  - [REQ-UI-BUTTON-0005](./SPEC-UI-BUTTON.md)
+  - [REQ-UI-BUTTON-0006](./SPEC-UI-BUTTON.md)
+  - [REQ-UI-INPUT-0003](./SPEC-UI-INPUT.md)
+  - [REQ-UI-INPUT-0004](./SPEC-UI-INPUT.md)
+  - [REQ-UI-INPUT-0005](./SPEC-UI-INPUT.md)
+  - [REQ-UI-INPUT-0006](./SPEC-UI-INPUT.md)
 
 Notes:
 - Examples include `ui-button`, `ui-button--primary`, `ui-button--disabled`, `ui-input__field`, and `ui-input--invalid`.
