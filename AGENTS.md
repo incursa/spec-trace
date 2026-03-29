@@ -47,5 +47,6 @@ If you find a mismatch, follow the higher-authority source and fix the lower-aut
 - [`LLMS.txt`](./LLMS.txt) is the lightweight plain-text bootstrap.
 - [`skills/README.md`](./skills/README.md) catalogs the repo-local authoring skills.
 - [`authoring.md`](./authoring.md) is the task-oriented human guide that points back to the authoritative sources.
+- [`artifact-model-explainer.md`](./artifact-model-explainer.md) is the plain-language operational model for artifact families, profiles, provenance, direct refs, and downstream trace.
 - [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1) is the repository-level validation entry point for duplicate IDs, unresolved direct links, reciprocal consistency, namespace alignment, and profile enforcement.
 - [`scripts/Validate-SpecTrace.ps1`](./scripts/Validate-SpecTrace.ps1) remains a narrower compatibility check for the canonical bundle.

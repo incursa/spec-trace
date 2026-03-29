@@ -124,6 +124,7 @@ A requirement `Trace` block MUST treat `Satisfied By`, `Implemented By`, and `Ve
 Notes:
 - The trace block records explicit relationships, while the surrounding prose may add context.
 - Inline identifier references stay separate from the trace block and do not change the meaning of its labels.
+- `Test Refs` and `Code Refs` can help readers and tools find implementation details, but they are not substitutes for `Satisfied By`, `Implemented By`, or `Verified By`.
 
 ## [`REQ-TPL-0009`](./SPEC-TPL.md) Keep one specification and its requirements in the same file
 A specification document MUST represent one specification in one Markdown file.

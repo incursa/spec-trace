@@ -34,6 +34,7 @@ When working in this repository:
 ## Task Routing
 
 - [`authoring.md`](./authoring.md): task-oriented entry point for choosing specification, requirement, architecture, work-item, or verification workflows.
+- [`artifact-model-explainer.md`](./artifact-model-explainer.md): plain-language explanation of the artifact families, profiles, provenance, direct refs, and canonical downstream trace.
 - [`overview.md`](./overview.md): concise summary of the core model and canonical requirement form.
 - [`layout.md`](./layout.md): recommended repository structure and placement guidance.
 - [`README.md`](./README.md): package overview, getting started, and tool index.

@@ -33,6 +33,7 @@ The standard MUST define `core`, `traceable`, and `auditable` as its only canoni
 Notes:
 - The profiles are ordered from least strict to most strict.
 - The profile names are canonical; repositories may add local policy names, but not new canonical profiles.
+- Reader-friendly shorthand such as spec-valid, artifact-linked, and evidence-backed may help explanation, but it does not create alternate canonical names.
 
 ## [`REQ-PRF-0002`](./SPEC-PRF.md) Keep the core profile minimal
 The `core` profile MUST require schema-conformant shape, identifier correctness, and approved normative keyword correctness only.
@@ -40,6 +41,7 @@ The `core` profile MUST require schema-conformant shape, identifier correctness,
 Notes:
 - `core` is the low-burden baseline.
 - `core` does not require downstream trace completeness, verification coverage, or reciprocal trace checks.
+- In practice, `core` is the spec-valid baseline: the requirements are structurally valid and trustworthy as requirements.
 
 ## [`REQ-PRF-0003`](./SPEC-PRF.md) Define the traceable profile as core plus graph hygiene
 The `traceable` profile MUST require the `core` profile plus no unresolved artifact or requirement references, no duplicate IDs, and at least one downstream trace link for every requirement.
@@ -47,6 +49,7 @@ The `traceable` profile MUST require the `core` profile plus no unresolved artif
 Notes:
 - Downstream trace links are `Satisfied By`, `Implemented By`, and `Verified By`.
 - Upstream lineage fields such as `Derived From`, `Supersedes`, and `Source Refs` do not satisfy the downstream-trace requirement by themselves.
+- In practice, `traceable` is artifact-linked: every requirement must be connected to at least one downstream artifact.
 
 ## [`REQ-PRF-0004`](./SPEC-PRF.md) Define the auditable profile as traceable plus proof coverage
 The `auditable` profile MUST require the `traceable` profile plus verification coverage for every requirement, reciprocal trace agreement where reciprocal fields exist, and no orphan ARC, WI, or VER artifacts.
@@ -55,6 +58,8 @@ Notes:
 - Verification coverage means each requirement has at least one `Verified By` link.
 - Reciprocal fields exist when a linked architecture, work item, or verification artifact can mirror the requirement's downstream trace.
 - An orphan ARC, WI, or VER artifact is an artifact that is not targeted by any requirement's downstream trace links.
+- In practice, `auditable` is evidence-backed: every requirement has verification coverage and the graph is internally consistent.
+- `auditable` does not mean formal proof of correctness or certification-style assurance.
 
 ## [`REQ-PRF-0005`](./SPEC-PRF.md) Keep profile choice lightweight and repository-scoped
 The standard MUST remain usable at `core` level without per-artifact profile fields or certification records.
@@ -62,3 +67,4 @@ The standard MUST remain usable at `core` level without per-artifact profile fie
 Notes:
 - A repository MAY choose one canonical profile as its local enforcement target.
 - Profile choice is repository policy, not canonical artifact metadata.
+- Local policy terms such as implemented, verified, and release-ready may be useful inside a repository, but they remain outside the canonical profile set unless the repository standardizes them.

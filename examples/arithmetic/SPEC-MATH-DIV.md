@@ -32,10 +32,16 @@ Trace:
   - [WI-MATH-DIV-0001](./sample-work-item.md)
 - Verified By:
   - [VER-MATH-DIV-0001](./sample-verification.md)
+- Source Refs:
+  - API design note: divide requests must provide both operands
 - Test Refs:
   - tests/arithmetic/divide.spec::requires_two_operands
 - Code Refs:
   - arithmetic.divide
+
+Notes:
+- `Source Refs` records the upstream design note that motivated the rule.
+- `Test Refs` and `Code Refs` are direct implementation references; they do not replace the downstream trace graph.
 
 ## [`REQ-MATH-DIV-0002`](./SPEC-MATH-DIV.md) Return the quotient for a non-zero denominator
 The divide operation MUST return `numerator / denominator` when the denominator is not `0`.

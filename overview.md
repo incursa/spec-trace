@@ -4,6 +4,8 @@ This file summarizes the standard described in [`specs/requirements/spec-trace/`
 
 The core artifact families are specification, architecture, work item, and verification.
 
+If you want the operational model in plain language, read [`artifact-model-explainer.md`](./artifact-model-explainer.md). This overview stays shorter and points at the explainer for the practical interpretation of profiles, provenance, and trace labels.
+
 ## Core Vocabulary
 
 ### Specification
@@ -40,6 +42,8 @@ The standard gives first-class weight to links from a requirement to:
 - tests
 - code references
 
+In practice, the canonical downstream trace is `Satisfied By`, `Implemented By`, and `Verified By`. `Source Refs` are upstream provenance, `Derived From` and `Supersedes` are lineage, and `Test Refs` and `Code Refs` are direct implementation references.
+
 The published schemas constrain the direct link families, and repository-wide validation through [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1) checks duplicate IDs, unresolved direct links, reciprocal consistency, namespace alignment, and profile rules.
 Inline identifier references are prose mentions, not trace edges. They live outside the structured `Trace` block even when they point at canonical artifact IDs.
 
@@ -63,7 +67,15 @@ The standard defines three repository-level conformance profiles:
 - `traceable`: core plus no unresolved artifact or requirement refs, no duplicate IDs, and at least one downstream trace link for every requirement
 - `auditable`: traceable plus verification coverage for every requirement, reciprocal trace agreement where reciprocal fields exist, and no orphan ARC, WI, or VER artifacts
 
+Practical reading:
+
+- `core` is spec-valid.
+- `traceable` is artifact-linked.
+- `auditable` is evidence-backed.
+
 Core is the default low-burden baseline. Stricter profiles are opt-in repository policy rather than per-artifact metadata.
+
+`auditable` means the repository has recorded verification coverage and internal graph consistency. It does not mean formal proof of correctness.
 
 Use [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1) with `-Profile core`, `-Profile traceable`, or `-Profile auditable` to enforce those levels. Add `-JsonReportPath` when you need a machine-readable report.
 
@@ -87,13 +99,19 @@ A verification artifact describes how one or more requirements were verified and
 
 Verification artifacts may summarize verification at a higher level than individual tests. Tests may still reference requirement IDs directly.
 
+`Verified By` means the requirement is covered by a verification artifact. It does not by itself mean a formal proof or a stronger local release gate.
+
 ### Work Item
 
 A work item describes implementation work. It is not the requirement itself.
 
+Work items are delivery records, not normative statements.
+
 ### Architecture or Design Artifact
 
 An architecture or design artifact explains how one or more requirements will be satisfied. It is the default place for design rationale and decision tradeoffs. It is not the requirement itself. Decision records are not part of the core standard today; a repository may add them later as an optional local extension.
+
+Architecture is intent and design, not the requirement clause.
 
 ## Normative Keywords
 

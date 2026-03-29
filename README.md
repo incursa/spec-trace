@@ -22,15 +22,20 @@ The reference package also includes repository-wide validation through [`scripts
 - The clause should describe the required behavior, rule, or constraint. `Notes` carry rationale, clarification, and examples.
 - The standard uses BCP 14-style uppercase requirement language inspired by RFC 2119 and RFC 8174. The approved set is `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, and `MAY`. Only uppercase forms are normative; lowercase spellings are plain English.
 - Traceability is explicit. Related artifacts are linked by stable IDs in structured `Trace` fields, by inline backtick references in prose when a lightweight cross-link is enough, or by implementation-specific string references. Inline references are prose mentions, not trace edges.
-- Structured `Trace` fields have typed semantics by family: `Satisfied By`, `Implemented By`, and `Verified By` are downstream links; `Derived From` and `Supersedes` are lineage; `Source Refs` are upstream source citations; `Test Refs` and `Code Refs` are implementation-specific string references; `Related` is a loose association.
+- Structured `Trace` fields have typed semantics by family: `Satisfied By`, `Implemented By`, and `Verified By` are downstream links; `Derived From` and `Supersedes` are lineage; `Source Refs` are upstream provenance; `Test Refs` and `Code Refs` are implementation-specific direct references; `Related` is a loose association.
 - File-level front matter stays strict for the core keys, and repositories may add optional namespaced `x_...` keys for local extensions.
 - Optional upstream lineage can record `Derived From`, `Supersedes`, and `Source Refs` when requirement history or external sources matter.
-- The standard defines three conformance profiles: `core`, `traceable`, and `auditable`. `core` is the low-burden baseline; stricter profiles are opt-in repository policy.
+- The standard defines three conformance profiles: `core`, `traceable`, and `auditable`. In practical terms, those read as `spec-valid`, `artifact-linked`, and `evidence-backed` respectively, but the canonical names remain `core`, `traceable`, and `auditable`.
+- `core` remains the low-burden baseline.
 - The core artifact families are specification, architecture, work item, and verification.
 - Architecture artifacts are the default place for design rationale and decision tradeoffs.
+- Work items describe implementation work, not requirement text.
+- Verification artifacts record how requirements were checked and what shared outcome was recorded. A verification artifact has one status that applies to every requirement it lists. Tests may reference requirement IDs directly. Code may reference requirement IDs directly.
+- `Verified By` means the requirement is covered by a verification artifact. It does not mean formal proof of correctness.
 - Decision records are not part of the core standard today; they may be added later as an optional local extension.
-- Verification proves a requirement. A verification artifact has one status that applies to every requirement it lists. Tests may reference requirement IDs directly. Code may reference requirement IDs directly.
 - Each specification Markdown file contains one specification and one or more related `REQ-...` clauses under it.
+
+For a compact operational explanation of the artifact model, read [`artifact-model-explainer.md`](./artifact-model-explainer.md) and the worked examples under [`examples/`](./examples/).
 
 The standard is intentionally small. It does not require a requirements platform, a workflow tool, Gherkin, or a test-framework abstraction layer.
 
@@ -40,10 +45,11 @@ The standard is intentionally small. It does not require a requirements platform
 2. Read [`overview.md`](./overview.md) for the compact authoring model.
 3. Read [`layout.md`](./layout.md) for the recommended repository structure.
 4. Read [`authoring.md`](./authoring.md) for the task-oriented authoring workflow across specifications, requirements, design, work items, and verification artifacts.
-5. Copy from the root templates, such as [`spec-template.md`](./spec-template.md), [`architecture-template.md`](./architecture-template.md), [`work-item-template.md`](./work-item-template.md), and [`verification-template.md`](./verification-template.md), if you want a starting point for your own repo.
-6. Use [`artifact-id-policy.json`](./artifact-id-policy.json) and the files under [`schemas/`](./schemas/) for machine-readable validation targets.
-7. Open [`examples/README.md`](./examples/README.md) for worked examples, including a product-style payments example and a narrow arithmetic example.
-8. If you use AI-assisted authoring, point the agent at [`AGENTS.md`](./AGENTS.md), [`LLMS.txt`](./LLMS.txt), and the repo-local collection under [`skills/`](./skills/).
+5. Read [`artifact-model-explainer.md`](./artifact-model-explainer.md) for a plain-language explanation of the artifact families, profiles, provenance, direct refs, and canonical downstream trace.
+6. Copy from the root templates, such as [`spec-template.md`](./spec-template.md), [`architecture-template.md`](./architecture-template.md), [`work-item-template.md`](./work-item-template.md), and [`verification-template.md`](./verification-template.md), if you want a starting point for your own repo.
+7. Use [`artifact-id-policy.json`](./artifact-id-policy.json) and the files under [`schemas/`](./schemas/) for machine-readable validation targets.
+8. Open [`examples/README.md`](./examples/README.md) for worked examples, including a product-style payments example and a narrow arithmetic example.
+9. If you use AI-assisted authoring, point the agent at [`AGENTS.md`](./AGENTS.md), [`LLMS.txt`](./LLMS.txt), [`artifact-model-explainer.md`](./artifact-model-explainer.md), and the repo-local collection under [`skills/`](./skills/).
 
 ## Repository Contents
 

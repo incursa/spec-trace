@@ -2,6 +2,8 @@
 
 This guide is a practical entry point for people and agents working with `spec-trace`. It is not normative. The canonical standard lives under [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/).
 
+If you want the operational model in plain language, start with [`artifact-model-explainer.md`](./artifact-model-explainer.md) and then return here for the task-oriented workflow.
+
 ## Authority Model
 
 Use the repository in this order:
@@ -61,7 +63,9 @@ Read first:
 - [`specs/requirements/spec-trace/SPEC-STD.md`](./specs/requirements/spec-trace/SPEC-STD.md)
 - [`specs/requirements/spec-trace/SPEC-SCH.md`](./specs/requirements/spec-trace/SPEC-SCH.md)
 
-Core keeps the authoring burden low. `traceable` and `auditable` are stricter repository policies, not new artifact families.
+Core keeps the authoring burden low. In plain language, `core` is spec-valid, `traceable` is artifact-linked, and `auditable` is evidence-backed. Those are explanatory phrases only; the canonical profile names remain `core`, `traceable`, and `auditable`.
+
+`Verified By` means a requirement is covered by a verification artifact. `Verified` in local workflow terms may be stronger or looser depending on repository policy, but that policy sits outside the canonical standard unless the repository standardizes it.
 
 ### Architecture Or Design Artifact
 
@@ -77,6 +81,8 @@ Read first:
 
 Use a work item when you need to describe implementation work, delivery scope, and trace links back to requirements and design inputs.
 
+Work items are where you record what was implemented, not what the requirement says.
+
 Read first:
 
 - the relevant `SPEC-...` file
@@ -87,6 +93,8 @@ Read first:
 ### Verification Artifact
 
 Use a verification artifact when you need to record how requirements were proven and what the shared outcome was. If the requirements do not share one outcome, split the verification scope across multiple artifacts.
+
+Verification artifacts record repository practice for checking requirements; they do not automatically mean formal proof of correctness.
 
 Read first:
 
@@ -103,6 +111,8 @@ Read first:
 4. Draft or revise the artifact.
 5. Run [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1) and check that trace links point at stable IDs rather than loose prose, with no duplicate IDs, unresolved references, reciprocal mismatches, or namespace drift. Use `-Profile traceable` or `-Profile auditable` when you want the stricter repository policies, and `-JsonReportPath` when you need a machine-readable report.
    Also check that any inline identifier references are backtick-delimited stable IDs rather than loose prose.
+
+6. When you need to explain the operational model to another person, point them at [`artifact-model-explainer.md`](./artifact-model-explainer.md) and the worked examples under [`examples/`](./examples/).
 
 ## When The Standard Changes
 

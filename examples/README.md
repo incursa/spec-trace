@@ -10,6 +10,8 @@ Where it helps the narrative, the examples also show optional upstream lineage t
 
 Requirement titles in the examples are short descriptive labels for the obligation or concern; the clause carries the normative behavior and `Notes` carry the extras.
 
+If you want the operational model explained in plain language first, read [`../artifact-model-explainer.md`](../artifact-model-explainer.md). It separates canonical downstream trace from provenance and direct implementation references.
+
 ## Inline Identifier References
 
 Inline identifier references use backticks around stable IDs. They are lightweight links for prose when a full `Trace` block would be heavier than necessary.
@@ -51,6 +53,14 @@ It demonstrates:
 - stable requirement IDs that can be referenced directly from tests and code
 - inline identifier references that keep shared rules visible without duplicating trace blocks
 - verification artifacts with one shared status per artifact
+
+It also shows the difference between:
+
+- provenance in `Source Refs`
+- canonical downstream trace in `Satisfied By`, `Implemented By`, and `Verified By`
+- direct implementation references in `Test Refs` and `Code Refs`
+
+That makes it the smallest worked example for the operational model.
 
 ### UI Design System
 

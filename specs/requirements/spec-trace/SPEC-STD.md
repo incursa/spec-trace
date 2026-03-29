@@ -111,11 +111,22 @@ A canonical requirement MUST appear inside its specification document rather tha
 ## [`REQ-STD-0010`](./SPEC-STD.md) Distinguish work items from requirements
 A work item MUST describe implementation work rather than normative requirement text.
 
+Notes:
+- A work item is a delivery record, not the requirement itself.
+
 ## [`REQ-STD-0011`](./SPEC-STD.md) Distinguish architecture from requirements
 An architecture or design artifact MUST explain how one or more requirements are satisfied rather than replace those requirements.
 
+Notes:
+- Architecture is intent and design, not the requirement clause.
+
 ## [`REQ-STD-0012`](./SPEC-STD.md) Distinguish verification artifacts and tests from requirements
 A verification artifact MUST record how one or more requirements were verified.
+
+Notes:
+- `Verified By` means the requirement is covered by one or more verification artifacts.
+- It does not by itself mean formal proof of program correctness.
+- The rigor of verification depends on repository practice and local policy.
 
 ## [`REQ-STD-0019`](./SPEC-STD.md) Keep verification outcomes homogeneous within one artifact
 A verification artifact MUST only list requirements in `verifies` when the artifact status applies to every listed requirement; mixed outcomes belong in separate verification artifacts.
@@ -131,6 +142,7 @@ Notes:
 - `core` is the low-burden baseline.
 - `traceable` and `auditable` are stricter optional repository profiles.
 - Profiles are repository-level enforcement targets, not per-artifact metadata.
+- Explanatory shorthand such as spec-valid, artifact-linked, and evidence-backed does not replace the canonical profile names.
 
 ## [`REQ-STD-0013`](./SPEC-STD.md) Distinguish code references from requirements
 Tests MAY reference requirement identifiers directly without becoming the requirements themselves.
