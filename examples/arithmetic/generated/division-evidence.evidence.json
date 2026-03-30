@@ -1,0 +1,67 @@
+{
+  "snapshot_id": "evidence-arithmetic-division-2026-03-30",
+  "generated_at": "2026-03-30T18:00:00Z",
+  "producer": {
+    "name": "example-evidence-generator",
+    "version": "1.0.0"
+  },
+  "requirements": [
+    {
+      "requirement_id": "REQ-MATH-DIV-0001",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/arithmetic/divide.spec::requires_two_operands"
+          ]
+        },
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "arithmetic.divide"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-MATH-DIV-0002",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/arithmetic/divide.spec::returns_quotient_for_non_zero_denominator"
+          ]
+        },
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "arithmetic.divide"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-MATH-DIV-0003",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/arithmetic/divide.spec::throws_on_zero_denominator"
+          ]
+        },
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "arithmetic.divide"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -46,7 +46,7 @@ Trace:
   - [REQ-BEM-NAMING-0003](./SPEC-BEM-NAMING.md)
   - [REQ-BEM-NAMING-0005](./SPEC-BEM-NAMING.md)
   - [REQ-BEM-NAMING-0006](./SPEC-BEM-NAMING.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/css/
 
 ## [`REQ-BEM-CSS-0002`](./SPEC-BEM-CSS.md) Avoid tag and ID selectors
@@ -57,7 +57,7 @@ Trace:
   - [ARC-BEM-CSS-0001](./sample-architecture.md)
 - Verified By:
   - [VER-BEM-CSS-0001](./sample-verification.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/css/
   - https://en.bem.info/methodology/quick-start/
 
@@ -71,7 +71,7 @@ Trace:
   - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
   - [REQ-BEM-CSS-0001](./SPEC-BEM-CSS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/css/
   - https://en.bem.info/methodology/faq/?lang=en
 
@@ -83,7 +83,7 @@ Trace:
   - [ARC-BEM-CSS-0001](./sample-architecture.md)
 - Verified By:
   - [VER-BEM-CSS-0001](./sample-verification.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/css/
 
 ## [`REQ-BEM-CSS-0005`](./SPEC-BEM-CSS.md) Limit nested selectors to block state or theme set changes
@@ -97,7 +97,7 @@ Trace:
 - Related:
   - [REQ-BEM-CSS-0004](./SPEC-BEM-CSS.md)
   - [REQ-BEM-CONCEPTS-0003](./SPEC-BEM-CONCEPTS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/css/
 
 ## [`REQ-BEM-CSS-0006`](./SPEC-BEM-CSS.md) Avoid combined selectors
@@ -110,7 +110,7 @@ Trace:
   - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
   - [REQ-BEM-CSS-0001](./SPEC-BEM-CSS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/css/
   - https://en.bem.info/methodology/faq/?lang=en
 
@@ -124,7 +124,7 @@ Trace:
   - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
   - [REQ-BEM-CONCEPTS-0006](./SPEC-BEM-CONCEPTS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
   - https://en.bem.info/methodology/html/
   - https://en.bem.info/methodology/css/
@@ -139,7 +139,7 @@ Trace:
   - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
   - [REQ-BEM-CONCEPTS-0007](./SPEC-BEM-CONCEPTS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
   - https://en.bem.info/methodology/html/
   - https://en.bem.info/methodology/css/
@@ -155,7 +155,7 @@ Trace:
 - Related:
   - [REQ-BEM-CSS-0008](./SPEC-BEM-CSS.md)
   - [REQ-BEM-CONCEPTS-0006](./SPEC-BEM-CONCEPTS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/html/
   - https://en.bem.info/methodology/css/
 
@@ -171,7 +171,7 @@ Trace:
   - [REQ-BEM-CONCEPTS-0001](./SPEC-BEM-CONCEPTS.md)
   - [REQ-BEM-CONCEPTS-0002](./SPEC-BEM-CONCEPTS.md)
   - [REQ-BEM-CONCEPTS-0003](./SPEC-BEM-CONCEPTS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/css/
 
 Notes:

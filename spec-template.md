@@ -40,12 +40,8 @@ Trace:
   - REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
 - Supersedes:
   - REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
-- Source Refs:
+- Upstream Refs:
   - <external reference>
-- Test Refs:
-  - <test reference>
-- Code Refs:
-  - <code reference>
 - Related:
   - <artifact or requirement ID>
 
@@ -67,12 +63,17 @@ The system SHOULD <recommended behavior>.
 - The clause should express one obligation, rule, or constraint and should usually be a single sentence.
 - Each specification Markdown file contains one specification and one or more related requirement clauses.
 - `Trace` and `Notes` are optional.
-- `Derived From` and `Supersedes` capture requirement lineage; `Source Refs` captures external upstream material.
+- `Derived From` and `Supersedes` capture requirement lineage; `Upstream Refs` captures external upstream material.
+- `Upstream Refs` may be as precise as the repository needs when source-coverage reporting matters.
 - Inline identifier references use backticks around stable artifact IDs in clauses, `Notes`, and descriptive text. Use them for lightweight cross-links; use `Trace` when the relationship should be structured and machine-extracted.
+- When a repo-local Markdown link targets a specific requirement or other headed subsection inside a specification artifact document, include the relevant heading anchor or other supported sub-document locator.
 - The short title should name the obligation or concern in a few words, not repeat the whole clause.
 - The clause should state the required behavior, rule, or constraint. Put rationale, examples, and caveats in `Notes`.
-- `Trace` labels have typed semantics: `Satisfied By`, `Implemented By`, and `Verified By` are downstream links; `Derived From` and `Supersedes` are lineage; `Source Refs` are source citations; `Test Refs` and `Code Refs` are implementation-specific references; `Related` is a loose association.
+- `Trace` labels have typed semantics: `Satisfied By`, `Implemented By`, and `Verified By` are downstream links; `Derived From` and `Supersedes` are lineage; `Upstream Refs` are source citations; `Related` is a loose association.
+- Coverage and attestation reporting are derived from the canonical graph; do not add per-requirement live-status fields to the template.
 - The clause is the normative content. Do not bury it under a required metadata block.
 - If you add richer local metadata, keep it clearly optional and do not place it between the requirement heading and the clause.
 - Front matter describes the document as a whole, not individual requirements.
-- `Test Refs` and `Code Refs` stay implementation-specific. The standard does not prescribe a framework or comment syntax.
+- Generated evidence snapshots carry tool-produced test, code, benchmark, or
+  other evidence observations; the core template does not embed those
+  implementation details in canonical requirement trace.

@@ -31,9 +31,11 @@ $ErrorActionPreference = 'Stop'
 Import-Module (Join-Path $PSScriptRoot 'SpecTrace.Helpers.psm1') -Force -DisableNameChecking
 
 $ApprovedKeywordPattern = '\b(?:MUST NOT|SHALL NOT|SHOULD NOT|MUST|SHALL|SHOULD|MAY)\b'
-$CanonicalTraceLabels = @('Satisfied By', 'Implemented By', 'Verified By', 'Derived From', 'Supersedes', 'Source Refs', 'Test Refs', 'Code Refs', 'Related')
+$CanonicalTraceLabels = @('Satisfied By', 'Implemented By', 'Verified By', 'Derived From', 'Supersedes', 'Upstream Refs', 'Related')
 $CanonicalWorkItemTraceLabels = @('Addresses', 'Uses Design', 'Verified By')
 $ArtifactTypes = @('specification', 'architecture', 'work_item', 'verification')
+$EvidenceStatusValues = @('observed', 'passed', 'failed', 'not_observed', 'not_collected', 'unsupported')
+$EvidenceKindPattern = '^[a-z][a-z0-9_]*$'
 
 $ArtifactFrontMatterKeys = @{
     specification = @('artifact_id', 'artifact_type', 'title', 'domain', 'capability', 'status', 'owner', 'tags', 'related_artifacts')
@@ -226,7 +228,7 @@ function Test-ReferenceList {
             continue
         }
 
-        $reference = $value.ToString().Trim()
+        $reference = Get-NormalizedIdentifierText ($value.ToString())
         $normalized += $reference
 
         $family = Get-ReferenceFamily $reference
@@ -339,10 +341,21 @@ function Get-SchemaPaths {
         (Join-Path $ResolvedRootPath 'artifact-id-policy.json')
         (Join-Path $ResolvedRootPath 'schemas/artifact-frontmatter.schema.json')
         (Join-Path $ResolvedRootPath 'schemas/artifact-id-policy.schema.json')
+        (Join-Path $ResolvedRootPath 'schemas/evidence-snapshot.schema.json')
         (Join-Path $ResolvedRootPath 'schemas/requirement-clause.schema.json')
         (Join-Path $ResolvedRootPath 'schemas/requirement-trace-fields.schema.json')
         (Join-Path $ResolvedRootPath 'schemas/work-item-trace-fields.schema.json')
     )
+}
+
+function Get-EvidenceSnapshotFiles {
+    param(
+        [string]$ResolvedRootPath,
+        [string]$ResolvedInputPath
+    )
+
+    $searchPath = if ($ResolvedInputPath -eq $ResolvedRootPath) { $ResolvedRootPath } else { $ResolvedInputPath }
+    return @(Get-ChildItem -LiteralPath $searchPath -Recurse -File -Filter *.evidence.json)
 }
 
 function Write-JsonReport {
@@ -467,10 +480,29 @@ if ($schemaObjects.ContainsKey((Join-Path $resolvedRootPath 'schemas/requirement
 if ($schemaObjects.ContainsKey((Join-Path $resolvedRootPath 'schemas/requirement-trace-fields.schema.json'))) {
     $schema = $schemaObjects[(Join-Path $resolvedRootPath 'schemas/requirement-trace-fields.schema.json')]
     $schemaFile = 'schemas/requirement-trace-fields.schema.json'
-    $expectedTraceKeys = @('Satisfied By', 'Implemented By', 'Verified By', 'Derived From', 'Supersedes', 'Source Refs', 'Test Refs', 'Code Refs', 'Related')
+    $expectedTraceKeys = @('Satisfied By', 'Implemented By', 'Verified By', 'Derived From', 'Supersedes', 'Upstream Refs', 'Related')
     $actualTraceKeys = @($schema.properties.PSObject.Properties.Name)
     if ($actualTraceKeys.Count -ne $expectedTraceKeys.Count -or (Compare-Object -ReferenceObject $expectedTraceKeys -DifferenceObject $actualTraceKeys)) {
         Add-Finding -Findings $findings -Severity 'error' -Code 'SCHEMA-TRACE' -File $schemaFile -Message "requirement trace schema must expose the canonical label set only."
+    }
+}
+
+if ($schemaObjects.ContainsKey((Join-Path $resolvedRootPath 'schemas/evidence-snapshot.schema.json'))) {
+    $schema = $schemaObjects[(Join-Path $resolvedRootPath 'schemas/evidence-snapshot.schema.json')]
+    $schemaFile = 'schemas/evidence-snapshot.schema.json'
+    $expectedTopLevelKeys = @('snapshot_id', 'generated_at', 'producer', 'requirements')
+    $actualTopLevelKeys = @($schema.properties.PSObject.Properties.Name)
+    if ($actualTopLevelKeys.Count -ne $expectedTopLevelKeys.Count -or (Compare-Object -ReferenceObject $expectedTopLevelKeys -DifferenceObject $actualTopLevelKeys)) {
+        Add-Finding -Findings $findings -Severity 'error' -Code 'SCHEMA-EVIDENCE' -File $schemaFile -Message "evidence snapshot schema must expose the canonical top-level key set only."
+    }
+
+    $actualStatuses = @($schema.'$defs'.statusToken.enum)
+    if ($actualStatuses.Count -ne $EvidenceStatusValues.Count -or (Compare-Object -ReferenceObject $EvidenceStatusValues -DifferenceObject $actualStatuses)) {
+        Add-Finding -Findings $findings -Severity 'error' -Code 'SCHEMA-EVIDENCE' -File $schemaFile -Message "evidence snapshot status enum is not aligned with the canonical evidence statuses."
+    }
+
+    if ($schema.'$defs'.kindToken.pattern -ne $EvidenceKindPattern) {
+        Add-Finding -Findings $findings -Severity 'error' -Code 'SCHEMA-EVIDENCE' -File $schemaFile -Message "evidence snapshot kind token pattern is not aligned with the canonical lowercase evidence-kind format."
     }
 }
 
@@ -593,9 +625,10 @@ foreach ($file in $markdownFiles) {
 
         $requirementCountInFile = 0
         foreach ($section in $sections) {
-            if ($section.Heading -match '^(?<requirementId>REQ-[A-Z0-9-]+)\s+(?<title>.+)$') {
+            $headingParts = Get-RequirementHeadingParts $section.Heading
+            if ($null -ne $headingParts) {
                 $requirementCountInFile++
-                $requirementId = $Matches['requirementId']
+                $requirementId = $headingParts.RequirementId
                 $requirementNamespace = Get-Namespace $requirementId
 
                 if ($requirements.ContainsKey($requirementId)) {
@@ -614,7 +647,7 @@ foreach ($file in $markdownFiles) {
                     ArtifactNamespace    = $artifactNamespace
                     RequirementNamespace = $requirementNamespace
                     Section              = $section
-                    Title                = $Matches['title'].Trim()
+                    Title                = $headingParts.Title
                     Parsed               = $null
                     Trace                = [ordered]@{}
                 }
@@ -691,22 +724,10 @@ foreach ($entry in ($requirements.GetEnumerator() | Sort-Object Key)) {
         $record.Trace['Supersedes'] = $supersedes
     }
 
-    if ($trace.Contains('Source Refs')) {
-        $sourceRefs = @($trace['Source Refs'])
-        Test-UniqueStrings -Findings $findings -Profile $Profile -Code 'REQ-TRACE' -File $record.RelativePath -Label 'Source Refs' -Values $sourceRefs -ArtifactId $record.ArtifactId -RequirementId $requirementId
-        $record.Trace['Source Refs'] = $sourceRefs
-    }
-
-    if ($trace.Contains('Test Refs')) {
-        $testRefs = @($trace['Test Refs'])
-        Test-UniqueStrings -Findings $findings -Profile $Profile -Code 'REQ-TRACE' -File $record.RelativePath -Label 'Test Refs' -Values $testRefs -ArtifactId $record.ArtifactId -RequirementId $requirementId
-        $record.Trace['Test Refs'] = $testRefs
-    }
-
-    if ($trace.Contains('Code Refs')) {
-        $codeRefs = @($trace['Code Refs'])
-        Test-UniqueStrings -Findings $findings -Profile $Profile -Code 'REQ-TRACE' -File $record.RelativePath -Label 'Code Refs' -Values $codeRefs -ArtifactId $record.ArtifactId -RequirementId $requirementId
-        $record.Trace['Code Refs'] = $codeRefs
+    if ($trace.Contains('Upstream Refs')) {
+        $sourceRefs = @($trace['Upstream Refs'])
+        Test-UniqueStrings -Findings $findings -Profile $Profile -Code 'REQ-TRACE' -File $record.RelativePath -Label 'Upstream Refs' -Values $sourceRefs -ArtifactId $record.ArtifactId -RequirementId $requirementId
+        $record.Trace['Upstream Refs'] = $sourceRefs
     }
 
     if ($trace.Contains('Related')) {
@@ -719,7 +740,7 @@ foreach ($entry in ($requirements.GetEnumerator() | Sort-Object Key)) {
                 continue
             }
 
-            $normalizedReference = $reference.ToString().Trim()
+            $normalizedReference = Get-NormalizedIdentifierText ($reference.ToString())
             $family = Get-ReferenceFamily $normalizedReference
             if ($family -eq 'REQ') {
                 if (-not $requirements.ContainsKey($normalizedReference)) {
@@ -906,12 +927,189 @@ foreach ($entry in ($artifacts.GetEnumerator() | Sort-Object Key)) {
     }
 }
 
+$evidenceSnapshots = @()
+$evidenceByRequirement = @{}
+$evidenceKinds = @{}
+
+foreach ($file in (Get-EvidenceSnapshotFiles -ResolvedRootPath $resolvedRootPath -ResolvedInputPath $resolvedInputPath | Sort-Object FullName)) {
+    $relativePath = [System.IO.Path]::GetRelativePath($resolvedRootPath, $file.FullName).Replace('\', '/')
+    $content = Get-Content -Raw -LiteralPath $file.FullName
+    if ([string]::IsNullOrWhiteSpace($content)) {
+        Add-Finding -Findings $findings -Severity 'error' -Code 'EVIDENCE-EMPTY' -File $relativePath -Message "evidence snapshot file is empty."
+        continue
+    }
+
+    try {
+        $snapshot = $content | ConvertFrom-Json -Depth 64
+    }
+    catch {
+        Add-Finding -Findings $findings -Severity 'error' -Code 'EVIDENCE-JSON' -File $relativePath -Message "invalid JSON: $($_.Exception.Message)"
+        continue
+    }
+
+    if ([string]::IsNullOrWhiteSpace([string]$snapshot.snapshot_id)) {
+        Add-Finding -Findings $findings -Severity 'error' -Code 'EVIDENCE-SHAPE' -File $relativePath -Message "evidence snapshot is missing snapshot_id."
+        continue
+    }
+    if ([string]::IsNullOrWhiteSpace([string]$snapshot.generated_at)) {
+        Add-Finding -Findings $findings -Severity 'error' -Code 'EVIDENCE-SHAPE' -File $relativePath -Message "evidence snapshot '$($snapshot.snapshot_id)' is missing generated_at."
+    }
+    if ($null -eq $snapshot.producer -or [string]::IsNullOrWhiteSpace([string]$snapshot.producer.name) -or [string]::IsNullOrWhiteSpace([string]$snapshot.producer.version)) {
+        Add-Finding -Findings $findings -Severity 'error' -Code 'EVIDENCE-SHAPE' -File $relativePath -Message "evidence snapshot '$($snapshot.snapshot_id)' must include producer name and version."
+    }
+    if ($null -eq $snapshot.requirements -or @($snapshot.requirements).Count -eq 0) {
+        Add-Finding -Findings $findings -Severity 'error' -Code 'EVIDENCE-SHAPE' -File $relativePath -Message "evidence snapshot '$($snapshot.snapshot_id)' must include at least one requirement observation."
+        continue
+    }
+
+    $seenRequirementIds = @{}
+    foreach ($requirementEvidence in @($snapshot.requirements)) {
+        $requirementId = [string]$requirementEvidence.requirement_id
+        if ([string]::IsNullOrWhiteSpace($requirementId)) {
+            Add-Finding -Findings $findings -Severity 'error' -Code 'EVIDENCE-SHAPE' -File $relativePath -Message "evidence snapshot '$($snapshot.snapshot_id)' contains a requirement observation without requirement_id."
+            continue
+        }
+
+        if ($seenRequirementIds.ContainsKey($requirementId)) {
+            Add-Finding -Findings $findings -Severity (Get-RuleSeverity -Rule 'duplicate' -Profile $Profile) -Code 'EVIDENCE-DUPLICATE' -File $relativePath -RequirementId $requirementId -Message "evidence snapshot '$($snapshot.snapshot_id)' contains duplicate requirement observations for '$requirementId'."
+        }
+        else {
+            $seenRequirementIds[$requirementId] = $true
+        }
+
+        if (-not $requirements.ContainsKey($requirementId)) {
+            Add-Finding -Findings $findings -Severity (Get-RuleSeverity -Rule 'unresolved' -Profile $Profile) -Code 'EVIDENCE-TRACE' -File $relativePath -RequirementId $requirementId -Message "evidence snapshot '$($snapshot.snapshot_id)' references unknown requirement '$requirementId'."
+        }
+
+        if ($null -eq $requirementEvidence.observations -or @($requirementEvidence.observations).Count -eq 0) {
+            Add-Finding -Findings $findings -Severity 'error' -Code 'EVIDENCE-SHAPE' -File $relativePath -RequirementId $requirementId -Message "evidence snapshot '$($snapshot.snapshot_id)' must include at least one observation for '$requirementId'."
+            continue
+        }
+
+        foreach ($observation in @($requirementEvidence.observations)) {
+            $kind = [string]$observation.kind
+            $status = [string]$observation.status
+
+            if ([string]::IsNullOrWhiteSpace($kind) -or $kind -notmatch $EvidenceKindPattern) {
+                Add-Finding -Findings $findings -Severity 'error' -Code 'EVIDENCE-KIND' -File $relativePath -RequirementId $requirementId -Message "evidence snapshot '$($snapshot.snapshot_id)' has invalid evidence kind '$kind'."
+                continue
+            }
+            if ($EvidenceStatusValues -notcontains $status) {
+                Add-Finding -Findings $findings -Severity 'error' -Code 'EVIDENCE-STATUS' -File $relativePath -RequirementId $requirementId -Message "evidence snapshot '$($snapshot.snapshot_id)' has invalid evidence status '$status' for '$requirementId'."
+                continue
+            }
+
+            $evidenceKinds[$kind] = $true
+            if (-not $evidenceByRequirement.ContainsKey($requirementId)) {
+                $evidenceByRequirement[$requirementId] = [ordered]@{}
+            }
+            if (-not $evidenceByRequirement[$requirementId].Contains($kind)) {
+                $evidenceByRequirement[$requirementId][$kind] = [ordered]@{
+                    statuses = @()
+                    refs = @()
+                }
+            }
+
+            $bucket = $evidenceByRequirement[$requirementId][$kind]
+            $bucket.statuses = @($bucket.statuses + $status | Select-Object -Unique)
+
+            $refs = @($observation.refs | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) })
+            if ($refs.Count -ne @($refs | Select-Object -Unique).Count) {
+                Add-Finding -Findings $findings -Severity (Get-RuleSeverity -Rule 'duplicate' -Profile $Profile) -Code 'EVIDENCE-DUPLICATE' -File $relativePath -RequirementId $requirementId -Message "evidence snapshot '$($snapshot.snapshot_id)' has duplicate refs for '$requirementId' / '$kind'."
+            }
+            if ($refs.Count -gt 0) {
+                $bucket.refs = @($bucket.refs + $refs | Select-Object -Unique)
+            }
+        }
+    }
+
+    $evidenceSnapshots += [ordered]@{
+        relative_path = $relativePath
+        snapshot_id = [string]$snapshot.snapshot_id
+        generated_at = [string]$snapshot.generated_at
+        producer = [ordered]@{
+            name = [string]$snapshot.producer.name
+            version = [string]$snapshot.producer.version
+        }
+    }
+}
+
 $errorCount = @($findings | Where-Object { $_.severity -eq 'error' }).Count
 $warningCount = @($findings | Where-Object { $_.severity -eq 'warning' }).Count
 $specCount = @($artifacts.Values | Where-Object { $_.ArtifactType -eq 'specification' }).Count
 $requirementCount = $requirements.Count
 $artifactCount = $artifacts.Count
 $markdownCount = $markdownFiles.Count
+
+$coverageDimensions = [ordered]@{
+    upstream_refs  = [ordered]@{ present = 0; missing = 0 }
+    satisfied_by   = [ordered]@{ present = 0; missing = 0 }
+    implemented_by = [ordered]@{ present = 0; missing = 0 }
+    verified_by    = [ordered]@{ present = 0; missing = 0 }
+}
+
+$evidenceKindDimensions = [ordered]@{}
+foreach ($kind in ($evidenceKinds.Keys | Sort-Object)) {
+    $statusCounts = [ordered]@{}
+    foreach ($status in $EvidenceStatusValues) {
+        $statusCounts[$status] = 0
+    }
+    $evidenceKindDimensions[$kind] = [ordered]@{
+        present = 0
+        missing = 0
+        status_counts = $statusCounts
+    }
+}
+
+$requirementDimensions = @()
+foreach ($entry in ($requirements.GetEnumerator() | Sort-Object Key)) {
+    $requirementId = $entry.Key
+    $record = $entry.Value
+    $trace = if ($null -ne $record.Trace) { $record.Trace } else { [ordered]@{} }
+    $evidence = if ($evidenceByRequirement.ContainsKey($requirementId)) { $evidenceByRequirement[$requirementId] } else { [ordered]@{} }
+
+    $hasSourceRefs = @($trace['Upstream Refs']).Count -gt 0
+    $hasSatisfiedBy = @($trace['Satisfied By']).Count -gt 0
+    $hasImplementedBy = @($trace['Implemented By']).Count -gt 0
+    $hasVerifiedBy = @($trace['Verified By']).Count -gt 0
+
+    foreach ($dimension in @(
+        @{ name = 'upstream_refs'; present = $hasSourceRefs },
+        @{ name = 'satisfied_by'; present = $hasSatisfiedBy },
+        @{ name = 'implemented_by'; present = $hasImplementedBy },
+        @{ name = 'verified_by'; present = $hasVerifiedBy }
+    )) {
+        if ($dimension.present) {
+            $coverageDimensions[$dimension.name]['present']++
+        }
+        else {
+            $coverageDimensions[$dimension.name]['missing']++
+        }
+    }
+
+    foreach ($kind in $evidenceKindDimensions.Keys) {
+        if ($evidence.Contains($kind)) {
+            $evidenceKindDimensions[$kind]['present']++
+            foreach ($status in @($evidence[$kind].statuses)) {
+                if ($evidenceKindDimensions[$kind].status_counts.Contains($status)) {
+                    $evidenceKindDimensions[$kind].status_counts[$status]++
+                }
+            }
+        }
+        else {
+            $evidenceKindDimensions[$kind]['missing']++
+        }
+    }
+
+    $requirementDimensions += [ordered]@{
+        requirement_id = $requirementId
+        upstream_refs = $hasSourceRefs
+        satisfied_by = $hasSatisfiedBy
+        implemented_by = $hasImplementedBy
+        verified_by = $hasVerifiedBy
+        evidence_kinds = $evidence
+    }
+}
 
 $report = [ordered]@{
     root_path = $resolvedRootPath
@@ -920,12 +1118,17 @@ $report = [ordered]@{
     success = ($errorCount -eq 0)
     counts = [ordered]@{
         markdown_files = $markdownCount
+        evidence_files = $evidenceSnapshots.Count
         artifacts = $artifactCount
         specifications = $specCount
         requirements = $requirementCount
         warnings = $warningCount
         errors = $errorCount
     }
+    coverage_dimensions = $coverageDimensions
+    evidence_kind_dimensions = $evidenceKindDimensions
+    requirement_dimensions = $requirementDimensions
+    evidence_snapshots = $evidenceSnapshots
     findings = @($findings)
 }
 
@@ -941,6 +1144,11 @@ if ($errorCount -gt 0) {
         Write-Host ($finding.severity.ToUpperInvariant() + ' [' + $finding.code + '] ' + $finding.file + $artifactSuffix + $requirementSuffix + ': ' + $finding.message)
     }
     Write-Host ("Summary: {0} errors, {1} warnings, {2} artifacts, {3} specifications, {4} requirements." -f $errorCount, $warningCount, $artifactCount, $specCount, $requirementCount)
+    Write-Host ("Coverage: upstream {0}/{4}, design {1}/{4}, work {2}/{4}, verification {3}/{4}." -f $coverageDimensions.upstream_refs.present, $coverageDimensions.satisfied_by.present, $coverageDimensions.implemented_by.present, $coverageDimensions.verified_by.present, $requirementCount)
+    if ($evidenceKindDimensions.Count -gt 0) {
+        $evidenceSummary = ($evidenceKindDimensions.GetEnumerator() | Sort-Object Key | ForEach-Object { "{0} {1}/{2}" -f $_.Key, $_.Value.present, $requirementCount }) -join ', '
+        Write-Host ("Evidence kinds: {0}." -f $evidenceSummary)
+    }
     exit 1
 }
 
@@ -954,4 +1162,10 @@ if ($warningCount -gt 0) {
 }
 else {
     Write-Host "Validated $artifactCount artifacts across $specCount specifications and $requirementCount requirements."
+}
+
+Write-Host ("Coverage: upstream {0}/{4}, design {1}/{4}, work {2}/{4}, verification {3}/{4}." -f $coverageDimensions.upstream_refs.present, $coverageDimensions.satisfied_by.present, $coverageDimensions.implemented_by.present, $coverageDimensions.verified_by.present, $requirementCount)
+if ($evidenceKindDimensions.Count -gt 0) {
+    $evidenceSummary = ($evidenceKindDimensions.GetEnumerator() | Sort-Object Key | ForEach-Object { "{0} {1}/{2}" -f $_.Key, $_.Value.present, $requirementCount }) -join ', '
+    Write-Host ("Evidence kinds: {0}." -f $evidenceSummary)
 }

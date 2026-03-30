@@ -12,7 +12,7 @@ If your AI tool only auto-discovers skills from a separate home directory, point
 
 For repository changes that affect traceability, run [`scripts/Test-SpecTraceRepository.ps1`](../scripts/Test-SpecTraceRepository.ps1) after editing the canonical files, schemas, or examples. Use `-Profile traceable` or `-Profile auditable` when you need the stricter repository policies.
 
-When these skills draft Markdown for the repository, they should use relative links for repo-local targets and keep backticks inside the link text when monospace styling should remain.
+When these skills draft Markdown for the repository, they should use relative links for repo-local targets and keep backticks inside the link text when monospace styling should remain. When the target is a specific requirement or other headed subsection inside a specification artifact document, they should include the relevant heading anchor or other supported sub-document locator.
 
 ## Included Skills
 

@@ -1,0 +1,214 @@
+{
+  "snapshot_id": "evidence-calc-int-unit-tests-2026-03-30",
+  "generated_at": "2026-03-30T18:10:00Z",
+  "producer": {
+    "name": "example-evidence-generator",
+    "version": "1.0.0"
+  },
+  "requirements": [
+    {
+      "requirement_id": "REQ-CALC-INT-0001",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/api.spec::exposes_integer_calculator_with_five_methods"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0002",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/add.spec::returns_sum_for_typical_inputs"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0003",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/add.spec::is_commutative"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0004",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/subtract.spec::uses_declared_operand_order"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0005",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/multiply.spec::returns_product_for_typical_inputs"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0006",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/multiply.spec::is_commutative"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0007",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/divide.spec::rejects_zero_divisor"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0008",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/divide.spec::returns_exact_quotient_for_even_division"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0009",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/divide.spec::truncates_toward_zero_for_fractional_quotients"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0010",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/modulus.spec::rejects_zero_divisor"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0011",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/modulus.spec::returns_truncation_based_remainder"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0012",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/boundaries.spec::accepts_boundary_operands_when_result_is_representable"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0013",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/overflow.spec::rejects_unrepresentable_results"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0014",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/add.spec::rejects_unrepresentable_sum"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0015",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/subtract.spec::rejects_unrepresentable_difference"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0016",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/multiply.spec::rejects_unrepresentable_product"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0017",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/calculator/int32/divide.spec::returns_expected_sign_for_negative_divisor"
+          ]
+        }
+      ]
+    }
+  ]
+}

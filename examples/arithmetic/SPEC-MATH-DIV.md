@@ -32,16 +32,13 @@ Trace:
   - [WI-MATH-DIV-0001](./sample-work-item.md)
 - Verified By:
   - [VER-MATH-DIV-0001](./sample-verification.md)
-- Source Refs:
+- Upstream Refs:
   - API design note: divide requests must provide both operands
-- Test Refs:
-  - tests/arithmetic/divide.spec::requires_two_operands
-- Code Refs:
-  - arithmetic.divide
 
 Notes:
-- `Source Refs` records the upstream design note that motivated the rule.
-- `Test Refs` and `Code Refs` are direct implementation references; they do not replace the downstream trace graph.
+- `Upstream Refs` records the upstream design note that motivated the rule.
+- Generated evidence snapshots carry direct implementation observations without
+  changing the authored downstream trace graph.
 
 ## [`REQ-MATH-DIV-0002`](./SPEC-MATH-DIV.md) Return the quotient for a non-zero denominator
 The divide operation MUST return `numerator / denominator` when the denominator is not `0`.
@@ -53,10 +50,6 @@ Trace:
   - [WI-MATH-DIV-0001](./sample-work-item.md)
 - Verified By:
   - [VER-MATH-DIV-0001](./sample-verification.md)
-- Test Refs:
-  - tests/arithmetic/divide.spec::returns_quotient_for_non_zero_denominator
-- Code Refs:
-  - arithmetic.divide
 
 Notes:
 - This clause follows [`REQ-TPL-0006`](../../specs/requirements/spec-trace/SPEC-TPL.md) and [`REQ-TPL-0007`](../../specs/requirements/spec-trace/SPEC-TPL.md).
@@ -71,10 +64,7 @@ Trace:
   - [WI-MATH-DIV-0001](./sample-work-item.md)
 - Verified By:
   - [VER-MATH-DIV-0001](./sample-verification.md)
-- Test Refs:
-  - tests/arithmetic/divide.spec::throws_on_zero_denominator
-- Code Refs:
-  - arithmetic.divide
 
 Notes:
 - The exact exception type or error payload is implementation-specific unless another requirement constrains it.
+

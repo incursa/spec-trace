@@ -73,7 +73,7 @@ Verification artifacts prove requirements. They may summarize verification at a 
 
 Place generated indexes, matrices, and coverage reports under `/specs/generated/`.
 
-Generated outputs are derived artifacts. They are useful, but they are not source of truth.
+Generated outputs are derived artifacts such as coverage matrices, source-coverage views, evidence rollups, attestation snapshots, and current-status views. They are useful, but they are not source of truth.
 
 ## One Specification Per File
 

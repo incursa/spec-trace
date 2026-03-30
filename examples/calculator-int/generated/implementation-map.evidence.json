@@ -1,0 +1,218 @@
+{
+  "snapshot_id": "evidence-calc-int-implementation-map-2026-03-30",
+  "generated_at": "2026-03-30T18:15:00Z",
+  "producer": {
+    "name": "example-evidence-generator",
+    "version": "1.0.0"
+  },
+  "requirements": [
+    {
+      "requirement_id": "REQ-CALC-INT-0001",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0002",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Add"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0003",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Add"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0004",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Subtract"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0005",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Multiply"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0006",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Multiply"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0007",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Divide"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0008",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Divide"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0009",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Divide"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0010",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Modulus"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0011",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Modulus"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0012",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Add",
+            "calculator.int32.IntegerCalculator.Subtract",
+            "calculator.int32.IntegerCalculator.Multiply",
+            "calculator.int32.IntegerCalculator.Divide",
+            "calculator.int32.IntegerCalculator.Modulus"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0013",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Divide"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0014",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Add"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0015",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Subtract"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0016",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Multiply"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CALC-INT-0017",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "calculator.int32.IntegerCalculator.Divide"
+          ]
+        }
+      ]
+    }
+  ]
+}

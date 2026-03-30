@@ -12,6 +12,8 @@ Canonical files:
 - [`SPEC-ID`](SPEC-ID.md) - identifier policy and grouping-key registry
 - [`SPEC-LIN`](SPEC-LIN.md) - trace lineage and requirement evolution
 - [`SPEC-PRF`](SPEC-PRF.md) - conformance profiles and enforcement levels
+- [`SPEC-RPT`](SPEC-RPT.md) - derived reporting dimensions and attestation views
+- [`SPEC-EVD`](SPEC-EVD.md) - generated evidence snapshots and merge semantics
 - [`SPEC-LAY`](SPEC-LAY.md) - repository layout and artifact placement
 - [`SPEC-TPL`](SPEC-TPL.md) - templates and compact requirement grammar
 - [`SPEC-SCH`](SPEC-SCH.md) - schemas and validation rules

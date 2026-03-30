@@ -2,7 +2,7 @@
 
 This guide is a practical entry point for people and agents working with `spec-trace`. It is not normative. The canonical standard lives under [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/).
 
-If you want the operational model in plain language, start with [`artifact-model-explainer.md`](./artifact-model-explainer.md) and then return here for the task-oriented workflow.
+If you want the operational model in plain language, start with [`artifact-model-explainer.md`](./artifact-model-explainer.md) and [`profiles-and-attestation-explainer.md`](./profiles-and-attestation-explainer.md), then return here for the task-oriented workflow.
 
 ## Authority Model
 
@@ -43,6 +43,8 @@ Use `Trace` for typed downstream links, lineage, source citations, implementatio
 
 When you are writing Markdown in this repository, prefer relative links for repo-local files, folders, specifications, requirements, and other concrete local artifacts. If the visible text should stay monospace, put backticks inside the link text, for example [`README.md`](./README.md) or [`SPEC-STD.md`](./specs/requirements/spec-trace/SPEC-STD.md).
 
+When the repo-local target is a specific requirement or other headed subsection inside a specification artifact document, include the relevant heading anchor or other supported sub-document locator rather than link only to the containing file.
+
 Use absolute URLs only when the target must stay external, such as vendor documentation or package pages. Keep generic placeholders such as `REQ-...` as plain code spans when there is no single canonical destination.
 
 Read first:
@@ -60,12 +62,17 @@ Use the profiles spec when you need to decide how strict a repository's traceabi
 Read first:
 
 - [`specs/requirements/spec-trace/SPEC-PRF.md`](./specs/requirements/spec-trace/SPEC-PRF.md)
+- [`specs/requirements/spec-trace/SPEC-RPT.md`](./specs/requirements/spec-trace/SPEC-RPT.md)
 - [`specs/requirements/spec-trace/SPEC-STD.md`](./specs/requirements/spec-trace/SPEC-STD.md)
 - [`specs/requirements/spec-trace/SPEC-SCH.md`](./specs/requirements/spec-trace/SPEC-SCH.md)
 
 Core keeps the authoring burden low. In plain language, `core` is spec-valid, `traceable` is artifact-linked, and `auditable` is evidence-backed. Those are explanatory phrases only; the canonical profile names remain `core`, `traceable`, and `auditable`.
 
+The profiles are repository-level conformance gates, not maturity scores or workflow stages.
+
 `Verified By` means a requirement is covered by a verification artifact. `Verified` in local workflow terms may be stronger or looser depending on repository policy, but that policy sits outside the canonical standard unless the repository standardizes it.
+
+When you need dashboards, current-state rollups, or greenfield-versus-brownfield coverage interpretation, use the derived-reporting model in [`SPEC-RPT.md`](./specs/requirements/spec-trace/SPEC-RPT.md) instead of stretching the profile names.
 
 ### Architecture Or Design Artifact
 
@@ -96,6 +103,12 @@ Use a verification artifact when you need to record how requirements were proven
 
 Verification artifacts record repository practice for checking requirements; they do not automatically mean formal proof of correctness.
 
+Verification artifacts are usually most useful as proof-summary artifacts. They may summarize tests, manual QA, benchmarks, interoperability runs, security review, fuzzing, formal methods, or other repository-policy evidence sources.
+
+If you need a current-status report, generate it as a derived view rather than writing that status into the requirement itself.
+
+If you need freshness windows, last-run timestamps, or richer evidence rollups, prefer namespaced local extensions and generated reports over new canonical status fields.
+
 Read first:
 
 - the relevant `SPEC-...` file
@@ -113,6 +126,7 @@ Read first:
    Also check that any inline identifier references are backtick-delimited stable IDs rather than loose prose.
 
 6. When you need to explain the operational model to another person, point them at [`artifact-model-explainer.md`](./artifact-model-explainer.md) and the worked examples under [`examples/`](./examples/).
+7. When you need to distinguish authored trace from dynamic evidence reporting, point them at [`profiles-and-attestation-explainer.md`](./profiles-and-attestation-explainer.md).
 
 ## When The Standard Changes
 
@@ -129,6 +143,17 @@ If a change affects canonical field names, identifier rules, template shape, sch
 If a repository needs extra front matter metadata, prefer namespaced `x_...` keys so the core field set stays stable.
 
 Record notable package-level changes in [`CHANGELOG.md`](./CHANGELOG.md).
+
+## Incremental Adoption
+
+The model is intentionally adoptable in stages.
+
+- Start with clear, stable requirements.
+- Add architecture, work items, and verification artifacts when they add value.
+- Add direct test and code refs gradually.
+- Make `Upstream Refs` as precise as the repository needs when source-coverage reporting matters.
+- Do not invent fake historical work items for legacy code just to satisfy a graph shape.
+- Use generated gap reports and coverage views during adoption; they are valid derived outputs.
 
 ## AI Entry Points
 

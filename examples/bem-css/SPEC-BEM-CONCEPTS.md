@@ -47,7 +47,7 @@ Trace:
   - [REQ-BEM-CONCEPTS-0002](./SPEC-BEM-CONCEPTS.md)
   - [REQ-BEM-NAMING-0002](./SPEC-BEM-NAMING.md)
   - [REQ-BEM-CSS-0007](./SPEC-BEM-CSS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
   - https://en.bem.info/methodology/html/
 
@@ -67,7 +67,7 @@ Trace:
   - [REQ-BEM-NAMING-0003](./SPEC-BEM-NAMING.md)
   - [REQ-BEM-NAMING-0004](./SPEC-BEM-NAMING.md)
   - [REQ-BEM-CSS-0010](./SPEC-BEM-CSS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
   - https://en.bem.info/methodology/html/
 
@@ -89,7 +89,7 @@ Trace:
   - [REQ-BEM-NAMING-0008](./SPEC-BEM-NAMING.md)
   - [REQ-BEM-CSS-0005](./SPEC-BEM-CSS.md)
   - [REQ-BEM-CSS-0010](./SPEC-BEM-CSS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
   - https://en.bem.info/methodology/block-modification/
 
@@ -107,7 +107,7 @@ Trace:
 - Related:
   - [REQ-BEM-NAMING-0001](./SPEC-BEM-NAMING.md)
   - [REQ-BEM-NAMING-0008](./SPEC-BEM-NAMING.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
   - https://en.bem.info/methodology/css/
 
@@ -125,7 +125,7 @@ Trace:
 - Related:
   - [REQ-BEM-NAMING-0003](./SPEC-BEM-NAMING.md)
   - [REQ-BEM-NAMING-0004](./SPEC-BEM-NAMING.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
 
 Notes:
@@ -142,7 +142,7 @@ Trace:
 - Related:
   - [REQ-BEM-CSS-0007](./SPEC-BEM-CSS.md)
   - [REQ-BEM-CSS-0009](./SPEC-BEM-CSS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
   - https://en.bem.info/methodology/css/
   - https://en.bem.info/methodology/html/
@@ -161,7 +161,7 @@ Trace:
 - Related:
   - [REQ-BEM-CSS-0008](./SPEC-BEM-CSS.md)
   - [REQ-BEM-CSS-0009](./SPEC-BEM-CSS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
   - https://en.bem.info/methodology/css/
   - https://en.bem.info/methodology/html/

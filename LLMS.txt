@@ -10,7 +10,7 @@ When working in this repository:
 - Keep requirements inside specification documents.
 - Prefer the nearest template and worked example over inventing a new document shape.
 - If a change affects canonical field names, identifier rules, template shape, schema contracts, or example patterns, update the authoritative SPEC files first and propagate the change through dependent surfaces in the same change set.
-- If you are writing Markdown in this repository, prefer relative links for repo-local files and keep backticks inside the link text when monospace styling should remain. Use absolute URLs only for external targets.
+- If you are writing Markdown in this repository, prefer relative links for repo-local files and keep backticks inside the link text when monospace styling should remain. When the target is a specific requirement or other headed subsection inside a specification artifact document, include the relevant heading anchor or other supported sub-document locator. Use absolute URLs only for external targets.
 - If your tool can only ingest a single file, generate a bundled Markdown view with [`./scripts/Export-SpecTraceBundle.ps1`](./scripts/Export-SpecTraceBundle.ps1).
 
 ## Canonical Standard
@@ -20,12 +20,14 @@ When working in this repository:
 - [`SPEC-ID.md`](./specs/requirements/spec-trace/SPEC-ID.md): artifact and requirement identifier policy.
 - [`SPEC-LIN.md`](./specs/requirements/spec-trace/SPEC-LIN.md): trace lineage and requirement evolution.
 - [`SPEC-PRF.md`](./specs/requirements/spec-trace/SPEC-PRF.md): conformance profiles and enforcement levels.
+- [`SPEC-RPT.md`](./specs/requirements/spec-trace/SPEC-RPT.md): derived reporting dimensions, attestation semantics, and staged-adoption guidance.
 - [`SPEC-LAY.md`](./specs/requirements/spec-trace/SPEC-LAY.md): repository layout and artifact placement.
 - [`SPEC-TPL.md`](./specs/requirements/spec-trace/SPEC-TPL.md): front matter keys, compact requirement grammar, and trace labels.
 - [`SPEC-SCH.md`](./specs/requirements/spec-trace/SPEC-SCH.md): schema contracts and validation scope.
 - [`SPEC-EXM.md`](./specs/requirements/spec-trace/SPEC-EXM.md): worked-example expectations and traceability coverage.
 - Requirement clauses use the approved BCP 14-style uppercase keyword set only; lowercase spellings are plain English.
-- The standard defines three conformance profiles: `core`, `traceable`, and `auditable`. `core` is the low-burden baseline.
+- The standard defines three repository-level conformance profiles: `core`, `traceable`, and `auditable`. `core` is the low-burden baseline; the other two are stricter repository gates rather than maturity stages.
+- Coverage and attestation reporting are derived views over the canonical graph rather than extra canonical profile names.
 - Inline identifier references use backticks around stable artifact IDs in prose. They are prose mentions, not trace edges, and they complement structured trace fields rather than replacing them.
 - Requirement titles are short descriptive labels; the clause carries the normative behavior and `Notes` carry rationale and examples.
 - Structured `Trace` fields have typed semantics by label family: downstream links, lineage, source citations, implementation-specific references, and loose associations.
@@ -34,7 +36,8 @@ When working in this repository:
 ## Task Routing
 
 - [`authoring.md`](./authoring.md): task-oriented entry point for choosing specification, requirement, architecture, work-item, or verification workflows.
-- [`artifact-model-explainer.md`](./artifact-model-explainer.md): plain-language explanation of the artifact families, profiles, provenance, direct refs, and canonical downstream trace.
+- [`artifact-model-explainer.md`](./artifact-model-explainer.md): plain-language explanation of the artifact families, provenance, direct refs, and canonical downstream trace.
+- [`profiles-and-attestation-explainer.md`](./profiles-and-attestation-explainer.md): plain-language explanation of the static trace model, dynamic attestation reports, profile meaning, and local repository policy terms.
 - [`overview.md`](./overview.md): concise summary of the core model and canonical requirement form.
 - [`layout.md`](./layout.md): recommended repository structure and placement guidance.
 - [`README.md`](./README.md): package overview, getting started, and tool index.

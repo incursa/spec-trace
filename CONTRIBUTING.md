@@ -25,7 +25,7 @@ This repository is the public reference standard for `incursa/spec-trace`. Chang
 - Keep examples aligned with the schemas and the SPEC suite.
 - Keep terminology consistent across the SPEC suite, README, metadata catalog, schemas, and the example artifacts.
 - Keep AI-facing guidance such as [`AGENTS.md`](./AGENTS.md), [`LLMS.txt`](./LLMS.txt), and [`skills/`](./skills/) non-authoritative and aligned with the SPEC suite.
-- Use relative links for repo-local references in Markdown. If the visible text should stay monospace, put backticks inside the link text. Use absolute URLs only for external destinations.
+- Use relative links for repo-local references in Markdown. If the visible text should stay monospace, put backticks inside the link text. When the target is a specific requirement or other headed subsection inside a specification artifact document, include the relevant heading anchor or other supported sub-document locator. Use absolute URLs only for external destinations.
 - Prefer direct wording over process language that adds little value.
 
 ## Breaking Changes

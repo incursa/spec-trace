@@ -44,7 +44,7 @@ Trace:
   - [WI-PAY-ACH-0081](./sample-work-item.md)
 - Verified By:
   - [VER-PAY-ACH-0021](./sample-verification.md)
-- Source Refs:
+- Upstream Refs:
   - ACH Operating Rules, duplicate batch handling
   - Payments platform intake policy
 
@@ -60,10 +60,6 @@ Trace:
   - [WI-PAY-ACH-0081](./sample-work-item.md)
 - Verified By:
   - [VER-PAY-ACH-0021](./sample-verification.md)
-- Test Refs:
-  - tests/payments/ach/duplicate-batch.spec::rejects_second_submission_for_same_tenant
-- Code Refs:
-  - payments.ach.BatchIntakeGuard.rejectDuplicateBatch
 
 Notes:
 - This rule depends on [`REQ-PAY-ACH-0013`](./SPEC-PAY-ACH.md).
@@ -81,10 +77,6 @@ Trace:
   - [WI-PAY-ACH-0081](./sample-work-item.md)
 - Verified By:
   - [VER-PAY-ACH-0021](./sample-verification.md)
-- Test Refs:
-  - tests/payments/ach/duplicate-batch.spec::allows_same_identifier_for_different_tenant
-- Code Refs:
-  - payments.ach.BatchIdentityKey
 
 ## [`REQ-PAY-ACH-0016`](./SPEC-PAY-ACH.md) Check duplicates before downstream side effects
 The duplicate check MUST complete before downstream processing begins for the submitted batch.
@@ -98,7 +90,4 @@ Trace:
   - [WI-PAY-ACH-0081](./sample-work-item.md)
 - Verified By:
   - [VER-PAY-ACH-0021](./sample-verification.md)
-- Test Refs:
-  - tests/payments/ach/duplicate-batch.spec::does_not_start_processing_for_rejected_duplicate
-- Code Refs:
-  - payments.ach.BatchSubmissionService.submit
+

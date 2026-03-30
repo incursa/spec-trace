@@ -54,9 +54,7 @@ The first submission is accepted, the same-tenant repeat is rejected before down
 
 ## Evidence
 
-- tests/payments/ach/duplicate-batch.spec::rejects_second_submission_for_same_tenant
-- tests/payments/ach/duplicate-batch.spec::allows_same_identifier_for_different_tenant
-- tests/payments/ach/duplicate-batch.spec::does_not_start_processing_for_rejected_duplicate
+- [`duplicate-batch-evidence.evidence.json`](./generated/duplicate-batch-evidence.evidence.json)
 
 ## Status
 

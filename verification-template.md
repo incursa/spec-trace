@@ -43,12 +43,14 @@ Describe the expected outcome in plain language.
 
 ## Evidence
 
-- <evidence or test reference>
+- <verification summary or evidence snapshot reference>
+- <optional run ID, QA record, benchmark, or other repository-policy evidence pointer>
 
 ## Status
 
 The status below applies to every requirement listed in `verifies`. If the requirements do not share one outcome, split them into separate verification artifacts.
 Repositories that need richer per-requirement evidence MAY add local extension fields outside the core template, but the core standard remains artifact-scoped and does not define a nested result matrix.
+Repositories that need freshness or scheduling metadata MAY add namespaced extension fields such as `x_last_run_at` or `x_evidence_refs`.
 
 planned
 

@@ -11,7 +11,8 @@ The shared [`artifact-id-policy.json`](../artifact-id-policy.json) file defines 
 - [`artifact-id-policy.schema.json`](artifact-id-policy.schema.json) validates the shared identifier and grouping-key metadata catalog
 - [`artifact-frontmatter.schema.json`](artifact-frontmatter.schema.json) validates file-level front matter for specification, architecture, work-item, and verification documents, including family-specific trace-link lists and optional namespaced `x_` extension keys
 - [`requirement-clause.schema.json`](requirement-clause.schema.json) validates extracted compact requirement clauses, including the short descriptive title, normative keyword phrase, optional trace block, notes, and backtick-delimited inline identifier references in prose
-- [`requirement-trace-fields.schema.json`](requirement-trace-fields.schema.json) validates the canonical trace labels used inside a requirement `Trace` block, including structured downstream links, lineage, source citations, implementation-specific references, and loose associations; inline identifier references are outside this schema
+- [`requirement-trace-fields.schema.json`](requirement-trace-fields.schema.json) validates the canonical trace labels used inside a requirement `Trace` block, including structured downstream links, lineage, source citations, and loose associations; inline identifier references are outside this schema
+- [`evidence-snapshot.schema.json`](evidence-snapshot.schema.json) validates generated point-in-time evidence snapshots used for derived reporting and attestation
 - [`work-item-trace-fields.schema.json`](work-item-trace-fields.schema.json) validates the canonical labels used in a work-item `Trace Links` section and constrains requirement, design, and verification links to their expected identifier families
 
 ## Mapping Notes
@@ -20,11 +21,14 @@ The shared [`artifact-id-policy.json`](../artifact-id-policy.json) file defines 
 - [`requirement-clause.schema.json`](requirement-clause.schema.json) is for the requirement itself.
 - [`requirement-trace-fields.schema.json`](requirement-trace-fields.schema.json) is referenced by the requirement-clause schema.
 - Verification front matter uses one artifact-scoped status for every requirement ID listed in `verifies`; mixed outcomes belong in separate artifacts.
-- `Test Refs` and `Code Refs` remain implementation-specific string references. The schema constrains the field names and value shape, not the local reference syntax.
+- Generated evidence snapshots carry implementation observations such as
+  `unit_test`, `code_ref`, `benchmark`, or other repository-policy evidence
+  kinds.
+- Repository-level tooling may normalize clickable Markdown identifiers from body sections before validating the extracted shapes, including repo-local links that carry same-file or cross-file anchor fragments.
 - Inline identifier references are allowed in clauses, `Notes`, and other descriptive prose. They are backtick-delimited stable IDs, and repository-level tooling may need to resolve them across files because JSON Schema alone cannot fully enforce the cross-file link graph.
 - Requirement titles are short descriptive labels that name the obligation or concern rather than restating the full clause.
 - `requirement-clause.schema.json` recognizes the narrowed BCP 14-style uppercase normative keyword set: `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, and `MAY`. Lowercase spellings are plain English.
 - `Derived From` and `Supersedes` are lineage references; the repository-level validator accepts them without requiring tombstone requirement records.
 - File-level front matter may use optional namespaced `x_` keys for local extensions, but the core artifact family fields remain fixed.
 - The `core` profile maps to schema, identifier, and keyword checks; `traceable` and `auditable` add repository-level trace checks on top of those basics.
-- Repository-level validation is expected to go beyond shape checks and report duplicate IDs, unresolved direct links, reciprocal mismatches, and namespace drift.
+- Repository-level validation is expected to go beyond shape checks and report duplicate IDs, unresolved direct links, reciprocal mismatches, namespace drift, canonical coverage dimensions such as `Upstream Refs`, `Satisfied By`, `Implemented By`, and `Verified By`, plus evidence-kind coverage derived from evaluated evidence snapshots.

@@ -4,6 +4,8 @@ This file is a non-authoritative reading guide for the `spec-trace` reference re
 
 Use this as the plain-language map for how the artifact families, trace labels, and conformance profiles work in practice. If it ever disagrees with the SPEC suite, the SPEC suite wins.
 
+For the distinction between authored trace, dynamic attestation, and local repository policy terms, read [`profiles-and-attestation-explainer.md`](./profiles-and-attestation-explainer.md).
+
 ## Artifact Families
 
 The standard uses four core artifact families:
@@ -14,6 +16,8 @@ The standard uses four core artifact families:
 - `verification` means how the requirement was checked and what shared outcome was recorded.
 
 Those are different roles on purpose. Architecture explains intent, work items explain delivery work, and verification records how the requirement was checked and what outcome was recorded. None of them replace the requirement text itself.
+
+Architecture remains optional. When an RFC, policy, incident, or other upstream document is the real source of a requirement, capture that provenance in `Upstream Refs` and use derived reporting if you need source-coverage views.
 
 ## Profiles In Practice
 
@@ -35,6 +39,8 @@ Practical reading:
 
 `auditable` does not mean formal proof of program correctness. It means the repository has recorded verification coverage according to its chosen practice.
 
+If you need a dimension-style report instead of a gate result, use the derived-reporting model in [`profiles-and-attestation-explainer.md`](./profiles-and-attestation-explainer.md) and [`SPEC-RPT.md`](./specs/requirements/spec-trace/SPEC-RPT.md).
+
 ## Trace Labels At A Glance
 
 The canonical downstream trace graph is:
@@ -43,15 +49,21 @@ The canonical downstream trace graph is:
 - `Implemented By` for work items
 - `Verified By` for verification artifacts
 
-That graph is different from provenance and from implementation-specific direct references.
+That graph is different from provenance and from generated implementation
+evidence.
 
 Use these distinctions:
 
-- `Source Refs` are upstream provenance. They point at laws, policies, tickets, incidents, decisions, or other source material that motivated the requirement.
+- `Upstream Refs` are upstream provenance. They point at laws, policies, tickets, incidents, decisions, or other source material that motivated the requirement.
 - `Derived From` and `Supersedes` are lineage. They describe how one requirement evolved from another.
-- `Test Refs` and `Code Refs` are direct implementation references. They can point at tests, file paths, symbols, or other local references that help a reader find the implementation quickly.
+- Generated evidence snapshots record implementation observations such as
+  `unit_test`, `code_ref`, `benchmark`, or `manual_test`. They can point at
+  tests, file paths, symbols, or other local evidence refs without turning
+  those refs into authored requirement trace.
 
-Only `Satisfied By`, `Implemented By`, and `Verified By` are the canonical downstream trace edges. `Test Refs` and `Code Refs` are useful, but they are not substitutes for that graph.
+Only `Satisfied By`, `Implemented By`, and `Verified By` are the canonical
+downstream trace edges. Evidence snapshots are useful, but they are not
+substitutes for that graph.
 
 ## Canonical Semantics And Local Policy
 
@@ -76,10 +88,12 @@ If you want the smallest concrete chain, open [`examples/arithmetic/SPEC-MATH-DI
 
 That example shows:
 
-- one requirement with `Source Refs` for provenance
+- one requirement with `Upstream Refs` for provenance
 - one architecture artifact in `Satisfied By`
 - one work item in `Implemented By`
 - one verification artifact in `Verified By`
-- direct `Test Refs` and `Code Refs` that point straight at implementation details
+- generated evidence snapshots that point straight at implementation details
 
-Read the requirement first, then follow the downstream trace. Treat the source refs as background provenance and the test/code refs as direct implementation pointers.
+Read the requirement first, then follow the downstream trace. Treat the
+upstream refs as background provenance and the evidence snapshots as derived
+implementation pointers.

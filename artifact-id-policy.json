@@ -1,6 +1,6 @@
 {
   "name": "incursa/spec-trace metadata catalog",
-  "version": 6,
+  "version": 8,
   "artifact_id_format": {
     "summary": "PREFIX-DOMAIN(-GROUPING...)",
     "grouping_segments": {
@@ -69,6 +69,16 @@
       "description": "Conformance profiles and enforcement levels"
     },
     {
+      "code": "RPT",
+      "name": "Reporting",
+      "description": "Derived reporting dimensions and attestation views"
+    },
+    {
+      "code": "EVD",
+      "name": "Evidence",
+      "description": "Generated evidence snapshots and merge semantics"
+    },
+    {
       "code": "LAY",
       "name": "Layout",
       "description": "Repository layout and artifact placement"
@@ -94,14 +104,16 @@
       "architecture, work-item, and verification identifiers continue to use terminal sequences",
       "lineage fields keep requirement evolution lightweight without adding workflow states",
       "profile names stay limited to core, traceable, and auditable at the canonical level",
-    "grouping expands to zero or more '-SEGMENT' tokens after the domain token",
+      "derived reporting dimensions and attestation views remain separate from the canonical profile names",
+      "generated evidence snapshots are derived outputs rather than a fifth canonical artifact family",
+      "grouping expands to zero or more '-SEGMENT' tokens after the domain token",
     "grouping segments must start with a letter, so numeric-only grouping values are invalid",
     "the terminal sequence is zero-padded to at least four digits",
     "domain and grouping segments use the same uppercase alphanumeric token pattern",
     "the reference package allows zero or more grouping segments and does not set a hard maximum",
       "grouping-key registry entries provide the human-readable names and descriptions for the abbreviated codes used in the spec suite",
       "requirement identifiers use the same domain and grouping rules as specification identifiers but use the REQ prefix and terminal sequence because they identify clauses within specifications",
-      "tests and code may reference requirement identifiers directly",
+      "generated evidence snapshots and local tooling may reference requirement identifiers directly",
       "inline identifier references in prose use backticks around stable artifact IDs and may point at requirements, specifications, and other canonical artifact families"
     ]
   }

@@ -367,7 +367,7 @@ function Parse-RequirementSection {
     }
 
     $trace = if ($traceLines.Count -gt 0) { Parse-LabeledListBlock -Content ($traceLines -join "`n") } else { [ordered]@{} }
-    $allowedTraceLabels = @('Satisfied By', 'Implemented By', 'Verified By', 'Derived From', 'Supersedes', 'Source Refs', 'Test Refs', 'Code Refs', 'Related')
+    $allowedTraceLabels = @('Satisfied By', 'Implemented By', 'Verified By', 'Derived From', 'Supersedes', 'Upstream Refs', 'Related')
     foreach ($label in $trace.Keys) {
         if ($allowedTraceLabels -notcontains $label) {
             Add-Error $Errors "${FileLabel}: requirement '$requirementId' trace block contains unsupported label '$label'."

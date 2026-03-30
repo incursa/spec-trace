@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evidence-snapshot.schema.json",
+  "title": "Evidence Snapshot",
+  "description": "Reference schema for generated point-in-time evidence snapshots used for derived reporting and attestation.",
+  "$defs": {
+    "requirementId": {
+      "type": "string",
+      "pattern": "^REQ-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$"
+    },
+    "kindToken": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "statusToken": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "passed",
+        "failed",
+        "not_observed",
+        "not_collected",
+        "unsupported"
+      ]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "observation": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/kindToken"
+        },
+        "status": {
+          "$ref": "#/$defs/statusToken"
+        },
+        "refs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "status"
+      ],
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "requirementEvidence": {
+      "type": "object",
+      "properties": {
+        "requirement_id": {
+          "$ref": "#/$defs/requirementId"
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/observation"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "requirement_id",
+        "observations"
+      ],
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "properties": {
+    "snapshot_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "producer": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/requirementEvidence"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "snapshot_id",
+    "generated_at",
+    "producer",
+    "requirements"
+  ],
+  "patternProperties": {
+    "^x_[A-Za-z0-9_]+$": {}
+  },
+  "additionalProperties": false
+}

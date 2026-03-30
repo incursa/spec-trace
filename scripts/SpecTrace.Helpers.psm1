@@ -24,6 +24,75 @@ function Remove-YamlQuotes {
     return $trimmed
 }
 
+function Get-NormalizedIdentifierText {
+    param(
+        [AllowNull()]
+        [string]$Value
+    )
+
+    if ($null -eq $Value) {
+        return $null
+    }
+
+    $normalized = Remove-YamlQuotes $Value
+    if ($null -eq $normalized) {
+        return $null
+    }
+
+    $normalized = $normalized.Trim()
+
+    if ($normalized -match '^\[(?<label>.+?)\]\((?<target>[^)]+)\)$') {
+        $normalized = $Matches['label'].Trim()
+    }
+
+    if ($normalized -match '^`(?<id>(?:SPEC|REQ|ARC|WI|VER)-[A-Z0-9-]+)`$') {
+        return $Matches['id']
+    }
+
+    return $normalized
+}
+
+function Get-RequirementHeadingParts {
+    param(
+        [AllowNull()]
+        [string]$Heading
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Heading)) {
+        return $null
+    }
+
+    $trimmed = $Heading.Trim()
+
+    if ($trimmed -match '^\[(?<label>.+?)\]\((?<target>[^)]+)\)\s+(?<title>.+)$') {
+        $label = $Matches['label']
+        $title = $Matches['title'].Trim()
+        $requirementId = Get-NormalizedIdentifierText $label
+        if ($requirementId -match '^REQ-[A-Z0-9-]+$') {
+            return [pscustomobject]@{
+                RequirementId = $requirementId
+                Title         = $title
+            }
+        }
+    }
+
+    if ($trimmed -match '^`(?<requirementId>REQ-[A-Z0-9-]+)`\s+(?<title>.+)$') {
+        return [pscustomobject]@{
+            RequirementId = $Matches['requirementId']
+            Title         = $Matches['title'].Trim()
+        }
+    }
+
+    if ($trimmed -match '^(?<requirementId>REQ-[A-Z0-9-]+)\s+(?<title>.+)$') {
+        return [pscustomobject]@{
+            RequirementId = $Matches['requirementId']
+            Title         = $Matches['title'].Trim()
+        }
+    }
+
+    return $null
+}
+
 function Get-FrontMatter {
     param(
         [string]$Content
@@ -237,7 +306,7 @@ function Normalize-Set {
 
     @(
         $Values |
-            ForEach-Object { if ($null -ne $_) { $_.ToString().Trim() } } |
+            ForEach-Object { if ($null -ne $_) { Get-NormalizedIdentifierText ($_.ToString()) } } |
             Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
             Select-Object -Unique |
             Sort-Object
@@ -359,7 +428,7 @@ function Add-ReferenceValidation {
             continue
         }
 
-        $reference = $value.ToString().Trim()
+        $reference = Get-NormalizedIdentifierText ($value.ToString())
         if ($reference -notmatch $ExpectedPattern) {
             Add-Error $Errors "${FileLabel}: ${FieldLabel} value '$reference' does not match the expected identifier family."
             continue
@@ -397,19 +466,20 @@ function Parse-RequirementSection {
         [string]$ArchitectureIdPattern = '^ARC-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\d{4,}$',
         [string]$WorkItemIdPattern = '^WI-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\d{4,}$',
         [string]$VerificationIdPattern = '^VER-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\d{4,}$',
-        [string[]]$AllowedTraceLabels = @('Satisfied By', 'Implemented By', 'Verified By', 'Derived From', 'Supersedes', 'Source Refs', 'Test Refs', 'Code Refs', 'Related'),
+        [string[]]$AllowedTraceLabels = @('Satisfied By', 'Implemented By', 'Verified By', 'Derived From', 'Supersedes', 'Upstream Refs', 'Related'),
         [switch]$AllowExtensionLabels,
         [switch]$SkipReferenceValidation
     )
 
     $heading = $Section.Heading
-    if ($heading -notmatch '^(?<requirementId>REQ-[A-Z0-9-]+)\s+(?<title>.+)$') {
+    $headingParts = Get-RequirementHeadingParts $heading
+    if ($null -eq $headingParts) {
         Add-Error $Errors "${FileLabel}: invalid requirement heading '$heading'."
         return $null
     }
 
-    $requirementId = $Matches['requirementId']
-    $title = $Matches['title'].Trim()
+    $requirementId = $headingParts.RequirementId
+    $title = $headingParts.Title
     $namespace = Get-Namespace $requirementId
 
     if ([string]::IsNullOrWhiteSpace($title)) {
@@ -488,7 +558,7 @@ function Parse-RequirementSection {
                 continue
             }
 
-            $normalized = $reference.ToString().Trim()
+            $normalized = Get-NormalizedIdentifierText ($reference.ToString())
             if ($normalized -match $RequirementIdPattern) {
                 if (-not $KnownRequirements.ContainsKey($normalized)) {
                     Add-Error $Errors "${FileLabel}: requirement '$requirementId' / Related references unknown requirement '$normalized'."
@@ -524,7 +594,7 @@ function Get-FrontMatterArray {
     )
 
     if ($Metadata.Contains($Key)) {
-        return @($Metadata[$Key])
+        return @($Metadata[$Key] | ForEach-Object { if ($null -ne $_) { Get-NormalizedIdentifierText ($_.ToString()) } })
     }
 
     return @()
@@ -532,6 +602,8 @@ function Get-FrontMatterArray {
 
 Export-ModuleMember -Function `
     Remove-YamlQuotes, `
+    Get-NormalizedIdentifierText, `
+    Get-RequirementHeadingParts, `
     Get-FrontMatter, `
     ConvertFrom-SimpleFrontMatter, `
     Get-MarkdownSections, `

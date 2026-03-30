@@ -29,7 +29,7 @@ Verify the narrow contract for the division operation.
 
 ## Verification Method
 
-Automated execution of the operation with direct requirement-linked tests.
+Automated execution of the operation with generated requirement-linked evidence.
 
 ## Preconditions
 
@@ -49,9 +49,7 @@ The operation requires both operands, returns the quotient for non-zero denomina
 
 ## Evidence
 
-- tests/arithmetic/divide.spec::requires_two_operands
-- tests/arithmetic/divide.spec::returns_quotient_for_non_zero_denominator
-- tests/arithmetic/divide.spec::throws_on_zero_denominator
+- [`division-evidence.evidence.json`](./generated/division-evidence.evidence.json)
 
 ## Status
 

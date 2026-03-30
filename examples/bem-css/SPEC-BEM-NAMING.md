@@ -44,7 +44,7 @@ Trace:
 - Related:
   - [REQ-BEM-CONCEPTS-0004](./SPEC-BEM-CONCEPTS.md)
   - [REQ-BEM-NAMING-0009](./SPEC-BEM-NAMING.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/naming-convention/
   - https://en.bem.info/methodology/quick-start/
 
@@ -62,7 +62,7 @@ Trace:
 - Related:
   - [REQ-BEM-CONCEPTS-0001](./SPEC-BEM-CONCEPTS.md)
   - [REQ-BEM-CONCEPTS-0002](./SPEC-BEM-CONCEPTS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
   - https://en.bem.info/methodology/naming-convention/
 
@@ -79,7 +79,7 @@ Trace:
   - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
   - [REQ-BEM-CONCEPTS-0002](./SPEC-BEM-CONCEPTS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
   - https://en.bem.info/methodology/naming-convention/
 
@@ -93,7 +93,7 @@ Trace:
   - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
   - [REQ-BEM-NAMING-0003](./SPEC-BEM-NAMING.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
   - https://en.bem.info/methodology/naming-convention/
 
@@ -107,7 +107,7 @@ Trace:
   - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
   - [REQ-BEM-CONCEPTS-0003](./SPEC-BEM-CONCEPTS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
   - https://en.bem.info/methodology/naming-convention/
 
@@ -121,7 +121,7 @@ Trace:
   - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
   - [REQ-BEM-NAMING-0005](./SPEC-BEM-NAMING.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
   - https://en.bem.info/methodology/naming-convention/
 
@@ -135,7 +135,7 @@ Trace:
   - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
   - [REQ-BEM-CONCEPTS-0003](./SPEC-BEM-CONCEPTS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
 
 Notes:
@@ -151,7 +151,7 @@ Trace:
   - [VER-BEM-CSS-0001](./sample-verification.md)
 - Related:
   - [REQ-BEM-CONCEPTS-0003](./SPEC-BEM-CONCEPTS.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/quick-start/
 
 ## [`REQ-BEM-NAMING-0009`](./SPEC-BEM-NAMING.md) Exclude separator characters from block names
@@ -165,7 +165,7 @@ Trace:
 - Related:
   - [REQ-BEM-NAMING-0001](./SPEC-BEM-NAMING.md)
   - [REQ-BEM-NAMING-0002](./SPEC-BEM-NAMING.md)
-- Source Refs:
+- Upstream Refs:
   - https://en.bem.info/methodology/naming-convention/
   - https://en.bem.info/methodology/quick-start/
 

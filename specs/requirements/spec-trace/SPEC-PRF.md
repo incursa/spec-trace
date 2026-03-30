@@ -27,15 +27,16 @@ This specification covers the canonical profile names, the checks included in ea
 
 Not every repository wants the same enforcement baseline. Some only need correct shapes and stable identifiers. Others want a stricter trace graph without turning the standard into a certification program.
 
-## [`REQ-PRF-0001`](./SPEC-PRF.md) Define the canonical conformance profiles
+## [`REQ-PRF-0001`](./SPEC-PRF.md#req-prf-0001-define-the-canonical-conformance-profiles) Define the canonical conformance profiles
 The standard MUST define `core`, `traceable`, and `auditable` as its only canonical conformance profiles.
 
 Notes:
 - The profiles are ordered from least strict to most strict.
 - The profile names are canonical; repositories may add local policy names, but not new canonical profiles.
 - Reader-friendly shorthand such as spec-valid, artifact-linked, and evidence-backed may help explanation, but it does not create alternate canonical names.
+- The profiles are repository-level conformance gates, not maturity scores, workflow stages, or per-artifact labels.
 
-## [`REQ-PRF-0002`](./SPEC-PRF.md) Keep the core profile minimal
+## [`REQ-PRF-0002`](./SPEC-PRF.md#req-prf-0002-keep-the-core-profile-minimal) Keep the core profile minimal
 The `core` profile MUST require schema-conformant shape, identifier correctness, and approved normative keyword correctness only.
 
 Notes:
@@ -43,15 +44,17 @@ Notes:
 - `core` does not require downstream trace completeness, verification coverage, or reciprocal trace checks.
 - In practice, `core` is the spec-valid baseline: the requirements are structurally valid and trustworthy as requirements.
 
-## [`REQ-PRF-0003`](./SPEC-PRF.md) Define the traceable profile as core plus graph hygiene
+## [`REQ-PRF-0003`](./SPEC-PRF.md#req-prf-0003-define-the-traceable-profile-as-core-plus-graph-hygiene) Define the traceable profile as core plus graph hygiene
 The `traceable` profile MUST require the `core` profile plus no unresolved artifact or requirement references, no duplicate IDs, and at least one downstream trace link for every requirement.
 
 Notes:
 - Downstream trace links are `Satisfied By`, `Implemented By`, and `Verified By`.
-- Upstream lineage fields such as `Derived From`, `Supersedes`, and `Source Refs` do not satisfy the downstream-trace requirement by themselves.
+- Upstream lineage fields such as `Derived From`, `Supersedes`, and
+  `Upstream Refs` do not satisfy the downstream-trace requirement by
+  themselves.
 - In practice, `traceable` is artifact-linked: every requirement must be connected to at least one downstream artifact.
 
-## [`REQ-PRF-0004`](./SPEC-PRF.md) Define the auditable profile as traceable plus proof coverage
+## [`REQ-PRF-0004`](./SPEC-PRF.md#req-prf-0004-define-the-auditable-profile-as-traceable-plus-proof-coverage) Define the auditable profile as traceable plus proof coverage
 The `auditable` profile MUST require the `traceable` profile plus verification coverage for every requirement, reciprocal trace agreement where reciprocal fields exist, and no orphan ARC, WI, or VER artifacts.
 
 Notes:
@@ -61,10 +64,23 @@ Notes:
 - In practice, `auditable` is evidence-backed: every requirement has verification coverage and the graph is internally consistent.
 - `auditable` does not mean formal proof of correctness or certification-style assurance.
 
-## [`REQ-PRF-0005`](./SPEC-PRF.md) Keep profile choice lightweight and repository-scoped
+## [`REQ-PRF-0005`](./SPEC-PRF.md#req-prf-0005-keep-profile-choice-lightweight-and-repository-scoped) Keep profile choice lightweight and repository-scoped
 The standard MUST remain usable at `core` level without per-artifact profile fields or certification records.
 
 Notes:
 - A repository MAY choose one canonical profile as its local enforcement target.
 - Profile choice is repository policy, not canonical artifact metadata.
 - Local policy terms such as implemented, verified, and release-ready may be useful inside a repository, but they remain outside the canonical profile set unless the repository standardizes them.
+- A repository may use those terms in status fields or generated reports without turning them into new canonical profiles.
+
+## [`REQ-PRF-0006`](./SPEC-PRF.md#req-prf-0006-keep-conformance-gates-separate-from-reporting-dimensions) Keep conformance gates separate from reporting dimensions
+The standard MUST treat conformance profiles as minimum repository gates and derived reporting dimensions as a separate reporting layer.
+
+Trace:
+- Related:
+  - [SPEC-RPT](./SPEC-RPT.md)
+
+Notes:
+- A repository may remain at `core` while still reporting upstream, design,
+  implementation, verification, and evidence-by-kind coverage dimensions.
+- A profile result does not replace a dimension-level coverage or attestation report.

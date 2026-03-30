@@ -1,0 +1,80 @@
+{
+  "snapshot_id": "evidence-payments-duplicate-batch-2026-03-30",
+  "generated_at": "2026-03-30T18:05:00Z",
+  "producer": {
+    "name": "example-evidence-generator",
+    "version": "1.0.0"
+  },
+  "requirements": [
+    {
+      "requirement_id": "REQ-PAY-ACH-0013",
+      "observations": [
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "payments.ach.BatchIdentityKey",
+            "payments.ach.BatchIntakeGuard.rejectDuplicateBatch"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-PAY-ACH-0014",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/payments/ach/duplicate-batch.spec::rejects_second_submission_for_same_tenant"
+          ]
+        },
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "payments.ach.BatchIntakeGuard.rejectDuplicateBatch"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-PAY-ACH-0015",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/payments/ach/duplicate-batch.spec::allows_same_identifier_for_different_tenant"
+          ]
+        },
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "payments.ach.BatchIdentityKey"
+          ]
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-PAY-ACH-0016",
+      "observations": [
+        {
+          "kind": "unit_test",
+          "status": "passed",
+          "refs": [
+            "tests/payments/ach/duplicate-batch.spec::does_not_start_processing_for_rejected_duplicate"
+          ]
+        },
+        {
+          "kind": "code_ref",
+          "status": "observed",
+          "refs": [
+            "payments.ach.BatchSubmissionService.submit"
+          ]
+        }
+      ]
+    }
+  ]
+}

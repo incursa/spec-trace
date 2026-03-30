@@ -20,6 +20,6 @@ How to read it:
 - [`sample-architecture.md`](./sample-architecture.md) shows how those requirements are satisfied in a BEM implementation.
 - [`sample-verification.md`](./sample-verification.md) records the review used to verify the requirement set.
 - Each requirement is atomic and can be referenced directly by ID.
-- The `Trace` blocks use `Satisfied By` and `Verified By` for downstream links, plus `Source Refs` and `Related` where useful.
+- The `Trace` blocks use `Satisfied By` and `Verified By` for downstream links, plus `Upstream Refs` and `Related` where useful.
 
 Definitions stay in the specification family. In this repo, definition-like statements are still written as requirements when they need stable IDs and downstream trace.

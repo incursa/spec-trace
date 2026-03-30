@@ -46,11 +46,14 @@ Add the two-operand entry point, return the quotient for non-zero denominators, 
 
 ## Verification Plan
 
-Use [`VER-MATH-DIV-0001`](./sample-verification.md) and direct test references to confirm the operation contract.
+Use [`VER-MATH-DIV-0001`](./sample-verification.md) and
+[`division-evidence.evidence.json`](./generated/division-evidence.evidence.json)
+to confirm the operation contract.
 
 ## Completion Notes
 
-The implementation keeps the code reference stable at `arithmetic.divide`.
+The implementation keeps the exported operation reference stable at
+`arithmetic.divide`.
 
 ## Trace Links
 

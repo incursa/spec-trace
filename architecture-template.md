@@ -19,6 +19,8 @@ Use one of the approved architecture statuses: `draft`, `proposed`, `approved`, 
 
 State how this design satisfies the named requirements.
 
+Create this artifact when design explanation, tradeoffs, or stable technical structure add value. If the requirement only needs upstream provenance, use `Upstream Refs` in the requirement instead of forcing an architecture document.
+
 ## Requirements Satisfied
 
 - REQ-<DOMAIN>[-<GROUPING>...]-<SEQUENCE:4+>
