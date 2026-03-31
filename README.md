@@ -36,6 +36,8 @@ The published module path is `github.com/incursa/spec-trace@v0`. Consumers can i
 - `github.com/incursa/spec-trace/model@v0` for the canonical schema definitions
 - `github.com/incursa/spec-trace@v0:templates` for the schema-backed root template definitions (`templates.#SpecificationTemplate`, `templates.#ArchitectureTemplate`, `templates.#WorkItemTemplate`, `templates.#VerificationTemplate`)
 
+The Central Registry package is built from the dedicated [`publish/`](./publish/) submodule, so it contains only the reusable schema and template definitions plus package metadata. It does not publish the canonical SPEC suite, examples, generated artifacts, or repository tooling.
+
 Concrete artifacts live under [`specs/`](./specs/) and [`examples/`](./examples/). Generated Markdown sits beside the `.cue` source for readability, but contributors should edit the `.cue` file.
 
 ## Commands
@@ -65,6 +67,7 @@ Useful variants:
 - [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/) - canonical self-specification suite, authored in CUE with generated Markdown siblings
 - [`model/`](./model/) - canonical shared CUE definitions for artifacts, requirements, evidence, retired-ID ledgers, and generated catalogs
 - [`cue.mod/`](./cue.mod/) - root CUE module
+- [`publish/`](./publish/) - dedicated publish submodule for the reusable Central Registry package
 - [`catalog/retired-requirements.cue`](./catalog/retired-requirements.cue) - retired requirement ledger used during lineage validation
 - [`spec-template.cue`](./spec-template.cue), [`architecture-template.cue`](./architecture-template.cue), [`work-item-template.cue`](./work-item-template.cue), [`verification-template.cue`](./verification-template.cue) - schema-backed template definitions for the published root `templates` package
 - [`schemas/`](./schemas/) - compatibility JSON Schemas and related exports; helpful for integrations, not authoritative over CUE
@@ -107,4 +110,4 @@ The repository is prepared for Central Registry publishing through [`.github/wor
 
 - Push a semver tag such as `v0.1.0`, or run the workflow manually with a version input.
 - Add a Central Registry trust entry for this repository and workflow so GitHub Actions can exchange its OIDC token for a short-lived registry token.
-- The workflow logs into `registry.cue.works` through `cue-labs/registry-login-action@v1`, validates the repository, checks that `cue mod tidy` leaves `cue.mod/module.cue` unchanged, performs a dry run, and then runs `cue mod publish <version>`.
+- The workflow synchronizes [`publish/`](./publish/) from the canonical root model and templates, validates the repository, checks that the publish submodule stays tidy, performs a dry run from that submodule, and then publishes from `publish/`.

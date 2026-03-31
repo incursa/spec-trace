@@ -29,6 +29,7 @@ If you find a mismatch, follow the higher-authority source and fix the lower-aut
 - To run repository-wide validation, use [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1).
 - To generate readable Markdown from canonical CUE, use [`scripts/Render-SpecTraceMarkdown.ps1`](./scripts/Render-SpecTraceMarkdown.ps1).
 - To emit a machine-readable repository catalog, use [`scripts/Build-SpecTraceCatalog.ps1`](./scripts/Build-SpecTraceCatalog.ps1).
+- To synchronize the reusable publishable package, use [`scripts/Sync-PublishModule.ps1`](./scripts/Sync-PublishModule.ps1). The publishable Central Registry artifact comes from [`publish/`](./publish/), not from the canonical SPEC or example trees.
 
 ## Working Rules
 

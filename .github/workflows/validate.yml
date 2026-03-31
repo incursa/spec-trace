@@ -24,6 +24,10 @@ jobs:
           "path=$cue" >> $env:GITHUB_OUTPUT
           Add-Content -LiteralPath $env:GITHUB_PATH -Value (Split-Path -Parent $cue)
 
+      - name: Sync publish submodule
+        shell: pwsh
+        run: ./scripts/Sync-PublishModule.ps1
+
       - name: Run tool tests
         shell: pwsh
         run: dotnet test tests/SpecTrace.Tool.Tests/SpecTrace.Tool.Tests.csproj
@@ -36,15 +40,52 @@ jobs:
         shell: pwsh
         run: ./scripts/Render-SpecTraceMarkdown.ps1 -Check
 
-      - name: Verify module metadata is tidy
+      - name: Verify publish submodule is synchronized
         shell: pwsh
         run: |
-          cue mod tidy
-          git diff --exit-code -- cue.mod/module.cue
+          $status = git status --short --untracked-files=all -- publish
+          if ($status) {
+            $status | Write-Host
+            throw "Publish subtree is not synchronized."
+          }
 
-      - name: Dry-run module publish
+      - name: Verify publish module metadata is tidy
         shell: pwsh
-        run: cue mod publish v0.0.0-validate --dry-run
+        run: |
+          Push-Location publish
+          try {
+            cue mod tidy
+          }
+          finally {
+            Pop-Location
+          }
+          $status = git status --short --untracked-files=all -- publish
+          if ($status) {
+            $status | Write-Host
+            throw "Publish subtree changed after cue mod tidy."
+          }
+
+      - name: Evaluate publish module templates package
+        shell: pwsh
+        run: |
+          Push-Location publish
+          try {
+            cue eval .:templates
+          }
+          finally {
+            Pop-Location
+          }
+
+      - name: Dry-run publish module
+        shell: pwsh
+        run: |
+          Push-Location publish
+          try {
+            cue mod publish v0.0.0-validate --dry-run
+          }
+          finally {
+            Pop-Location
+          }
 
       - name: Build repository catalog
         shell: pwsh

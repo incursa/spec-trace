@@ -35,6 +35,9 @@ When working in this repository:
 - [`work-item-template.cue`](./work-item-template.cue): `templates.#WorkItemTemplate`
 - [`verification-template.cue`](./verification-template.cue): `templates.#VerificationTemplate`
 - [`catalog/retired-requirements.cue`](./catalog/retired-requirements.cue): retired requirement ledger for lineage validation
+- Central Registry imports come from the curated [`publish/`](./publish/) submodule, not from the repository's canonical SPEC or example trees:
+  - `github.com/incursa/spec-trace/model@v0`
+  - `github.com/incursa/spec-trace@v0:templates`
 
 ## Commands
 

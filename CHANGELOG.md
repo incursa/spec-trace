@@ -16,7 +16,8 @@
 
 ### Changed
 
-- Switched Central Registry publishing from a long-lived token secret to GitHub OIDC via `cue-labs/registry-login-action`, and updated the release workflow to put the pinned CUE CLI on `PATH` before running `cue mod tidy` or `cue mod publish`.
+- Split Central Registry packaging into a dedicated [`publish/`](./publish/) submodule so published versions contain only the reusable schema and template definitions instead of the repository's canonical specs, examples, and tooling.
+- Switched Central Registry publishing from a long-lived token secret to GitHub OIDC via `cue-labs/registry-login-action`, and updated the release workflow to sync and publish the dedicated `publish/` submodule with the pinned CUE CLI on `PATH`.
 - Clarified that consumers import the schema-backed root template package as `github.com/incursa/spec-trace@v0:templates`.
 - Clarified repository documentation guidance so repo-local references use relative Markdown links, with backticks kept inside link text when monospace styling is desired.
 - Clarified that repo-local Markdown links to specific requirements or other headed specification subsections should include anchors or equivalent sub-document locators when relevant.

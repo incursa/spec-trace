@@ -18,6 +18,7 @@ If any lower layer disagrees with the SPEC suite or the shared CUE model, the CU
 - Author canonical artifacts in `.cue`, not Markdown, YAML, or JSON.
 - Use the shared import path [`github.com/incursa/spec-trace/model@v0`](./model/README.md).
 - Use the root module import path `github.com/incursa/spec-trace@v0:templates` when you want the published template definitions from the `templates` package.
+- The reusable Central Registry artifact is synchronized into [`publish/`](./publish/) and published from that submodule; root canonical specs and examples are intentionally not part of the published package.
 - Keep concrete authored documents mostly data. Prefer straightforward field assignment over clever CUE metaprogramming.
 - Treat generated Markdown as read-only presentation output.
 - Use stable IDs for cross-file references. Do not use file paths as canonical trace identifiers when an artifact or requirement ID exists.
