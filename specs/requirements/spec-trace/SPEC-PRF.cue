@@ -1,0 +1,106 @@
+package artifacts
+
+import model "github.com/incursa/spec-trace/model@v0"
+
+artifact: model.#Specification & {
+    artifact_id: "SPEC-PRF"
+    artifact_type: "specification"
+    title: "Conformance Profiles and Enforcement Levels"
+    domain: "spec-trace"
+    capability: "conformance-profiles"
+    status: "draft"
+    owner: "spec-trace-maintainers"
+    tags: [
+        "spec-trace",
+        "profiles",
+        "conformance",
+        "validation",
+    ]
+    purpose: """
+      Define the lightweight conformance profiles that let the standard stay easy on day one while supporting stricter repository policies when stronger traceability is needed.
+      """
+    scope: """
+      This specification covers the canonical profile names, the checks included in each profile, and the rule that profile choice stays repository-level rather than becoming per-artifact metadata.
+      """
+    context: """
+      Not every repository wants the same enforcement baseline. Some only need correct shapes and stable identifiers. Others want a stricter trace graph without turning the standard into a certification program.
+      """
+    requirements: [
+        {
+            id: "REQ-PRF-0001"
+            title: "Define the canonical conformance profiles"
+            statement: "The standard MUST define `core`, `traceable`, and `auditable` as its only canonical conformance profiles."
+            notes: [
+                "The profiles are ordered from least strict to most strict.",
+                "The profile names are canonical; repositories may add local policy names, but not new canonical profiles.",
+                "Reader-friendly shorthand such as spec-valid, artifact-linked, and evidence-backed may help explanation, but it does not create alternate canonical names.",
+                "The profiles are repository-level conformance gates, not maturity scores, workflow stages, or per-artifact labels.",
+            ]
+        },
+        {
+            id: "REQ-PRF-0002"
+            title: "Keep the core profile minimal"
+            statement: """
+              The `core` profile MUST require CUE-schema-conformant shape, identifier correctness, approved normative keyword correctness, no duplicate canonical IDs, and no broken structured references.
+              """
+            notes: [
+                "`core` is the low-burden baseline.",
+                "`core` does not require downstream trace completeness, verification coverage, or reciprocal trace checks.",
+                "In practice, `core` is the spec-valid baseline: the requirements are structurally valid and trustworthy as requirements.",
+            ]
+        },
+        {
+            id: "REQ-PRF-0003"
+            title: "Define the traceable profile as core plus graph hygiene"
+            statement: """
+              The `traceable` profile MUST require the `core` profile plus at least one downstream trace link for every requirement.
+              """
+            notes: [
+                "Downstream trace links are `Satisfied By`, `Implemented By`, and `Verified By`.",
+                "Upstream lineage fields such as `Derived From`, `Supersedes`, and\n`Upstream Refs` do not satisfy the downstream-trace requirement by\nthemselves.",
+                "In practice, `traceable` is artifact-linked: every requirement must be connected to at least one downstream artifact.",
+            ]
+        },
+        {
+            id: "REQ-PRF-0004"
+            title: "Define the auditable profile as traceable plus proof coverage"
+            statement: """
+              The `auditable` profile MUST require the `traceable` profile plus verification coverage for every requirement, reciprocal trace agreement where reciprocal fields exist, and no orphan ARC, WI, or VER artifacts.
+              """
+            notes: [
+                "Verification coverage means each requirement has at least one `Verified By` link.",
+                "Reciprocal fields exist when a linked architecture, work item, or verification artifact can mirror the requirement's downstream trace.",
+                "An orphan ARC, WI, or VER artifact is an artifact that is not targeted by any requirement's downstream trace links.",
+                "In practice, `auditable` is evidence-backed: every requirement has verification coverage and the graph is internally consistent.",
+                "`auditable` does not mean formal proof of correctness or certification-style assurance.",
+            ]
+        },
+        {
+            id: "REQ-PRF-0005"
+            title: "Keep profile choice lightweight and repository-scoped"
+            statement: "The standard MUST remain usable at `core` level without per-artifact profile fields or certification records."
+            notes: [
+                "A repository MAY choose one canonical profile as its local enforcement target.",
+                "Profile choice is repository policy, not canonical artifact metadata.",
+                "Local policy terms such as implemented, verified, and release-ready may be useful inside a repository, but they remain outside the canonical profile set unless the repository standardizes them.",
+                "A repository may use those terms in status fields or generated reports without turning them into new canonical profiles.",
+            ]
+        },
+        {
+            id: "REQ-PRF-0006"
+            title: "Keep conformance gates separate from reporting dimensions"
+            statement: """
+              The standard MUST treat conformance profiles as minimum repository gates and derived reporting dimensions as a separate reporting layer.
+              """
+            trace: {
+                related: [
+                    "SPEC-RPT",
+                ]
+            }
+            notes: [
+                "A repository may remain at `core` while still reporting upstream, design,\nimplementation, verification, and evidence-by-kind coverage dimensions.",
+                "A profile result does not replace a dimension-level coverage or attestation report.",
+            ]
+        },
+    ]
+}

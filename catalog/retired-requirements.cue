@@ -1,0 +1,18 @@
+package catalog
+
+import model "github.com/incursa/spec-trace/model@v0"
+
+ledger: model.#RetiredRequirementLedger & {
+    retired_requirements: [
+        {
+            id:    "REQ-PAY-ACH-0012"
+            title: "Legacy duplicate ACH batch rule"
+            replaced_by: [
+                "REQ-PAY-ACH-0013",
+            ]
+            notes: [
+                "Retained as lineage-only history after the payments example clarified tenant-scoped duplicate handling.",
+            ]
+        },
+    ]
+}

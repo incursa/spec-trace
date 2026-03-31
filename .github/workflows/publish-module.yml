@@ -1,0 +1,91 @@
+name: Publish CUE Module
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Module version to publish, for example v0.1.0
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve publish version
+        id: version
+        shell: pwsh
+        run: |
+          if ('${{ github.event_name }}' -eq 'workflow_dispatch') {
+            $version = '${{ inputs.version }}'
+          }
+          else {
+            $version = '${{ github.ref_name }}'
+          }
+
+          if ($version -notmatch '^v\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$') {
+            throw "Publish version '$version' is not a valid semver tag."
+          }
+
+          "value=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Resolve pinned CUE CLI
+        id: cue
+        shell: pwsh
+        run: |
+          $cue = ./scripts/Resolve-Cue.ps1
+          "path=$cue" >> $env:GITHUB_OUTPUT
+          Add-Content -LiteralPath $env:GITHUB_PATH -Value (Split-Path -Parent $cue)
+
+      - name: Run tool tests
+        shell: pwsh
+        run: dotnet test tests/SpecTrace.Tool.Tests/SpecTrace.Tool.Tests.csproj
+
+      - name: Validate canonical CUE artifacts
+        shell: pwsh
+        run: ./scripts/Test-SpecTraceRepository.ps1 -Profile core
+
+      - name: Check generated Markdown
+        shell: pwsh
+        run: ./scripts/Render-SpecTraceMarkdown.ps1 -Check
+
+      - name: Validate evidence snapshots
+        shell: pwsh
+        run: ./scripts/Validate-SpecTraceEvidence.ps1
+
+      - name: Verify module metadata is tidy
+        shell: pwsh
+        run: |
+          cue mod tidy
+          git diff --exit-code -- cue.mod/module.cue
+
+      - name: Dry-run module publish
+        shell: pwsh
+        run: cue mod publish '${{ steps.version.outputs.value }}' --dry-run
+
+      - name: Log in to the Central Registry
+        uses: cue-labs/registry-login-action@v1
+        with:
+          registry: registry.cue.works
+
+      - name: Publish module
+        shell: pwsh
+        run: cue mod publish '${{ steps.version.outputs.value }}'

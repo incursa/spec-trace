@@ -105,4 +105,4 @@ mandatory tombstone requirement artifact.
 Notes:
 - This preserves history when teams want visibility into retired IDs.
 - The core standard still does not require inactive requirement sections to
-  remain in the active specification files.
+remain in the active specification files.

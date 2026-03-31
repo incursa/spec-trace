@@ -29,7 +29,7 @@ identifier references and structured trace differ.
 
 ## Context
 
-The repository exists to make precise software requirements easy to author, review, and trace in plain Markdown. That goal only works if the requirement itself stays short and direct, and the repository also needs a low-burden baseline so teams can adopt the standard without committing to a stricter traceability policy on day one.
+The repository exists to make precise software requirements easy to author, review, and trace from a strongly validated canonical source. CUE provides that source of truth while generated Markdown keeps the standard readable in normal repository browsing and review flows.
 
 ## [`REQ-STD-0001`](./SPEC-STD.md#req-std-0001-distinguish-specifications-from-requirements) Distinguish specifications from requirements
 A specification MUST group one or more related requirements for a capability, behavior area, interface, or narrow technical concern.
@@ -49,7 +49,7 @@ Notes:
 Each canonical requirement MUST have a stable `REQ-...` identifier.
 
 ## [`REQ-STD-0003`](./SPEC-STD.md#req-std-0003-keep-the-canonical-standard-in-the-spec-suite) Keep the canonical standard in the SPEC suite
-The `spec-trace` standard MUST be expressed as the canonical SPEC suite under [`specs/requirements/spec-trace/`](./).
+The `spec-trace` standard MUST be expressed as canonical CUE-authored SPEC artifacts under [`specs/requirements/spec-trace/`](./).
 
 Trace:
 - Related:
@@ -64,10 +64,10 @@ Trace:
   - [SPEC-EXM](./SPEC-EXM.md)
 
 ## [`REQ-STD-0004`](./SPEC-STD.md#req-std-0004-keep-root-guidance-subordinate-to-the-spec-suite) Keep root guidance subordinate to the SPEC suite
-[`README.md`](../../../README.md), [`overview.md`](../../../overview.md), [`layout.md`](../../../layout.md), the root templates, the schemas, and the examples MUST align with the SPEC suite.
+[`README.md`](../../../README.md), [`overview.md`](../../../overview.md), [`layout.md`](../../../layout.md), the root templates, generated Markdown outputs, compatibility schemas, and the examples MUST align with the canonical CUE SPEC suite.
 
 ## [`REQ-STD-0015`](./SPEC-STD.md#req-std-0015-keep-root-guidance-non-authoritative) Keep root guidance non-authoritative
-[`README.md`](../../../README.md), [`overview.md`](../../../overview.md), [`layout.md`](../../../layout.md), the root templates, the schemas, and the examples MUST NOT override the SPEC suite.
+[`README.md`](../../../README.md), [`overview.md`](../../../overview.md), [`layout.md`](../../../layout.md), the root templates, generated Markdown outputs, compatibility schemas, and the examples MUST NOT override the canonical CUE SPEC suite.
 
 ## [`REQ-STD-0005`](./SPEC-STD.md#req-std-0005-make-traceability-a-first-class-goal) Make traceability a first-class goal
 The standard MUST support explicit links from each requirement to relevant
@@ -75,7 +75,7 @@ design, work-item, verification, and upstream-origin material.
 
 Notes:
 - Direct implementation evidence may still be reported through generated
-  evidence snapshots.
+evidence snapshots.
 
 ## [`REQ-STD-0021`](./SPEC-STD.md#req-std-0021-treat-inline-identifier-references-as-lightweight-links) Treat inline identifier references as lightweight links
 The standard MUST treat a backtick-delimited canonical artifact identifier in prose as a lightweight, human-readable, machine-detectable inline identifier reference.
@@ -102,23 +102,23 @@ Notes:
 - Inline identifier references do not replace `Trace` fields.
 
 ## [`REQ-STD-0006`](./SPEC-STD.md#req-std-0006-treat-generated-outputs-as-derived-material) Treat generated outputs as derived material
-Generated indexes, traceability matrices, and coverage reports MUST be treated as derived outputs rather than canonical requirements.
+Generated indexes, traceability matrices, coverage reports, and Markdown renderings MUST be treated as derived outputs rather than canonical requirements.
 
 Notes:
 - This includes current-status views, evidence rollups, coverage dashboards, and attestation snapshots that answer questions such as which requirements currently have passing tests, failing tests, benchmark regressions, stale manual QA, or open implementation work.
 - These views are useful derived outputs, but they are not requirement text, and they do not become source artifacts just because they summarize the canonical graph.
 
 ## [`REQ-STD-0007`](./SPEC-STD.md#req-std-0007-update-canonical-surfaces-together) Update canonical surfaces together
-A change to a canonical field, identifier rule, template shape, schema contract, or example pattern MUST update the affected specs, templates, schemas, and examples in the same change set.
+A change to a canonical field, identifier rule, template shape, CUE schema contract, generator behavior, or example pattern MUST update the affected specs, CUE packages, generated Markdown surfaces, tooling, and examples in the same change set.
 
 ## [`REQ-STD-0008`](./SPEC-STD.md#req-std-0008-use-the-reference-repository-as-a-proving-ground) Use the reference repository as a proving ground
 The reference repository MUST use the standard to specify itself under [`specs/requirements/spec-trace/`](./).
 
 ## [`REQ-STD-0009`](./SPEC-STD.md#req-std-0009-keep-canonical-requirements-inside-specifications) Keep canonical requirements inside specifications
-Each specification Markdown file MUST contain one specification.
+Each specification `.cue` file MUST contain one specification artifact.
 
 ## [`REQ-STD-0016`](./SPEC-STD.md#req-std-0016-keep-canonical-requirements-inside-specifications) Keep canonical requirements inside specifications
-A canonical requirement MUST appear inside its specification document rather than stand alone as an unlabeled prose fragment.
+A canonical requirement MUST appear inside its containing specification artifact rather than stand alone as an unlabeled prose fragment.
 
 ## [`REQ-STD-0010`](./SPEC-STD.md#req-std-0010-distinguish-work-items-from-requirements) Distinguish work items from requirements
 A work item MUST describe implementation work rather than normative requirement text.
@@ -143,7 +143,7 @@ Notes:
 - Verification artifacts are usually more useful as proof-summary artifacts than as hand-maintained duplicate test catalogs.
 - A repository may use tests, manual QA, benchmarks, interoperability runs, security review, fuzzing, formal methods, or other evidence sources according to local policy when it records verification.
 - Verification artifacts may cite one or more generated evidence snapshots as
-  proof inputs.
+proof inputs.
 
 ## [`REQ-STD-0019`](./SPEC-STD.md#req-std-0019-keep-verification-outcomes-homogeneous-within-one-artifact) Keep verification outcomes homogeneous within one artifact
 A verification artifact MUST only list requirements in `verifies` when the artifact status applies to every listed requirement; mixed outcomes belong in separate verification artifacts.
@@ -178,7 +178,7 @@ The standard MUST support staged adoption without requiring synthetic architectu
 Notes:
 - Greenfield repositories may start with requirements and source lineage before implementation exists.
 - Brownfield repositories may ground requirements directly through evidence
-  snapshots and verification evidence without reconstructing delivery history.
+snapshots and verification evidence without reconstructing delivery history.
 
 ## [`REQ-STD-0024`](./SPEC-STD.md#req-std-0024-keep-local-attestation-states-derived-rather-than-canonical) Keep local attestation states derived rather than canonical
 Local states such as implemented, verified, and release-ready MUST be treated as derived repository-policy outputs rather than canonical requirement states.
@@ -204,4 +204,4 @@ Trace:
 Notes:
 - Evidence snapshots complement requirements and verification artifacts.
 - Evidence snapshots do not replace the canonical specification,
-  architecture, work-item, or verification artifact families.
+architecture, work-item, or verification artifact families.

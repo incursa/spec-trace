@@ -1,6 +1,6 @@
 # Profiles And Attestation Explainer
 
-This file is a non-authoritative reading guide for the `spec-trace` reference repository. The canonical standard lives in [`./specs/requirements/spec-trace/`](./specs/requirements/spec-trace/). If this file disagrees with the SPEC suite, the SPEC suite wins.
+This file is a non-authoritative reading guide for the `spec-trace` reference repository. The canonical standard lives in [`./specs/requirements/spec-trace/`](./specs/requirements/spec-trace/), authored in CUE with generated Markdown views for browsing. If this file disagrees with the SPEC suite, the SPEC suite wins.
 
 Use this guide when you want the practical distinction between:
 
@@ -174,6 +174,11 @@ Legacy codebases do not need fake historical work items to become useful under t
 During adoption, generated gap reports, coverage views, and attestation snapshots are valid and useful. They show where the graph is incomplete or where evidence is current, but they remain derived outputs.
 
 This also means repositories do not need fake historical work items just to become useful under the model.
+
+In this reference repository, the practical entry points are:
+
+- [`./scripts/Validate-SpecTraceEvidence.ps1`](./scripts/Validate-SpecTraceEvidence.ps1) to vet one or more `*.evidence.json` snapshots against the canonical CUE schema and repository requirement catalog
+- [`./scripts/Render-SpecTraceAttestation.ps1`](./scripts/Render-SpecTraceAttestation.ps1) to generate deterministic `index.html`, `summary.html`, `details.html`, per-spec pages, and `attestation.json`
 
 ## Smallest End-To-End Example
 

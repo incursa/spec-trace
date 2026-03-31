@@ -5,21 +5,21 @@ title: Implement division operation guard and tests
 domain: arithmetic
 status: complete
 owner: platform-core
-addresses:
-  - [REQ-MATH-DIV-0001](./SPEC-MATH-DIV.md)
-  - [REQ-MATH-DIV-0002](./SPEC-MATH-DIV.md)
-  - [REQ-MATH-DIV-0003](./SPEC-MATH-DIV.md)
-design_links:
-  - [ARC-MATH-DIV-0001](./sample-architecture.md)
-verification_links:
-  - [VER-MATH-DIV-0001](./sample-verification.md)
 related_artifacts:
-  - [SPEC-MATH-DIV](./SPEC-MATH-DIV.md)
-  - [ARC-MATH-DIV-0001](./sample-architecture.md)
-  - [VER-MATH-DIV-0001](./sample-verification.md)
+  - SPEC-MATH-DIV
+  - ARC-MATH-DIV-0001
+  - VER-MATH-DIV-0001
+addresses:
+  - REQ-MATH-DIV-0001
+  - REQ-MATH-DIV-0002
+  - REQ-MATH-DIV-0003
+design_links:
+  - ARC-MATH-DIV-0001
+verification_links:
+  - VER-MATH-DIV-0001
 ---
 
-# [`WI-MATH-DIV-0001`](./sample-work-item.md) - Implement Division Operation Guard And Tests
+# [`WI-MATH-DIV-0001`](./sample-work-item.md) - Implement division operation guard and tests
 
 ## Summary
 
@@ -27,9 +27,9 @@ Implement the division operation, add a zero-denominator guard, and verify the n
 
 ## Requirements Addressed
 
-- [REQ-MATH-DIV-0001](./SPEC-MATH-DIV.md)
-- [REQ-MATH-DIV-0002](./SPEC-MATH-DIV.md)
-- [REQ-MATH-DIV-0003](./SPEC-MATH-DIV.md)
+- [`REQ-MATH-DIV-0001`](./SPEC-MATH-DIV.md#req-math-div-0001-require-numerator-and-denominator-inputs)
+- [`REQ-MATH-DIV-0002`](./SPEC-MATH-DIV.md#req-math-div-0002-return-the-quotient-for-a-non-zero-denominator)
+- [`REQ-MATH-DIV-0003`](./SPEC-MATH-DIV.md#req-math-div-0003-reject-a-zero-denominator)
 
 ## Design Inputs
 
@@ -59,9 +59,9 @@ The implementation keeps the exported operation reference stable at
 
 Addresses:
 
-- [REQ-MATH-DIV-0001](./SPEC-MATH-DIV.md)
-- [REQ-MATH-DIV-0002](./SPEC-MATH-DIV.md)
-- [REQ-MATH-DIV-0003](./SPEC-MATH-DIV.md)
+- [`REQ-MATH-DIV-0001`](./SPEC-MATH-DIV.md#req-math-div-0001-require-numerator-and-denominator-inputs)
+- [`REQ-MATH-DIV-0002`](./SPEC-MATH-DIV.md#req-math-div-0002-return-the-quotient-for-a-non-zero-denominator)
+- [`REQ-MATH-DIV-0003`](./SPEC-MATH-DIV.md#req-math-div-0003-reject-a-zero-denominator)
 
 Uses Design:
 

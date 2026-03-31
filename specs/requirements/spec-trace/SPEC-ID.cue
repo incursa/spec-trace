@@ -1,0 +1,175 @@
+package artifacts
+
+import model "github.com/incursa/spec-trace/model@v0"
+
+artifact: model.#Specification & {
+    artifact_id: "SPEC-ID"
+    artifact_type: "specification"
+    title: "Identifier Policy and Grouping-Key Registry"
+    domain: "spec-trace"
+    capability: "identifier-policy"
+    status: "draft"
+    owner: "spec-trace-maintainers"
+    tags: [
+        "spec-trace",
+        "identifiers",
+        "policy",
+    ]
+    purpose: "Define the shape, stability, and published metadata for identifiers used by the standard."
+    scope: """
+      This specification covers specification, architecture, work-item, verification, and requirement identifiers; domain and grouping tokens; terminal sequence rules for sequence-bearing identifiers; and the machine-readable grouping-key registry.
+      """
+    context: """
+      Stable identifiers are the backbone of traceability. The standard cannot answer coverage questions if requirement IDs and artifact IDs drift or collapse into file-name conventions.
+      """
+    supplemental_sections: [
+        {
+            heading: "Identifier Shape Summary"
+            content: """
+              The following EBNF-style summary describes the canonical identifier families defined by this specification.
+              
+              ```text
+              UPPER_LETTER ::= ? ASCII A through Z ?
+              DIGIT        ::= ? 0 through 9 ?
+              UPPER_ALNUM  ::= UPPER_LETTER | DIGIT
+              
+              DOMAIN       ::= UPPER_LETTER , { UPPER_ALNUM }
+              GROUPING     ::= UPPER_LETTER , { UPPER_ALNUM }
+              SEQUENCE     ::= DIGIT , DIGIT , DIGIT , DIGIT , { DIGIT }
+              
+              SPEC_ID      ::= "SPEC-" , DOMAIN , { "-" , GROUPING }
+              ARC_ID       ::= "ARC-" , DOMAIN , { "-" , GROUPING } , "-" , SEQUENCE
+              WI_ID        ::= "WI-" , DOMAIN , { "-" , GROUPING } , "-" , SEQUENCE
+              VER_ID       ::= "VER-" , DOMAIN , { "-" , GROUPING } , "-" , SEQUENCE
+              REQ_ID       ::= "REQ-" , DOMAIN , { "-" , GROUPING } , "-" , SEQUENCE
+              ```
+              """
+        },
+        {
+            heading: "Draft Evolution Note"
+            content: """
+              Earlier drafts used retired identifier `REQ-ID-0002` for a combined domain-and-grouping token rule. The current draft splits that retired combined rule into `REQ-ID-0016` through `REQ-ID-0019` so domain versus grouping and character-set versus leading-character constraints stay atomic.
+              """
+        },
+    ]
+    requirements: [
+        {
+            id: "REQ-ID-0001"
+            title: "Use approved artifact identifier prefixes"
+            statement: "Artifact documents MUST use `SPEC`, `ARC`, `WI`, or `VER` as applicable."
+            notes: [
+                "Decision records are not part of the core standard today; repositories that add them can do so through an optional local extension.",
+            ]
+        },
+        {
+            id: "REQ-ID-0010"
+            title: "Use the REQ prefix for requirement identifiers"
+            statement: "Requirement identifiers MUST use the `REQ` prefix."
+        },
+        {
+            id: "REQ-ID-0016"
+            title: "Keep domain tokens uppercase alphanumeric"
+            statement: "A domain token MUST use only ASCII uppercase letters and digits."
+        },
+        {
+            id: "REQ-ID-0017"
+            title: "Keep domain tokens letter-starting"
+            statement: "A domain token MUST start with an ASCII uppercase letter."
+        },
+        {
+            id: "REQ-ID-0003"
+            title: "Allow stable optional grouping segments"
+            statement: "Identifiers MAY include zero or more grouping segments after the domain token."
+            notes: [
+                "Grouping segments work best when they reflect stable structure rather than dates or workflow state.",
+            ]
+        },
+        {
+            id: "REQ-ID-0018"
+            title: "Keep grouping tokens uppercase alphanumeric"
+            statement: "A grouping token MUST use only ASCII uppercase letters and digits."
+        },
+        {
+            id: "REQ-ID-0019"
+            title: "Keep grouping tokens letter-starting"
+            statement: "A grouping token MUST start with an ASCII uppercase letter."
+        },
+        {
+            id: "REQ-ID-0020"
+            title: "Keep terminal sequences numeric"
+            statement: "A terminal sequence token MUST use only decimal digits."
+        },
+        {
+            id: "REQ-ID-0021"
+            title: "Keep terminal sequences at least four digits long"
+            statement: "A terminal sequence token MUST use at least four digits."
+        },
+        {
+            id: "REQ-ID-0004"
+            title: "Use terminal-free specification identifiers"
+            statement: "Specification artifact identifiers MUST use `SPEC-<DOMAIN>(-<GROUPING>...)`."
+        },
+        {
+            id: "REQ-ID-0013"
+            title: "Use sequence-bearing architecture identifiers"
+            statement: "Architecture artifact identifiers MUST use `ARC-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`."
+        },
+        {
+            id: "REQ-ID-0014"
+            title: "Use sequence-bearing work-item identifiers"
+            statement: "Work-item artifact identifiers MUST use `WI-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`."
+        },
+        {
+            id: "REQ-ID-0015"
+            title: "Use sequence-bearing verification identifiers"
+            statement: "Verification artifact identifiers MUST use `VER-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`."
+        },
+        {
+            id: "REQ-ID-0022"
+            title: "Use sequence-bearing requirement identifiers"
+            statement: "Requirement identifiers MUST use `REQ-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`."
+        },
+        {
+            id: "REQ-ID-0005"
+            title: "Preserve identifier stability"
+            statement: "An assigned identifier MUST remain stable."
+        },
+        {
+            id: "REQ-ID-0011"
+            title: "Prevent identifier reuse"
+            statement: "An assigned identifier MUST NOT be reused for a different artifact or requirement."
+        },
+        {
+            id: "REQ-ID-0006"
+            title: "Keep identifiers authoritative inside the document"
+            statement: "The identifier in canonical artifact fields or a requirement record MUST be authoritative."
+        },
+        {
+            id: "REQ-ID-0012"
+            title: "Keep file names non-authoritative"
+            statement: "The file name MUST NOT replace the document or requirement identifier in traceability links."
+        },
+        {
+            id: "REQ-ID-0007"
+            title: "Keep requirement IDs aligned with their specification context"
+            statement: "A requirement identifier SHOULD reuse the domain and grouping segments of the specification that contains it."
+            notes: [
+                "This keeps related clauses easy to find and trace, especially from generated\nevidence snapshots and other repository tooling.",
+            ]
+        },
+        {
+            id: "REQ-ID-0008"
+            title: "Publish machine-readable grouping metadata"
+            statement: """
+              The reference package MUST publish a machine-readable grouping-key registry and identifier summary as an importable CUE definition and can also export a compatibility view such as [`artifact-id-policy.json`](../../../artifact-id-policy.json).
+              """
+        },
+        {
+            id: "REQ-ID-0009"
+            title: "Publish identifier family shapes in the catalog"
+            statement: """
+              The authoritative identifier catalog MUST define the `SPEC-<DOMAIN>(-<GROUPING>...)`, `ARC-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`, `WI-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`, `VER-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`, and `REQ-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>` shapes.
+              """
+        },
+    ]
+}

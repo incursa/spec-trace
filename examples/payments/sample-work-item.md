@@ -5,22 +5,22 @@ title: Add ACH duplicate batch guard
 domain: payments
 status: complete
 owner: payments-platform
-addresses:
-  - [REQ-PAY-ACH-0013](./SPEC-PAY-ACH.md)
-  - [REQ-PAY-ACH-0014](./SPEC-PAY-ACH.md)
-  - [REQ-PAY-ACH-0015](./SPEC-PAY-ACH.md)
-  - [REQ-PAY-ACH-0016](./SPEC-PAY-ACH.md)
-design_links:
-  - [ARC-PAY-ACH-0002](./sample-architecture.md)
-verification_links:
-  - [VER-PAY-ACH-0021](./sample-verification.md)
 related_artifacts:
-  - [SPEC-PAY-ACH](./SPEC-PAY-ACH.md)
-  - [ARC-PAY-ACH-0002](./sample-architecture.md)
-  - [VER-PAY-ACH-0021](./sample-verification.md)
+  - SPEC-PAY-ACH
+  - ARC-PAY-ACH-0002
+  - VER-PAY-ACH-0021
+addresses:
+  - REQ-PAY-ACH-0013
+  - REQ-PAY-ACH-0014
+  - REQ-PAY-ACH-0015
+  - REQ-PAY-ACH-0016
+design_links:
+  - ARC-PAY-ACH-0002
+verification_links:
+  - VER-PAY-ACH-0021
 ---
 
-# [`WI-PAY-ACH-0081`](./sample-work-item.md) - Add ACH Duplicate Batch Guard
+# [`WI-PAY-ACH-0081`](./sample-work-item.md) - Add ACH duplicate batch guard
 
 ## Summary
 
@@ -28,10 +28,10 @@ Implement the tenant-scoped duplicate guard for ACH batch intake and prevent rej
 
 ## Requirements Addressed
 
-- [REQ-PAY-ACH-0013](./SPEC-PAY-ACH.md)
-- [REQ-PAY-ACH-0014](./SPEC-PAY-ACH.md)
-- [REQ-PAY-ACH-0015](./SPEC-PAY-ACH.md)
-- [REQ-PAY-ACH-0016](./SPEC-PAY-ACH.md)
+- [`REQ-PAY-ACH-0013`](./SPEC-PAY-ACH.md#req-pay-ach-0013-scope-duplicate-detection-to-the-tenant-and-batch-identifier)
+- [`REQ-PAY-ACH-0014`](./SPEC-PAY-ACH.md#req-pay-ach-0014-reject-duplicate-ach-batch-submission)
+- [`REQ-PAY-ACH-0015`](./SPEC-PAY-ACH.md#req-pay-ach-0015-allow-the-same-external-batch-identifier-across-tenants)
+- [`REQ-PAY-ACH-0016`](./SPEC-PAY-ACH.md#req-pay-ach-0016-check-duplicates-before-downstream-side-effects)
 
 ## Design Inputs
 
@@ -59,10 +59,10 @@ The implementation preserves the existing success path for unique batch identifi
 
 Addresses:
 
-- [REQ-PAY-ACH-0013](./SPEC-PAY-ACH.md)
-- [REQ-PAY-ACH-0014](./SPEC-PAY-ACH.md)
-- [REQ-PAY-ACH-0015](./SPEC-PAY-ACH.md)
-- [REQ-PAY-ACH-0016](./SPEC-PAY-ACH.md)
+- [`REQ-PAY-ACH-0013`](./SPEC-PAY-ACH.md#req-pay-ach-0013-scope-duplicate-detection-to-the-tenant-and-batch-identifier)
+- [`REQ-PAY-ACH-0014`](./SPEC-PAY-ACH.md#req-pay-ach-0014-reject-duplicate-ach-batch-submission)
+- [`REQ-PAY-ACH-0015`](./SPEC-PAY-ACH.md#req-pay-ach-0015-allow-the-same-external-batch-identifier-across-tenants)
+- [`REQ-PAY-ACH-0016`](./SPEC-PAY-ACH.md#req-pay-ach-0016-check-duplicates-before-downstream-side-effects)
 
 Uses Design:
 

@@ -3,10 +3,11 @@
 Bundles discovered specification documents into one Markdown file.
 
 .DESCRIPTION
-Scans a target folder recursively for Markdown files with SpecTrace-style
-front matter, keeps only real specification artifacts with terminal-free
-`SPEC-<DOMAIN>(-<GROUPING>...)` identifiers, and writes a single Markdown bundle containing a
-summary table plus the grouped requirement content for each specification.
+Refreshes generated Markdown from canonical CUE sources, scans a target folder
+recursively for generated specification Markdown files, keeps only real
+specification artifacts with terminal-free `SPEC-<DOMAIN>(-<GROUPING>...)`
+identifiers, and writes a single Markdown bundle containing a summary table
+plus the grouped requirement content for each specification.
 
 .PARAMETER InputPath
 Root folder to scan. Point this at a whole repository or a narrower folder.
@@ -16,6 +17,9 @@ Destination Markdown file.
 
 .PARAMETER IncludeTableOfContents
 When set, include a per-specification table of contents with requirement links.
+
+.PARAMETER NoRefreshMarkdown
+Skip regenerating Markdown from CUE before bundling.
 
 .EXAMPLE
 .\scripts\Export-SpecTraceBundle.ps1 `
@@ -36,13 +40,22 @@ param(
     [Parameter(Mandatory)]
     [string]$OutputPath,
 
-    [switch]$IncludeTableOfContents
+    [switch]$IncludeTableOfContents,
+
+    [switch]$NoRefreshMarkdown
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 Import-Module (Join-Path $PSScriptRoot 'SpecTrace.Helpers.psm1') -Force -DisableNameChecking
+
+if (-not $NoRefreshMarkdown) {
+    & (Join-Path $PSScriptRoot 'Render-SpecTraceMarkdown.ps1') -RootPath (Resolve-Path (Join-Path $PSScriptRoot '..')).Path -InputPath $InputPath
+    if ($LASTEXITCODE -ne 0) {
+        throw "Markdown generation failed, so the bundle was not produced."
+    }
+}
 
 function Get-SpecificationDocument {
     param(

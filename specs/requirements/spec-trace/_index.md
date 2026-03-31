@@ -2,11 +2,11 @@
 
 This folder contains the canonical SPEC suite for the `spec-trace` standard.
 
-The suite intentionally uses the standard to specify itself. It is the proving ground for the compact requirement-clause model.
+The suite intentionally uses the standard to specify itself. Canonical authored sources are the `.cue` artifacts in this directory. The `.md` siblings are generated browsing views.
 
 The specification files include the full specification ID in the filename.
 
-Canonical files:
+Generated browsing entry points:
 
 - [`SPEC-STD`](SPEC-STD.md) - core definitions, authority model, and publication rules
 - [`SPEC-ID`](SPEC-ID.md) - identifier policy and grouping-key registry

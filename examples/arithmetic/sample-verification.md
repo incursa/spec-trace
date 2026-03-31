@@ -5,17 +5,17 @@ title: Division operation verification
 domain: arithmetic
 status: passed
 owner: platform-core
-verifies:
-  - [REQ-MATH-DIV-0001](./SPEC-MATH-DIV.md)
-  - [REQ-MATH-DIV-0002](./SPEC-MATH-DIV.md)
-  - [REQ-MATH-DIV-0003](./SPEC-MATH-DIV.md)
 related_artifacts:
-  - [SPEC-MATH-DIV](./SPEC-MATH-DIV.md)
-  - [ARC-MATH-DIV-0001](./sample-architecture.md)
-  - [WI-MATH-DIV-0001](./sample-work-item.md)
+  - SPEC-MATH-DIV
+  - ARC-MATH-DIV-0001
+  - WI-MATH-DIV-0001
+verifies:
+  - REQ-MATH-DIV-0001
+  - REQ-MATH-DIV-0002
+  - REQ-MATH-DIV-0003
 ---
 
-# [`VER-MATH-DIV-0001`](./sample-verification.md) - Division Operation Verification
+# [`VER-MATH-DIV-0001`](./sample-verification.md) - Division operation verification
 
 ## Scope
 
@@ -23,9 +23,9 @@ Verify the narrow contract for the division operation.
 
 ## Requirements Verified
 
-- [REQ-MATH-DIV-0001](./SPEC-MATH-DIV.md)
-- [REQ-MATH-DIV-0002](./SPEC-MATH-DIV.md)
-- [REQ-MATH-DIV-0003](./SPEC-MATH-DIV.md)
+- [`REQ-MATH-DIV-0001`](./SPEC-MATH-DIV.md#req-math-div-0001-require-numerator-and-denominator-inputs)
+- [`REQ-MATH-DIV-0002`](./SPEC-MATH-DIV.md#req-math-div-0002-return-the-quotient-for-a-non-zero-denominator)
+- [`REQ-MATH-DIV-0003`](./SPEC-MATH-DIV.md#req-math-div-0003-reject-a-zero-denominator)
 
 ## Verification Method
 

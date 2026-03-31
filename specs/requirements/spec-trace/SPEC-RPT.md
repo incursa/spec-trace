@@ -91,7 +91,7 @@ signals for attestation views.
 Notes:
 - Verification artifacts summarize proof activity.
 - Evidence snapshots provide tool-produced direct implementation or execution
-  grounding even when supporting documents are sparse.
+grounding even when supporting documents are sparse.
 
 ## [`REQ-RPT-0009`](./SPEC-RPT.md#req-rpt-0009-distinguish-missing-evidence-from-uncollected-evidence) Distinguish missing evidence from uncollected evidence
 Derived reporting SHOULD distinguish missing evidence from uncollected,
@@ -101,6 +101,6 @@ undifferentiated gap state.
 Notes:
 - A requirement may lack `unit_test` evidence because no matching test exists.
 - A requirement may also lack current `benchmark` evidence because no benchmark
-  snapshot was collected for the evaluated scope.
+snapshot was collected for the evaluated scope.
 - These are different reporting outcomes even when neither one satisfies a
-  local policy gate.
+local policy gate.

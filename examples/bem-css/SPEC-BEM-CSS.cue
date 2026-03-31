@@ -1,0 +1,238 @@
+package artifacts
+
+import model "github.com/incursa/spec-trace/model@v0"
+
+artifact: model.#Specification & {
+    artifact_id: "SPEC-BEM-CSS"
+    artifact_type: "specification"
+    title: "BEM CSS Selector and Layout Contract"
+    domain: "bem-css"
+    capability: "bem-css-selector-rules"
+    status: "approved"
+    owner: "frontend-platform"
+    tags: [
+        "bem",
+        "css",
+        "methodology",
+        "selectors",
+        "mixes",
+    ]
+    related_artifacts: [
+        "ARC-BEM-CSS-0001",
+        "VER-BEM-CSS-0001",
+        "SPEC-BEM-CONCEPTS",
+        "SPEC-BEM-NAMING",
+    ]
+    purpose: "Define a compact, testable contract for the CSS rules used by the BEM methodology."
+    scope: """
+      This specification covers class-based selectors, nested selector limits, mixes, and the layout rules that keep BEM blocks reusable. It does not define class-name syntax or build tooling.
+      """
+    context: """
+      The official BEM documentation presents BEM as a reusable component methodology with class-based selector rules and mix-based composition. This example translates those rules into requirement form so the repository can show a real, useful specification instead of a synthetic one.
+      """
+    requirements: [
+        {
+            id: "REQ-BEM-CSS-0001"
+            title: "Use class selectors for BEM entities"
+            statement: "BEM entity styling MUST use class selectors."
+            trace: {
+                satisfied_by: [
+                    "ARC-BEM-CSS-0001",
+                ]
+                verified_by: [
+                    "VER-BEM-CSS-0001",
+                ]
+                upstream_refs: [
+                    "https://en.bem.info/methodology/css/",
+                ]
+                related: [
+                    "REQ-BEM-NAMING-0001",
+                    "REQ-BEM-NAMING-0003",
+                    "REQ-BEM-NAMING-0005",
+                    "REQ-BEM-NAMING-0006",
+                ]
+            }
+        },
+        {
+            id: "REQ-BEM-CSS-0002"
+            title: "Avoid tag and ID selectors"
+            statement: "BEM entity styling MUST NOT use tag or ID selectors."
+            trace: {
+                satisfied_by: [
+                    "ARC-BEM-CSS-0001",
+                ]
+                verified_by: [
+                    "VER-BEM-CSS-0001",
+                ]
+                upstream_refs: [
+                    "https://en.bem.info/methodology/css/",
+                    "https://en.bem.info/methodology/quick-start/",
+                ]
+            }
+        },
+        {
+            id: "REQ-BEM-CSS-0003"
+            title: "Avoid tag-and-class selectors"
+            statement: "BEM entity styling SHOULD NOT combine tags and classes in a selector."
+            trace: {
+                satisfied_by: [
+                    "ARC-BEM-CSS-0001",
+                ]
+                verified_by: [
+                    "VER-BEM-CSS-0001",
+                ]
+                upstream_refs: [
+                    "https://en.bem.info/methodology/css/",
+                    "https://en.bem.info/methodology/faq/?lang=en",
+                ]
+                related: [
+                    "REQ-BEM-CSS-0001",
+                ]
+            }
+        },
+        {
+            id: "REQ-BEM-CSS-0004"
+            title: "Minimize nested selectors"
+            statement: "Nested selectors SHOULD be minimized."
+            trace: {
+                satisfied_by: [
+                    "ARC-BEM-CSS-0001",
+                ]
+                verified_by: [
+                    "VER-BEM-CSS-0001",
+                ]
+                upstream_refs: [
+                    "https://en.bem.info/methodology/css/",
+                ]
+            }
+        },
+        {
+            id: "REQ-BEM-CSS-0005"
+            title: "Limit nested selectors to block state or theme set changes"
+            statement: "Nested selectors MAY change element styles relative to a block state or theme set."
+            trace: {
+                satisfied_by: [
+                    "ARC-BEM-CSS-0001",
+                ]
+                verified_by: [
+                    "VER-BEM-CSS-0001",
+                ]
+                upstream_refs: [
+                    "https://en.bem.info/methodology/css/",
+                ]
+                related: [
+                    "REQ-BEM-CSS-0004",
+                    "REQ-BEM-CONCEPTS-0003",
+                ]
+            }
+        },
+        {
+            id: "REQ-BEM-CSS-0006"
+            title: "Avoid combined selectors"
+            statement: "Combined selectors SHOULD NOT be used."
+            trace: {
+                satisfied_by: [
+                    "ARC-BEM-CSS-0001",
+                ]
+                verified_by: [
+                    "VER-BEM-CSS-0001",
+                ]
+                upstream_refs: [
+                    "https://en.bem.info/methodology/css/",
+                    "https://en.bem.info/methodology/faq/?lang=en",
+                ]
+                related: [
+                    "REQ-BEM-CSS-0001",
+                ]
+            }
+        },
+        {
+            id: "REQ-BEM-CSS-0007"
+            title: "Allow mixes to combine entities on one node"
+            statement: "A mix MAY combine multiple BEM entities on the same DOM node."
+            trace: {
+                satisfied_by: [
+                    "ARC-BEM-CSS-0001",
+                ]
+                verified_by: [
+                    "VER-BEM-CSS-0001",
+                ]
+                upstream_refs: [
+                    "https://en.bem.info/methodology/quick-start/",
+                    "https://en.bem.info/methodology/html/",
+                    "https://en.bem.info/methodology/css/",
+                ]
+                related: [
+                    "REQ-BEM-CONCEPTS-0006",
+                ]
+            }
+        },
+        {
+            id: "REQ-BEM-CSS-0008"
+            title: "Use mixes for external geometry and positioning"
+            statement: "External geometry and positioning SHOULD be set via the parent block or a mix."
+            trace: {
+                satisfied_by: [
+                    "ARC-BEM-CSS-0001",
+                ]
+                verified_by: [
+                    "VER-BEM-CSS-0001",
+                ]
+                upstream_refs: [
+                    "https://en.bem.info/methodology/quick-start/",
+                    "https://en.bem.info/methodology/html/",
+                    "https://en.bem.info/methodology/css/",
+                ]
+                related: [
+                    "REQ-BEM-CONCEPTS-0007",
+                ]
+            }
+        },
+        {
+            id: "REQ-BEM-CSS-0009"
+            title: "Avoid wrapper-heavy positioning"
+            statement: "Implementations SHOULD use mixes instead of wrapper blocks when positioning one block relative to another."
+            trace: {
+                satisfied_by: [
+                    "ARC-BEM-CSS-0001",
+                ]
+                verified_by: [
+                    "VER-BEM-CSS-0001",
+                ]
+                upstream_refs: [
+                    "https://en.bem.info/methodology/html/",
+                    "https://en.bem.info/methodology/css/",
+                ]
+                related: [
+                    "REQ-BEM-CSS-0008",
+                    "REQ-BEM-CONCEPTS-0006",
+                ]
+            }
+        },
+        {
+            id: "REQ-BEM-CSS-0010"
+            title: "Use selector names that accurately describe the entity"
+            statement: "The name of a selector SHOULD fully and accurately describe the BEM entity it represents."
+            trace: {
+                satisfied_by: [
+                    "ARC-BEM-CSS-0001",
+                ]
+                verified_by: [
+                    "VER-BEM-CSS-0001",
+                ]
+                upstream_refs: [
+                    "https://en.bem.info/methodology/css/",
+                ]
+                related: [
+                    "REQ-BEM-CONCEPTS-0001",
+                    "REQ-BEM-CONCEPTS-0002",
+                    "REQ-BEM-CONCEPTS-0003",
+                ]
+            }
+            notes: [
+                "Example class names from the official docs include `menu__item`, `menu_hidden`, `menu__item_visible`, and `button button_size_m`.",
+                "The example stays with the classic naming scheme and does not cover alternative naming variants.",
+            ]
+        },
+    ]
+}

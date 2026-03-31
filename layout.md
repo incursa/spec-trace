@@ -1,114 +1,111 @@
 # Recommended Repository Layout
 
-This file describes the recommended layout for repositories that adopt the standard. The `incursa/spec-trace` repository is the public reference package, so it also keeps a small root reference layer for readability and copy convenience.
+This file describes the recommended layout for repositories that adopt the standard.
 
 ## Default Layout
 
 ```text
-artifact-id-policy.json
+cue.mod/
+model/
+catalog/
+  retired-requirements.cue
 /specs
   /requirements
     /<domain>/
       _index.md
+      SPEC-<DOMAIN>[-<GROUPING>...].cue
       SPEC-<DOMAIN>[-<GROUPING>...].md
   /architecture
     /<domain>/
+      <readable-file-name>.cue
       <readable-file-name>.md
   /work-items
     /<domain>/
+      <readable-file-name>.cue
       <readable-file-name>.md
   /verification
     /<domain>/
+      <readable-file-name>.cue
       <readable-file-name>.md
   /generated
-    requirements-index.json
+    spec-trace-catalog.cue
+    spec-trace-catalog.json
     traceability-matrix.md
-    orphan-report.md
     verification-coverage.md
-  /templates
-    spec-template.md
-    architecture-template.md
-    work-item-template.md
-    verification-template.md
-  /schemas
-    artifact-frontmatter.schema.json
-    artifact-id-policy.schema.json
-    requirement-clause.schema.json
-    requirement-trace-fields.schema.json
-    work-item-trace-fields.schema.json
+/examples
+  /<domain>/
+    *.cue
+    *.md
 ```
 
 ## Layout Rules
 
+### Canonical Source
+
+Canonical authored artifacts live in `.cue` files. Generated Markdown may sit beside the source `.cue` file for readability, but contributors should edit the `.cue` file.
+
 ### Specifications
 
-Place specifications under `/specs/requirements/`.
+Place specifications under `/specs/requirements/<domain>/`.
 
-Organize them:
+- organize by stable domain first
+- organize by capability, behavior area, interface, or narrow concern second
+- keep one specification artifact per `.cue` file
+- include the full specification ID in the specification filename
 
-1. by domain or bounded area first
-2. by capability, behavior area, interface, or narrow technical concern second
+### Architecture
 
-Good grouping dimensions are stable technical or business concepts. Dates, sprints, owners, and release numbers are not.
+Place architecture artifacts under `/specs/architecture/<domain>/`.
 
-### Architecture or Design
-
-Place architecture and design artifacts under `/specs/architecture/`.
-
-These documents explain how requirements are satisfied. They are the default place for design rationale and decision tradeoffs. Decision records are not part of the core layout today, but a repository may add them through an optional local extension if needed.
+These artifacts explain how requirements are satisfied. They are the default place for design rationale and tradeoffs.
 
 ### Work Items
 
-Place work items under `/specs/work-items/`.
+Place work items under `/specs/work-items/<domain>/`.
 
-Work items describe implementation work and should trace back to requirement IDs and design artifacts.
+Work items describe implementation work and should trace back to requirements and design inputs.
 
 ### Verification
 
-Place verification artifacts under `/specs/verification/`.
+Place verification artifacts under `/specs/verification/<domain>/`.
 
-Verification artifacts prove requirements. They may summarize verification at a scenario level when all covered requirements share one outcome. Mixed outcomes belong in separate verification artifacts.
+Verification artifacts record how requirements were checked and what shared outcome was recorded.
 
 ### Generated Outputs
 
-Place generated indexes, matrices, and coverage reports under `/specs/generated/`.
+Place generated indexes, reports, and compatibility outputs under `/specs/generated/`.
 
-Generated outputs are derived artifacts such as coverage matrices, source-coverage views, evidence rollups, attestation snapshots, and current-status views. They are useful, but they are not source of truth.
+Examples:
 
-## One Specification Per File
+- repository catalogs
+- validation reports
+- traceability matrices
+- coverage rollups
+- bundled Markdown views
 
-Each specification Markdown file contains one specification and one or more related requirement clauses.
-
-If a concern is narrow, the specification may be narrow. The standard uses one specification model for both broad and narrow concerns.
+Those files are derived outputs, not canonical authored artifacts.
 
 ## File Names
 
-File names should be stable and readable.
+File names should stay stable and readable.
 
-- Specification file names should include the full specification artifact ID.
-- Avoid dates, sprint numbers, and owner names.
-- Keep traceability anchored on `artifact_id` and `REQ-...` identifiers inside the file, not on the file name.
-
-Recommended examples:
-
-- [`/specs/requirements/payments/SPEC-PAY-ACH.md`](./specs/requirements/payments/SPEC-PAY-ACH.md)
-- [`/specs/requirements/arithmetic/SPEC-MATH-DIV.md`](./specs/requirements/arithmetic/SPEC-MATH-DIV.md)
-- [`/specs/requirements/spec-trace/SPEC-STD.md`](./specs/requirements/spec-trace/SPEC-STD.md)
+- Specification `.cue` files should include the full specification ID.
+- Architecture, work-item, and verification artifact filenames may use readable stable names.
+- Avoid dates, sprint numbers, and owner names in canonical filenames.
+- Keep traceability anchored on stable IDs in the artifact content, not on the file name.
 
 ## Index Files
 
-[`_index.md`](./_index.md) files are optional. Use them for navigation only.
+[`_index.md`](./specs/requirements/spec-trace/_index.md) files are optional navigation aids.
 
-An index file may summarize a domain and link specifications, architecture, work items, verification artifacts, and generated outputs. It does not replace the underlying artifacts.
+They may summarize a domain and link the generated Markdown views, but they do not replace the underlying canonical `.cue` artifacts.
 
 ## Traceability Loop
 
-The layout should make this path easy to see:
+The layout should make this chain easy to follow:
 
-1. a specification groups the requirement clauses
-2. architecture or design artifacts satisfy requirements
+1. a specification groups requirement records
+2. architecture artifacts satisfy requirements
 3. work items address requirements and use design inputs
 4. verification artifacts prove requirements
-5. tests, code, and prose may reference stable artifact IDs directly, with prose using inline backticks for lightweight links or relative Markdown links for repo-local files and folders
-
-If the layout makes that chain hard to follow, the structure is working against the standard.
+5. generated evidence and reporting views summarize current repository state without becoming the authored source of truth

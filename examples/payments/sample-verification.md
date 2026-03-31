@@ -5,18 +5,18 @@ title: Duplicate ACH batch rejection verification
 domain: payments
 status: passed
 owner: payments-platform
-verifies:
-  - [REQ-PAY-ACH-0013](./SPEC-PAY-ACH.md)
-  - [REQ-PAY-ACH-0014](./SPEC-PAY-ACH.md)
-  - [REQ-PAY-ACH-0015](./SPEC-PAY-ACH.md)
-  - [REQ-PAY-ACH-0016](./SPEC-PAY-ACH.md)
 related_artifacts:
-  - [SPEC-PAY-ACH](./SPEC-PAY-ACH.md)
-  - [ARC-PAY-ACH-0002](./sample-architecture.md)
-  - [WI-PAY-ACH-0081](./sample-work-item.md)
+  - SPEC-PAY-ACH
+  - ARC-PAY-ACH-0002
+  - WI-PAY-ACH-0081
+verifies:
+  - REQ-PAY-ACH-0013
+  - REQ-PAY-ACH-0014
+  - REQ-PAY-ACH-0015
+  - REQ-PAY-ACH-0016
 ---
 
-# [`VER-PAY-ACH-0021`](./sample-verification.md) - Duplicate ACH Batch Rejection Verification
+# [`VER-PAY-ACH-0021`](./sample-verification.md) - Duplicate ACH batch rejection verification
 
 ## Scope
 
@@ -24,10 +24,10 @@ Verify tenant-scoped duplicate handling for ACH batch intake.
 
 ## Requirements Verified
 
-- [REQ-PAY-ACH-0013](./SPEC-PAY-ACH.md)
-- [REQ-PAY-ACH-0014](./SPEC-PAY-ACH.md)
-- [REQ-PAY-ACH-0015](./SPEC-PAY-ACH.md)
-- [REQ-PAY-ACH-0016](./SPEC-PAY-ACH.md)
+- [`REQ-PAY-ACH-0013`](./SPEC-PAY-ACH.md#req-pay-ach-0013-scope-duplicate-detection-to-the-tenant-and-batch-identifier)
+- [`REQ-PAY-ACH-0014`](./SPEC-PAY-ACH.md#req-pay-ach-0014-reject-duplicate-ach-batch-submission)
+- [`REQ-PAY-ACH-0015`](./SPEC-PAY-ACH.md#req-pay-ach-0015-allow-the-same-external-batch-identifier-across-tenants)
+- [`REQ-PAY-ACH-0016`](./SPEC-PAY-ACH.md#req-pay-ach-0016-check-duplicates-before-downstream-side-effects)
 
 ## Verification Method
 

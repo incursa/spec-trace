@@ -4,6 +4,13 @@ node_modules/
 coverage/
 dist/
 *.log
+.tools/
+bin/
+obj/
+TestResults/
 
 # Local export from scripts/Export-SpecTraceBundle.ps1
 /specs/generated/spec-bundle.md
+/specs/generated/spec-trace-catalog.cue
+/specs/generated/spec-trace-catalog.json
+/artifacts/spec-trace/attestation/

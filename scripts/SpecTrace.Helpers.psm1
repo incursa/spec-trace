@@ -278,6 +278,40 @@ function Parse-BulletList {
     return $items
 }
 
+function Parse-MarkdownList {
+    param([string]$Content)
+
+    $items = [System.Collections.Generic.List[string]]::new()
+    $current = [System.Collections.Generic.List[string]]::new()
+
+    foreach ($line in ($Content -split "\r?\n")) {
+        if ($line -match '^\s*-\s+(?<item>.+?)\s*$') {
+            if ($current.Count -gt 0) {
+                [void]$items.Add((($current -join "`n").Trim()))
+                $current.Clear()
+            }
+
+            [void]$current.Add($Matches['item'])
+            continue
+        }
+
+        if ($current.Count -gt 0) {
+            if ([string]::IsNullOrWhiteSpace($line)) {
+                [void]$current.Add('')
+            }
+            else {
+                [void]$current.Add($line.Trim())
+            }
+        }
+    }
+
+    if ($current.Count -gt 0) {
+        [void]$items.Add((($current -join "`n").Trim()))
+    }
+
+    return @($items | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+}
+
 function Parse-LabeledListBlock {
     param([string]$Content)
 
@@ -612,6 +646,7 @@ Export-ModuleMember -Function `
     Get-ArtifactIdComponents, `
     Test-ArtifactIdFamily, `
     Parse-BulletList, `
+    Parse-MarkdownList, `
     Parse-LabeledListBlock, `
     Normalize-Set, `
     Add-Error, `

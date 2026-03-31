@@ -69,14 +69,14 @@ Notes:
 - Such views can summarize current passing tests, manual QA, benchmark health, or other repository-policy evidence sources.
 - They are derived outputs, not a fifth artifact family, and they do not replace the example's specification, architecture, work-item, or verification artifacts.
 - Worked examples that need direct implementation grounding SHOULD prefer
-  generated evidence snapshots over hand-authored implementation-reference
-  fields in requirement trace blocks.
+generated evidence snapshots over hand-authored implementation-reference
+fields in requirement trace blocks.
 
 ## [`REQ-EXM-0010`](./SPEC-EXM.md#req-exm-0010-demonstrate-dimension-oriented-derived-reporting) Demonstrate dimension-oriented derived reporting
 Worked examples SHOULD include at least one derived view that summarizes requirement coverage by dimension rather than only a single current-status label.
 
 Notes:
 - Useful dimensions include downstream trace, verification coverage,
-  evidence-by-kind, and source coverage when the example includes source
-  material.
+evidence-by-kind, and source coverage when the example includes source
+material.
 - The view remains derived output and does not become a fifth artifact family.

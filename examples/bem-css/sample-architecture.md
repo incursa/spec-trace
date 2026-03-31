@@ -5,38 +5,38 @@ title: BEM Traceability and Composition Design
 domain: bem-css
 status: approved
 owner: frontend-platform
-satisfies:
-  - [REQ-BEM-CONCEPTS-0001](./SPEC-BEM-CONCEPTS.md)
-  - [REQ-BEM-CONCEPTS-0002](./SPEC-BEM-CONCEPTS.md)
-  - [REQ-BEM-CONCEPTS-0003](./SPEC-BEM-CONCEPTS.md)
-  - [REQ-BEM-CONCEPTS-0004](./SPEC-BEM-CONCEPTS.md)
-  - [REQ-BEM-CONCEPTS-0005](./SPEC-BEM-CONCEPTS.md)
-  - [REQ-BEM-CONCEPTS-0006](./SPEC-BEM-CONCEPTS.md)
-  - [REQ-BEM-CONCEPTS-0007](./SPEC-BEM-CONCEPTS.md)
-  - [REQ-BEM-NAMING-0001](./SPEC-BEM-NAMING.md)
-  - [REQ-BEM-NAMING-0002](./SPEC-BEM-NAMING.md)
-  - [REQ-BEM-NAMING-0003](./SPEC-BEM-NAMING.md)
-  - [REQ-BEM-NAMING-0004](./SPEC-BEM-NAMING.md)
-  - [REQ-BEM-NAMING-0005](./SPEC-BEM-NAMING.md)
-  - [REQ-BEM-NAMING-0006](./SPEC-BEM-NAMING.md)
-  - [REQ-BEM-NAMING-0007](./SPEC-BEM-NAMING.md)
-  - [REQ-BEM-NAMING-0008](./SPEC-BEM-NAMING.md)
-  - [REQ-BEM-NAMING-0009](./SPEC-BEM-NAMING.md)
-  - [REQ-BEM-CSS-0001](./SPEC-BEM-CSS.md)
-  - [REQ-BEM-CSS-0002](./SPEC-BEM-CSS.md)
-  - [REQ-BEM-CSS-0003](./SPEC-BEM-CSS.md)
-  - [REQ-BEM-CSS-0004](./SPEC-BEM-CSS.md)
-  - [REQ-BEM-CSS-0005](./SPEC-BEM-CSS.md)
-  - [REQ-BEM-CSS-0006](./SPEC-BEM-CSS.md)
-  - [REQ-BEM-CSS-0007](./SPEC-BEM-CSS.md)
-  - [REQ-BEM-CSS-0008](./SPEC-BEM-CSS.md)
-  - [REQ-BEM-CSS-0009](./SPEC-BEM-CSS.md)
-  - [REQ-BEM-CSS-0010](./SPEC-BEM-CSS.md)
 related_artifacts:
-  - [SPEC-BEM-CONCEPTS](./SPEC-BEM-CONCEPTS.md)
-  - [SPEC-BEM-NAMING](./SPEC-BEM-NAMING.md)
-  - [SPEC-BEM-CSS](./SPEC-BEM-CSS.md)
-  - [VER-BEM-CSS-0001](./sample-verification.md)
+  - SPEC-BEM-CONCEPTS
+  - SPEC-BEM-NAMING
+  - SPEC-BEM-CSS
+  - VER-BEM-CSS-0001
+satisfies:
+  - REQ-BEM-CONCEPTS-0001
+  - REQ-BEM-CONCEPTS-0002
+  - REQ-BEM-CONCEPTS-0003
+  - REQ-BEM-CONCEPTS-0004
+  - REQ-BEM-CONCEPTS-0005
+  - REQ-BEM-CONCEPTS-0006
+  - REQ-BEM-CONCEPTS-0007
+  - REQ-BEM-NAMING-0001
+  - REQ-BEM-NAMING-0002
+  - REQ-BEM-NAMING-0003
+  - REQ-BEM-NAMING-0004
+  - REQ-BEM-NAMING-0005
+  - REQ-BEM-NAMING-0006
+  - REQ-BEM-NAMING-0007
+  - REQ-BEM-NAMING-0008
+  - REQ-BEM-NAMING-0009
+  - REQ-BEM-CSS-0001
+  - REQ-BEM-CSS-0002
+  - REQ-BEM-CSS-0003
+  - REQ-BEM-CSS-0004
+  - REQ-BEM-CSS-0005
+  - REQ-BEM-CSS-0006
+  - REQ-BEM-CSS-0007
+  - REQ-BEM-CSS-0008
+  - REQ-BEM-CSS-0009
+  - REQ-BEM-CSS-0010
 ---
 
 # [`ARC-BEM-CSS-0001`](./sample-architecture.md) - BEM Traceability and Composition Design
@@ -47,32 +47,32 @@ Explain how a BEM implementation satisfies the shared concept, naming, and CSS r
 
 ## Requirements Satisfied
 
-- [REQ-BEM-CONCEPTS-0001](./SPEC-BEM-CONCEPTS.md)
-- [REQ-BEM-CONCEPTS-0002](./SPEC-BEM-CONCEPTS.md)
-- [REQ-BEM-CONCEPTS-0003](./SPEC-BEM-CONCEPTS.md)
-- [REQ-BEM-CONCEPTS-0004](./SPEC-BEM-CONCEPTS.md)
-- [REQ-BEM-CONCEPTS-0005](./SPEC-BEM-CONCEPTS.md)
-- [REQ-BEM-CONCEPTS-0006](./SPEC-BEM-CONCEPTS.md)
-- [REQ-BEM-CONCEPTS-0007](./SPEC-BEM-CONCEPTS.md)
-- [REQ-BEM-NAMING-0001](./SPEC-BEM-NAMING.md)
-- [REQ-BEM-NAMING-0002](./SPEC-BEM-NAMING.md)
-- [REQ-BEM-NAMING-0003](./SPEC-BEM-NAMING.md)
-- [REQ-BEM-NAMING-0004](./SPEC-BEM-NAMING.md)
-- [REQ-BEM-NAMING-0005](./SPEC-BEM-NAMING.md)
-- [REQ-BEM-NAMING-0006](./SPEC-BEM-NAMING.md)
-- [REQ-BEM-NAMING-0007](./SPEC-BEM-NAMING.md)
-- [REQ-BEM-NAMING-0008](./SPEC-BEM-NAMING.md)
-- [REQ-BEM-NAMING-0009](./SPEC-BEM-NAMING.md)
-- [REQ-BEM-CSS-0001](./SPEC-BEM-CSS.md)
-- [REQ-BEM-CSS-0002](./SPEC-BEM-CSS.md)
-- [REQ-BEM-CSS-0003](./SPEC-BEM-CSS.md)
-- [REQ-BEM-CSS-0004](./SPEC-BEM-CSS.md)
-- [REQ-BEM-CSS-0005](./SPEC-BEM-CSS.md)
-- [REQ-BEM-CSS-0006](./SPEC-BEM-CSS.md)
-- [REQ-BEM-CSS-0007](./SPEC-BEM-CSS.md)
-- [REQ-BEM-CSS-0008](./SPEC-BEM-CSS.md)
-- [REQ-BEM-CSS-0009](./SPEC-BEM-CSS.md)
-- [REQ-BEM-CSS-0010](./SPEC-BEM-CSS.md)
+- [`REQ-BEM-CONCEPTS-0001`](./SPEC-BEM-CONCEPTS.md#req-bem-concepts-0001-define-a-block-as-an-independent-reusable-unit)
+- [`REQ-BEM-CONCEPTS-0002`](./SPEC-BEM-CONCEPTS.md#req-bem-concepts-0002-define-an-element-as-part-of-a-block)
+- [`REQ-BEM-CONCEPTS-0003`](./SPEC-BEM-CONCEPTS.md#req-bem-concepts-0003-define-a-modifier-as-a-variation-of-a-block-or-element)
+- [`REQ-BEM-CONCEPTS-0004`](./SPEC-BEM-CONCEPTS.md#req-bem-concepts-0004-keep-block-names-semantic)
+- [`REQ-BEM-CONCEPTS-0005`](./SPEC-BEM-CONCEPTS.md#req-bem-concepts-0005-keep-element-names-semantic)
+- [`REQ-BEM-CONCEPTS-0006`](./SPEC-BEM-CONCEPTS.md#req-bem-concepts-0006-allow-mixes-to-combine-bem-entities)
+- [`REQ-BEM-CONCEPTS-0007`](./SPEC-BEM-CONCEPTS.md#req-bem-concepts-0007-keep-blocks-independent-from-external-geometry)
+- [`REQ-BEM-NAMING-0001`](./SPEC-BEM-NAMING.md#req-bem-naming-0001-match-block-names-to-the-block-name-pattern)
+- [`REQ-BEM-NAMING-0002`](./SPEC-BEM-NAMING.md#req-bem-naming-0002-use-block-names-as-namespaces)
+- [`REQ-BEM-NAMING-0003`](./SPEC-BEM-NAMING.md#req-bem-naming-0003-use-double-underscores-for-element-names)
+- [`REQ-BEM-NAMING-0004`](./SPEC-BEM-NAMING.md#req-bem-naming-0004-forbid-element-of-element-names)
+- [`REQ-BEM-NAMING-0005`](./SPEC-BEM-NAMING.md#req-bem-naming-0005-use-single-underscores-for-modifiers)
+- [`REQ-BEM-NAMING-0006`](./SPEC-BEM-NAMING.md#req-bem-naming-0006-require-a-keyed-modifier-value-suffix)
+- [`REQ-BEM-NAMING-0007`](./SPEC-BEM-NAMING.md#req-bem-naming-0007-omit-the-modifier-value-for-boolean-modifiers)
+- [`REQ-BEM-NAMING-0008`](./SPEC-BEM-NAMING.md#req-bem-naming-0008-forbid-standalone-modifiers)
+- [`REQ-BEM-NAMING-0009`](./SPEC-BEM-NAMING.md#req-bem-naming-0009-exclude-separator-characters-from-block-names)
+- [`REQ-BEM-CSS-0001`](./SPEC-BEM-CSS.md#req-bem-css-0001-use-class-selectors-for-bem-entities)
+- [`REQ-BEM-CSS-0002`](./SPEC-BEM-CSS.md#req-bem-css-0002-avoid-tag-and-id-selectors)
+- [`REQ-BEM-CSS-0003`](./SPEC-BEM-CSS.md#req-bem-css-0003-avoid-tag-and-class-selectors)
+- [`REQ-BEM-CSS-0004`](./SPEC-BEM-CSS.md#req-bem-css-0004-minimize-nested-selectors)
+- [`REQ-BEM-CSS-0005`](./SPEC-BEM-CSS.md#req-bem-css-0005-limit-nested-selectors-to-block-state-or-theme-set-changes)
+- [`REQ-BEM-CSS-0006`](./SPEC-BEM-CSS.md#req-bem-css-0006-avoid-combined-selectors)
+- [`REQ-BEM-CSS-0007`](./SPEC-BEM-CSS.md#req-bem-css-0007-allow-mixes-to-combine-entities-on-one-node)
+- [`REQ-BEM-CSS-0008`](./SPEC-BEM-CSS.md#req-bem-css-0008-use-mixes-for-external-geometry-and-positioning)
+- [`REQ-BEM-CSS-0009`](./SPEC-BEM-CSS.md#req-bem-css-0009-avoid-wrapper-heavy-positioning)
+- [`REQ-BEM-CSS-0010`](./SPEC-BEM-CSS.md#req-bem-css-0010-use-selector-names-that-accurately-describe-the-entity)
 
 ## Design Summary
 

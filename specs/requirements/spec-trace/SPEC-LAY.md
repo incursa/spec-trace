@@ -16,18 +16,18 @@ tags:
 
 ## Purpose
 
-Define how repositories should place source artifacts so the structure reinforces the traceability model.
+Define how repositories should place canonical CUE source artifacts and derived outputs so the structure reinforces the traceability model.
 
 ## Scope
 
-This specification covers the recommended `/specs` tree, placement of artifact families, generated outputs, and the distinction between document role and file naming.
+This specification covers the recommended `/specs` tree, placement of artifact families, canonical CUE sources, generated Markdown outputs, and the distinction between artifact role and file naming.
 
 ## Context
 
 Traceability weakens when requirements, design, work, and verification are scattered according to workflow noise instead of stable product structure.
 
 ## [`REQ-LAY-0001`](./SPEC-LAY.md#req-lay-0001-keep-live-source-artifacts-under-the-specs-tree) Keep live source artifacts under the /specs tree
-A repository using the standard MUST keep live source artifacts under [`/specs`](../../../specs) with dedicated areas for requirements, architecture, work-items, verification, generated outputs, templates, and schemas.
+A repository using the standard MUST keep live canonical source artifacts as CUE under [`/specs`](../../../specs) with dedicated areas for requirements, architecture, work-items, verification, generated outputs, templates, and schemas.
 
 Notes:
 - Decision records are not part of the core layout today; repositories that need them may add an optional local extension.
@@ -41,13 +41,14 @@ Architecture, work-item, and verification artifacts MUST live in their respectiv
 ## [`REQ-LAY-0004`](./SPEC-LAY.md#req-lay-0004-keep-generated-outputs-separate-from-source-artifacts) Keep generated outputs separate from source artifacts
 Generated indexes, matrices, coverage reports, and evidence snapshots MUST live
 under [`/specs/generated`](../../../specs/generated) when they are stored in
-the repository.
+the repository, while generated Markdown renderings of canonical artifacts may
+live beside their source `.cue` files for readability.
 
 ## [`REQ-LAY-0005`](./SPEC-LAY.md#req-lay-0005-include-the-full-specification-id-in-specification-file-names) Include the full specification ID in specification file names
-Each specification file name MUST include the full specification artifact ID.
+Each canonical specification `.cue` file name MUST include the full specification artifact ID.
 
-## [`REQ-LAY-0006`](./SPEC-LAY.md#req-lay-0006-keep-one-specification-per-markdown-file) Keep one specification per Markdown file
-Each specification Markdown file MUST contain exactly one specification and one or more related requirement clauses beneath it.
+## [`REQ-LAY-0006`](./SPEC-LAY.md#req-lay-0006-keep-one-specification-per-canonical-artifact-file) Keep one specification per canonical artifact file
+Each specification `.cue` file MUST contain exactly one specification artifact and one or more related requirement records beneath it.
 
 ## [`REQ-LAY-0007`](./SPEC-LAY.md#req-lay-0007-treat-index-files-as-navigation-only) Treat index files as navigation only
 A domain or concern MAY include an [`_index.md`](./_index.md) file for navigation.

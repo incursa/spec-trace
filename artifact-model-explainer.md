@@ -1,6 +1,6 @@
 # Artifact Model Explainer
 
-This file is a non-authoritative reading guide for the `spec-trace` reference repository. The canonical standard lives in [`./specs/requirements/spec-trace/`](./specs/requirements/spec-trace/).
+This file is a non-authoritative reading guide for the `spec-trace` reference repository. The canonical standard lives in [`./specs/requirements/spec-trace/`](./specs/requirements/spec-trace/), authored in CUE with generated Markdown views beside it.
 
 Use this as the plain-language map for how the artifact families, trace labels, and conformance profiles work in practice. If it ever disagrees with the SPEC suite, the SPEC suite wins.
 

@@ -105,7 +105,7 @@ An assigned identifier MUST remain stable.
 An assigned identifier MUST NOT be reused for a different artifact or requirement.
 
 ## [`REQ-ID-0006`](./SPEC-ID.md#req-id-0006-keep-identifiers-authoritative-inside-the-document) Keep identifiers authoritative inside the document
-The identifier in front matter or a requirement heading MUST be authoritative.
+The identifier in canonical artifact fields or a requirement record MUST be authoritative.
 
 ## [`REQ-ID-0012`](./SPEC-ID.md#req-id-0012-keep-file-names-non-authoritative) Keep file names non-authoritative
 The file name MUST NOT replace the document or requirement identifier in traceability links.
@@ -115,10 +115,10 @@ A requirement identifier SHOULD reuse the domain and grouping segments of the sp
 
 Notes:
 - This keeps related clauses easy to find and trace, especially from generated
-  evidence snapshots and other repository tooling.
+evidence snapshots and other repository tooling.
 
 ## [`REQ-ID-0008`](./SPEC-ID.md#req-id-0008-publish-machine-readable-grouping-metadata) Publish machine-readable grouping metadata
-The reference package MUST publish a machine-readable grouping-key registry and identifier summary in [`artifact-id-policy.json`](../../../artifact-id-policy.json).
+The reference package MUST publish a machine-readable grouping-key registry and identifier summary as an importable CUE definition and can also export a compatibility view such as [`artifact-id-policy.json`](../../../artifact-id-policy.json).
 
 ## [`REQ-ID-0009`](./SPEC-ID.md#req-id-0009-publish-identifier-family-shapes-in-the-catalog) Publish identifier family shapes in the catalog
-The identifier catalog MUST define the `SPEC-<DOMAIN>(-<GROUPING>...)`, `ARC-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`, `WI-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`, `VER-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`, and `REQ-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>` shapes.
+The authoritative identifier catalog MUST define the `SPEC-<DOMAIN>(-<GROUPING>...)`, `ARC-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`, `WI-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`, `VER-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`, and `REQ-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>` shapes.

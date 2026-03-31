@@ -1,134 +1,110 @@
 # Repository-Native Requirements and Traceability Standard
 
-`incursa/spec-trace` is a public reference standard for precise, Markdown-first software specifications.
+`incursa/spec-trace` is a public reference standard for precise, repository-native software specifications.
 
-The standard is optimized for compact requirement clauses with stable IDs and direct traceability to:
+The repository is now CUE-first:
 
-- architecture and design artifacts
-- work items
-- verification artifacts
-- upstream source material
-- generated evidence snapshots
+- canonical authored artifacts are `.cue`
+- shared schemas and policies live in the importable [`model/`](./model/) package
+- schema-backed authoring templates live in the module-root `templates` package
+- generated Markdown is a readable projection, not the source of truth
+- JSON and YAML are compatibility or integration formats, not primary authoring formats
+- the pinned CUE CLI is bootstrapped from GitHub release assets by [`scripts/Resolve-Cue.ps1`](./scripts/Resolve-Cue.ps1), so the repo does not require a Go toolchain just to validate artifacts
 
-The canonical standard lives in [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/). The root documents are practical summaries and copy-ready templates. If a root document and the SPEC suite ever disagree, the SPEC suite wins.
-
-The reference package also includes repository-wide validation through [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1), which checks identifier families, duplicate IDs, unresolved direct links, reciprocal trace consistency, namespace alignment, and profile-specific graph rules.
+The canonical standard lives under [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/). Each canonical spec artifact is authored as CUE and has a generated Markdown sibling for normal browsing and review.
 
 ## Core Model
 
 - The canonical static model uses four artifact families: specification, architecture, work item, and verification.
-- Requirements are the smallest normative unit inside a specification.
-- A specification groups related requirements for one capability, behavior area, interface, or narrow technical concern.
-- A requirement is the smallest normative unit. It has a short descriptive title, a compact normative clause, and optional `Trace` and `Notes` sections.
-- The title is a scan aid; the clause is the normative content.
-- The clause should describe the required behavior, rule, or constraint. `Notes` carry rationale, clarification, and examples.
-- The standard uses BCP 14-style uppercase requirement language inspired by RFC 2119 and RFC 8174. The approved set is `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, and `MAY`. Only uppercase forms are normative; lowercase spellings are plain English.
-- Traceability is explicit. Related artifacts are linked by stable IDs in structured `Trace` fields, by inline backtick references in prose when a lightweight cross-link is enough, or by generated evidence snapshots when the link is tool-produced. Inline references are prose mentions, not trace edges.
-- Structured `Trace` fields have typed semantics by family: `Satisfied By`, `Implemented By`, and `Verified By` are the canonical downstream trace; `Derived From` and `Supersedes` are lineage; `Upstream Refs` are upstream provenance; `Related` is a loose association.
-- Generated evidence rollups, coverage views, and attestation snapshots are derived outputs. They answer current-status questions, but they are not canonical requirement text.
-- Derived reporting can expose upstream, design, implementation, verification, and evidence-by-kind coverage dimensions without changing the canonical profile model.
-- File-level front matter stays strict for the core keys, and repositories may add optional namespaced `x_...` keys for local extensions.
-- Optional upstream lineage can record `Derived From`, `Supersedes`, and `Upstream Refs` when requirement history or external sources matter.
-- The standard defines three repository-level conformance gates: `core`, `traceable`, and `auditable`. In practical terms, those read as `spec-valid`, `artifact-linked`, and `evidence-backed` respectively, but the canonical names remain `core`, `traceable`, and `auditable`.
-- `core` is the low-burden baseline. `traceable` and `auditable` are stricter repository policies, not maturity labels or workflow stages.
-- Richer coverage and attestation reporting lives in a separate derived-reporting layer described by [`SPEC-RPT.md`](./specs/requirements/spec-trace/SPEC-RPT.md).
-- The core artifact families are specification, architecture, work item, and verification.
-- Architecture artifacts are the default place for design rationale and decision tradeoffs.
-- Work items describe implementation work, not requirement text.
-- Verification artifacts record how requirements were checked and what shared outcome was recorded. A verification artifact has one status that applies to every requirement it lists. Generated evidence snapshots and local tooling may reference requirement IDs directly.
-- `Verified By` means the requirement is covered by a verification artifact. It does not mean formal proof of correctness.
-- Verification artifacts are proof-summary artifacts rather than hand-maintained duplicate test catalogs. The repository may use tests, manual QA, benchmarks, interoperability runs, security review, fuzzing, formal methods, or other evidence sources according to local policy.
-- Decision records are not part of the core standard today; they may be added later as an optional local extension.
-- The standard supports staged adoption without requiring fake historical work items or architecture artifacts that do not add repository truth.
-- Each specification Markdown file contains one specification and one or more related `REQ-...` clauses under it.
+- Requirements are the smallest normative unit and live inside a specification artifact.
+- Requirement clauses use the approved uppercase keyword set: `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, and `MAY`.
+- Structured trace uses stable IDs. `Satisfied By`, `Implemented By`, and `Verified By` are downstream trace. `Derived From` and `Supersedes` are lineage. `Upstream Refs` are provenance. `Related` is a loose association.
+- Generated evidence snapshots, coverage rollups, attestation views, and Markdown renderings are derived outputs.
+- The repository-level conformance profiles are `core`, `traceable`, and `auditable`.
 
-For a compact operational explanation of the artifact model, read [`artifact-model-explainer.md`](./artifact-model-explainer.md). For the distinction between authored trace, dynamic attestation, and local repository policy, read [`profiles-and-attestation-explainer.md`](./profiles-and-attestation-explainer.md). The worked examples under [`examples/`](./examples/) show the same ideas in context.
+## Canonical Authoring
 
-The standard is intentionally small. It does not require a requirements platform, a workflow tool, Gherkin, or a test-framework abstraction layer.
+Canonical authored artifacts are CUE values with a top-level `artifact` unified against the shared model:
 
-## Getting Started
+- specifications: [`model.#Specification`](./model/model.cue)
+- architecture artifacts: [`model.#Architecture`](./model/model.cue)
+- work items: [`model.#WorkItem`](./model/model.cue)
+- verification artifacts: [`model.#Verification`](./model/model.cue)
 
-1. Read [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/) for the canonical self-specification suite; if you are revising requirement evolution or upstream trace, also read [`specs/requirements/spec-trace/SPEC-LIN.md`](./specs/requirements/spec-trace/SPEC-LIN.md); if you are choosing a conformance profile, also read [`specs/requirements/spec-trace/SPEC-PRF.md`](./specs/requirements/spec-trace/SPEC-PRF.md); if you are shaping dashboards or attestation, also read [`specs/requirements/spec-trace/SPEC-RPT.md`](./specs/requirements/spec-trace/SPEC-RPT.md) and [`specs/requirements/spec-trace/SPEC-EVD.md`](./specs/requirements/spec-trace/SPEC-EVD.md).
-2. Read [`overview.md`](./overview.md) for the compact authoring model.
-3. Read [`layout.md`](./layout.md) for the recommended repository structure.
-4. Read [`authoring.md`](./authoring.md) for the task-oriented authoring workflow across specifications, requirements, design, work items, and verification artifacts.
-5. Read [`artifact-model-explainer.md`](./artifact-model-explainer.md) for a compact plain-language map of the artifact families and trace labels, then read [`profiles-and-attestation-explainer.md`](./profiles-and-attestation-explainer.md) for the static-vs-dynamic and canonical-vs-local-policy distinction.
-6. Copy from the root templates, such as [`spec-template.md`](./spec-template.md), [`architecture-template.md`](./architecture-template.md), [`work-item-template.md`](./work-item-template.md), and [`verification-template.md`](./verification-template.md), if you want a starting point for your own repo.
-7. Use [`artifact-id-policy.json`](./artifact-id-policy.json) and the files under [`schemas/`](./schemas/) for machine-readable validation targets.
-8. Open [`examples/README.md`](./examples/README.md) for worked examples, including a product-style payments example, a narrow arithmetic example, a tiny generated current-status rollup, and a dimension-oriented coverage rollup.
-9. If you use AI-assisted authoring, point the agent at [`AGENTS.md`](./AGENTS.md), [`LLMS.txt`](./LLMS.txt), [`artifact-model-explainer.md`](./artifact-model-explainer.md), [`profiles-and-attestation-explainer.md`](./profiles-and-attestation-explainer.md), and the repo-local collection under [`skills/`](./skills/).
+The published module path is `github.com/incursa/spec-trace@v0`. Consumers can import:
+
+- `github.com/incursa/spec-trace/model@v0` for the canonical schema definitions
+- `github.com/incursa/spec-trace@v0:templates` for the schema-backed root template definitions (`templates.#SpecificationTemplate`, `templates.#ArchitectureTemplate`, `templates.#WorkItemTemplate`, `templates.#VerificationTemplate`)
+
+Concrete artifacts live under [`specs/`](./specs/) and [`examples/`](./examples/). Generated Markdown sits beside the `.cue` source for readability, but contributors should edit the `.cue` file.
+
+## Commands
+
+```powershell
+./scripts/Resolve-Cue.ps1
+./scripts/Test-SpecTraceRepository.ps1 -Profile core
+./scripts/Render-SpecTraceMarkdown.ps1 -Check
+./scripts/Build-SpecTraceCatalog.ps1
+./scripts/Validate-SpecTraceEvidence.ps1
+./scripts/Render-SpecTraceAttestation.ps1
+```
+
+Useful variants:
+
+- `./scripts/Test-SpecTraceRepository.ps1 -Profile traceable`
+- `./scripts/Test-SpecTraceRepository.ps1 -Profile auditable`
+- `./scripts/Test-SpecTraceRepository.ps1 -JsonReportPath ./specs/generated/validation-report.json`
+- `./scripts/Render-SpecTraceMarkdown.ps1`
+- `./scripts/Convert-MarkdownArtifactsToCue.ps1 -InputPath ./examples/payments`
+- `./scripts/Export-SpecTraceBundle.ps1 -InputPath ./specs/requirements/spec-trace -OutputPath ./specs/generated/spec-bundle.md`
+- `./scripts/Validate-SpecTraceEvidence.ps1 -EvidencePath ./examples/arithmetic/generated/division-evidence.evidence.json`
+- `./scripts/Render-SpecTraceAttestation.ps1 -Profile core -OutDir ./artifacts/spec-trace/attestation`
 
 ## Repository Contents
 
-- [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/) - canonical SPEC suite and proving ground for the standard
-- [`specs/requirements/spec-trace/SPEC-RPT.md`](./specs/requirements/spec-trace/SPEC-RPT.md) - canonical derived-reporting and attestation semantics
-- [`specs/requirements/spec-trace/SPEC-EVD.md`](./specs/requirements/spec-trace/SPEC-EVD.md) - canonical generated-evidence snapshot semantics
-- [`authoring.md`](./authoring.md) - task-oriented authoring guide that routes to the canonical suite, templates, and examples
-- [`overview.md`](./overview.md) - concise summary of the authoring model
-- [`layout.md`](./layout.md) - recommended repository layout and placement guidance
-- [`spec-template.md`](./spec-template.md) - copy-ready specification template
-- [`architecture-template.md`](./architecture-template.md) - copy-ready architecture or design template
-- [`work-item-template.md`](./work-item-template.md) - copy-ready work-item template
-- [`verification-template.md`](./verification-template.md) - copy-ready verification template
-- [`artifact-id-policy.json`](./artifact-id-policy.json) - shared identifier policy and grouping-key registry
-- [`schemas/`](./schemas/) - reference JSON Schemas for extracted metadata
-- [`schemas/evidence-snapshot.schema.json`](./schemas/evidence-snapshot.schema.json) - reference JSON Schema for generated evidence snapshots
-- [`examples/`](./examples/) - worked examples that apply the standard directly
-- [`scripts/Export-SpecTraceBundle.ps1`](./scripts/Export-SpecTraceBundle.ps1) - PowerShell utility that bundles discovered specification files into one Markdown output
-- [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1) - repository-wide validator for Markdown, schema, and cross-file trace rules; use `-Profile core|traceable|auditable`, `-InputPath`, and `-JsonReportPath`
-- [`scripts/Validate-SpecTrace.ps1`](./scripts/Validate-SpecTrace.ps1) - narrower reference-package validator kept for compatibility and bundle-aligned checks
-- [`AGENTS.md`](./AGENTS.md) - agent-oriented repository instructions that defer to the canonical SPEC suite
-- [`LLMS.txt`](./LLMS.txt) - plain-text AI bootstrap for llms.txt-style or prompt-bootstrap workflows
-- [`artifact-model-explainer.md`](./artifact-model-explainer.md) - compact plain-language map of artifact families and trace labels
-- [`profiles-and-attestation-explainer.md`](./profiles-and-attestation-explainer.md) - plain-language explanation of static trace, dynamic attestation, and local policy terms
-- [`skills/`](./skills/) - repo-local authoring skills that help agents draft artifacts without re-implementing the standard
+- [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/) - canonical self-specification suite, authored in CUE with generated Markdown siblings
+- [`model/`](./model/) - canonical shared CUE definitions for artifacts, requirements, evidence, retired-ID ledgers, and generated catalogs
+- [`cue.mod/`](./cue.mod/) - root CUE module
+- [`catalog/retired-requirements.cue`](./catalog/retired-requirements.cue) - retired requirement ledger used during lineage validation
+- [`spec-template.cue`](./spec-template.cue), [`architecture-template.cue`](./architecture-template.cue), [`work-item-template.cue`](./work-item-template.cue), [`verification-template.cue`](./verification-template.cue) - schema-backed template definitions for the published root `templates` package
+- [`schemas/`](./schemas/) - compatibility JSON Schemas and related exports; helpful for integrations, not authoritative over CUE
+- [`examples/`](./examples/) - worked examples across all major artifact families
+- [`src/SpecTrace.Tool/`](./src/SpecTrace.Tool/) - migration, validation, catalog, evidence-validation, attestation, and Markdown-generation toolchain
+- [`tests/SpecTrace.Tool.Tests/`](./tests/SpecTrace.Tool.Tests/) - automated tests covering valid and invalid repositories
 
-## AI-Assisted Authoring
+## Reading Order
 
-This repository includes a small AI-facing convenience layer for teams that want repo-local agent instructions and reusable authoring skills.
+1. [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/) for the canonical standard.
+2. [`authoring.md`](./authoring.md) for the day-to-day workflow.
+3. [`overview.md`](./overview.md) for a compact conceptual summary.
+4. [`layout.md`](./layout.md) for placement and file-layout guidance.
+5. [`examples/README.md`](./examples/README.md) for worked examples.
 
-- [`AGENTS.md`](./AGENTS.md) gives repository-specific instructions to coding and documentation agents.
-- [`LLMS.txt`](./LLMS.txt) provides a lightweight plain-text bootstrap that points tools back to the canonical suite.
-- [`skills/`](./skills/) contains repo-local skills for drafting specifications, requirements, architecture artifacts, work items, verification artifacts, and cross-surface maintenance.
+## Validation And Generation
 
-Those files are ergonomic helpers only. They must remain aligned with the SPEC suite and they must not become a second source of truth.
+The repository validation path is deterministic and local:
 
-## Why This Exists
+- CUE enforces artifact structure, required fields, allowed enums, and identifier regexes.
+- the .NET validator builds a repository-wide in-memory catalog of artifact IDs and nested requirement IDs
+- validation fails on invalid structure, invalid IDs, duplicate IDs, broken cross-file references, and wrong target kinds
+- evidence snapshots are vetted against the canonical CUE schema and then checked against the repository requirement catalog
+- attestation reports merge overlapping evidence snapshots additively and emit deterministic `index.html`, `summary.html`, `details.html`, per-spec pages, and `attestation.json`
+- `build-catalog` can emit the catalog as JSON and CUE for diagnostics or downstream tooling
+- Markdown is generated from canonical CUE and can be checked for drift in CI
 
-The standard is meant to answer practical software questions with minimal ceremony:
+## AI And Convenience Surfaces
 
-- Which requirements have unit-test evidence?
-- Which requirements have code evidence?
-- Which requirements are missing verification?
-- Which evidence observations exist because of which requirements?
-- Which code paths were introduced to satisfy which rules or edge cases?
-- Which source documents or source regions are covered by requirements?
-- Which requirements are grounded only by evidence versus linked delivery artifacts?
+- [`AGENTS.md`](./AGENTS.md) is the repo-local agent guide.
+- [`LLMS.txt`](./LLMS.txt) is the lightweight bootstrap file.
+- [`artifact-model-explainer.md`](./artifact-model-explainer.md) and [`profiles-and-attestation-explainer.md`](./profiles-and-attestation-explainer.md) explain the model in plain language.
+- [`skills/`](./skills/) contains repo-local authoring helpers.
 
-That only works if requirement IDs are stable, requirement clauses are compact, trace links use the right identifier families, and repository-wide validation keeps the graph consistent.
+Those files are convenience surfaces only. They must stay aligned with the canonical CUE-authored SPEC suite.
 
-## Self-Application
+## Publishing
 
-This repository uses the standard to specify itself under [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/). That recursive self-application is intentional. The SPEC suite is not an example pasted beside the standard; it is the standard expressed in its own form.
+The repository is prepared for Central Registry publishing through [`.github/workflows/publish-module.yml`](./.github/workflows/publish-module.yml).
 
-## Versioning
-
-This repository uses a simple public-reference versioning approach.
-
-- `0.1.x` tracks the early public reference package while the standard settles.
-- Changes to canonical field names, identifier rules, or required structures are breaking changes and should be documented.
-- [`CHANGELOG.md`](./CHANGELOG.md) records package-level changes to the reference standard.
-
-## Contributing
-
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the rules for proposing changes and keeping the SPEC suite, templates, schemas, and examples aligned.
-
-## License
-
-This repository is licensed under Apache-2.0. See [`LICENSE`](./LICENSE).
-
-## Security
-
-This repository is primarily documentation, schemas, examples, and policy files. Most issues should go through the normal issue or pull-request flow.
-
-If you believe you found a security-sensitive problem in the repository contents or release process, follow [`SECURITY.md`](./SECURITY.md).
+- Push a semver tag such as `v0.1.0`, or run the workflow manually with a version input.
+- Add a Central Registry trust entry for this repository and workflow so GitHub Actions can exchange its OIDC token for a short-lived registry token.
+- The workflow logs into `registry.cue.works` through `cue-labs/registry-login-action@v1`, validates the repository, checks that `cue mod tidy` leaves `cue.mod/module.cue` unchanged, performs a dry run, and then runs `cue mod publish <version>`.

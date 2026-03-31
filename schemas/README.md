@@ -1,34 +1,25 @@
 # Schemas
 
-These are reference schemas aligned to the SPEC suite under [`../specs/requirements/spec-trace/`](../specs/requirements/spec-trace/).
+These files are compatibility schemas aligned to the canonical CUE model under [`../model/`](../model/).
 
-The schemas validate extracted metadata shapes and the identifier families used by direct trace-bearing lists. They do not prescribe one Markdown parser.
+Authoritative constraints live in CUE. The JSON Schema files in this folder are export and integration surfaces for tools that need JSON-facing contracts.
 
-The shared [`artifact-id-policy.json`](../artifact-id-policy.json) file defines the identifier contract for both artifact documents and requirement clauses.
+## Canonical Source
 
-## Included Schemas
+- [`../model/model.cue`](../model/model.cue) is the authoritative shared schema package.
+- [`../specs/requirements/spec-trace/SPEC-SCH.md`](../specs/requirements/spec-trace/SPEC-SCH.md) defines the normative validation rules.
 
-- [`artifact-id-policy.schema.json`](artifact-id-policy.schema.json) validates the shared identifier and grouping-key metadata catalog
-- [`artifact-frontmatter.schema.json`](artifact-frontmatter.schema.json) validates file-level front matter for specification, architecture, work-item, and verification documents, including family-specific trace-link lists and optional namespaced `x_` extension keys
-- [`requirement-clause.schema.json`](requirement-clause.schema.json) validates extracted compact requirement clauses, including the short descriptive title, normative keyword phrase, optional trace block, notes, and backtick-delimited inline identifier references in prose
-- [`requirement-trace-fields.schema.json`](requirement-trace-fields.schema.json) validates the canonical trace labels used inside a requirement `Trace` block, including structured downstream links, lineage, source citations, and loose associations; inline identifier references are outside this schema
-- [`evidence-snapshot.schema.json`](evidence-snapshot.schema.json) validates generated point-in-time evidence snapshots used for derived reporting and attestation
-- [`work-item-trace-fields.schema.json`](work-item-trace-fields.schema.json) validates the canonical labels used in a work-item `Trace Links` section and constrains requirement, design, and verification links to their expected identifier families
+## Included Compatibility Schemas
 
-## Mapping Notes
+- [`artifact-frontmatter.schema.json`](./artifact-frontmatter.schema.json)
+- [`artifact-id-policy.schema.json`](./artifact-id-policy.schema.json)
+- [`requirement-clause.schema.json`](./requirement-clause.schema.json)
+- [`requirement-trace-fields.schema.json`](./requirement-trace-fields.schema.json)
+- [`work-item-trace-fields.schema.json`](./work-item-trace-fields.schema.json)
+- [`evidence-snapshot.schema.json`](./evidence-snapshot.schema.json)
 
-- [`artifact-frontmatter.schema.json`](artifact-frontmatter.schema.json) is for document metadata.
-- [`requirement-clause.schema.json`](requirement-clause.schema.json) is for the requirement itself.
-- [`requirement-trace-fields.schema.json`](requirement-trace-fields.schema.json) is referenced by the requirement-clause schema.
-- Verification front matter uses one artifact-scoped status for every requirement ID listed in `verifies`; mixed outcomes belong in separate artifacts.
-- Generated evidence snapshots carry implementation observations such as
-  `unit_test`, `code_ref`, `benchmark`, or other repository-policy evidence
-  kinds.
-- Repository-level tooling may normalize clickable Markdown identifiers from body sections before validating the extracted shapes, including repo-local links that carry same-file or cross-file anchor fragments.
-- Inline identifier references are allowed in clauses, `Notes`, and other descriptive prose. They are backtick-delimited stable IDs, and repository-level tooling may need to resolve them across files because JSON Schema alone cannot fully enforce the cross-file link graph.
-- Requirement titles are short descriptive labels that name the obligation or concern rather than restating the full clause.
-- `requirement-clause.schema.json` recognizes the narrowed BCP 14-style uppercase normative keyword set: `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, and `MAY`. Lowercase spellings are plain English.
-- `Derived From` and `Supersedes` are lineage references; the repository-level validator accepts them without requiring tombstone requirement records.
-- File-level front matter may use optional namespaced `x_` keys for local extensions, but the core artifact family fields remain fixed.
-- The `core` profile maps to schema, identifier, and keyword checks; `traceable` and `auditable` add repository-level trace checks on top of those basics.
-- Repository-level validation is expected to go beyond shape checks and report duplicate IDs, unresolved direct links, reciprocal mismatches, namespace drift, canonical coverage dimensions such as `Upstream Refs`, `Satisfied By`, `Implemented By`, and `Verified By`, plus evidence-kind coverage derived from evaluated evidence snapshots.
+## Notes
+
+- These files do not override the CUE model.
+- Repository-wide reference resolution, duplicate detection, and wrong-target-kind checks happen in the repository validator, not in JSON Schema alone.
+- Markdown is generated from canonical CUE, so any schema or extractor that consumes Markdown should treat it as a derived view.

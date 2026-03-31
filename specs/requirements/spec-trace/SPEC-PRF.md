@@ -37,7 +37,7 @@ Notes:
 - The profiles are repository-level conformance gates, not maturity scores, workflow stages, or per-artifact labels.
 
 ## [`REQ-PRF-0002`](./SPEC-PRF.md#req-prf-0002-keep-the-core-profile-minimal) Keep the core profile minimal
-The `core` profile MUST require schema-conformant shape, identifier correctness, and approved normative keyword correctness only.
+The `core` profile MUST require CUE-schema-conformant shape, identifier correctness, approved normative keyword correctness, no duplicate canonical IDs, and no broken structured references.
 
 Notes:
 - `core` is the low-burden baseline.
@@ -45,13 +45,13 @@ Notes:
 - In practice, `core` is the spec-valid baseline: the requirements are structurally valid and trustworthy as requirements.
 
 ## [`REQ-PRF-0003`](./SPEC-PRF.md#req-prf-0003-define-the-traceable-profile-as-core-plus-graph-hygiene) Define the traceable profile as core plus graph hygiene
-The `traceable` profile MUST require the `core` profile plus no unresolved artifact or requirement references, no duplicate IDs, and at least one downstream trace link for every requirement.
+The `traceable` profile MUST require the `core` profile plus at least one downstream trace link for every requirement.
 
 Notes:
 - Downstream trace links are `Satisfied By`, `Implemented By`, and `Verified By`.
 - Upstream lineage fields such as `Derived From`, `Supersedes`, and
-  `Upstream Refs` do not satisfy the downstream-trace requirement by
-  themselves.
+`Upstream Refs` do not satisfy the downstream-trace requirement by
+themselves.
 - In practice, `traceable` is artifact-linked: every requirement must be connected to at least one downstream artifact.
 
 ## [`REQ-PRF-0004`](./SPEC-PRF.md#req-prf-0004-define-the-auditable-profile-as-traceable-plus-proof-coverage) Define the auditable profile as traceable plus proof coverage
@@ -82,5 +82,5 @@ Trace:
 
 Notes:
 - A repository may remain at `core` while still reporting upstream, design,
-  implementation, verification, and evidence-by-kind coverage dimensions.
+implementation, verification, and evidence-by-kind coverage dimensions.
 - A profile result does not replace a dimension-level coverage or attestation report.
