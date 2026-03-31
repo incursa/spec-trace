@@ -1,0 +1,14 @@
+{
+  "$schema": "./model/model.schema.json",
+  "artifact_id": "ARC-EXAMPLE-0001",
+  "artifact_type": "architecture",
+  "title": "Example Architecture",
+  "domain": "example",
+  "status": "draft",
+  "owner": "example-team",
+  "satisfies": [
+    "REQ-EXAMPLE-0001"
+  ],
+  "purpose": "Explain why this design exists.",
+  "design_summary": "Summarize the design that satisfies the requirement."
+}

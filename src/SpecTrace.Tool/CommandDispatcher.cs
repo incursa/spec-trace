@@ -18,10 +18,8 @@ public static class CommandDispatcher
         {
             return command switch
             {
-                "migrate-markdown" => await RunMigrateMarkdownAsync(rootPath, inputPath),
-                "generate-markdown" => await RunGenerateMarkdownAsync(rootPath, inputPath, HasFlag(args, "--check")),
                 "validate" => await RunValidateAsync(rootPath, inputPath, GetOption(args, "--profile") ?? "core", GetOption(args, "--json-report")),
-                "build-catalog" => await RunBuildCatalogAsync(rootPath, inputPath, GetOption(args, "--json-out"), GetOption(args, "--cue-out")),
+                "build-catalog" => await RunBuildCatalogAsync(rootPath, inputPath, GetOption(args, "--json-out")),
                 "validate-evidence" => await RunValidateEvidenceAsync(rootPath, GetOptionValues(args, "--evidence-path")),
                 "generate-attestation" => await RunGenerateAttestationAsync(
                     rootPath,
@@ -40,68 +38,10 @@ public static class CommandDispatcher
         }
     }
 
-    private static async Task<int> RunMigrateMarkdownAsync(string rootPath, string? inputPath)
-    {
-        foreach (var markdownFile in DiscoverArtifactMarkdownFiles(rootPath, inputPath))
-        {
-            var artifact = MarkdownArtifactParser.ParseFile(markdownFile);
-            var cuePath = Path.ChangeExtension(markdownFile, ".cue");
-            File.WriteAllText(cuePath, CueArtifactWriter.WriteArtifact(artifact));
-            Console.WriteLine($"Wrote {Path.GetRelativePath(rootPath, cuePath)}");
-        }
-
-        return await Task.FromResult(0);
-    }
-
-    private static async Task<int> RunGenerateMarkdownAsync(string rootPath, string? inputPath, bool check)
-    {
-        var artifacts = await LoadCueArtifactsAsync(rootPath, inputPath);
-        var catalog = new ArtifactCatalog(artifacts);
-        var mismatches = new List<string>();
-
-        foreach (var (cuePath, artifact) in artifacts)
-        {
-            var markdownPath = Path.ChangeExtension(cuePath, ".md");
-            var generatedMarkdown = MarkdownArtifactWriter.WriteArtifact(artifact, catalog, cuePath);
-
-            if (check)
-            {
-                var existingMarkdown = File.Exists(markdownPath) ? File.ReadAllText(markdownPath) : null;
-                if (!string.Equals(existingMarkdown, generatedMarkdown, StringComparison.Ordinal))
-                {
-                    mismatches.Add(Path.GetRelativePath(rootPath, markdownPath).Replace('\\', '/'));
-                }
-
-                continue;
-            }
-
-            File.WriteAllText(markdownPath, generatedMarkdown);
-            Console.WriteLine($"Generated {Path.GetRelativePath(rootPath, markdownPath)}");
-        }
-
-        if (check)
-        {
-            if (mismatches.Count > 0)
-            {
-                Console.Error.WriteLine("Generated Markdown is out of date:");
-                foreach (var mismatch in mismatches)
-                {
-                    Console.Error.WriteLine($"  {mismatch}");
-                }
-
-                return 1;
-            }
-
-            Console.WriteLine("Generated Markdown is up to date.");
-        }
-
-        return 0;
-    }
-
     private static async Task<int> RunValidateAsync(string rootPath, string? inputPath, string profile, string? jsonReportPath)
     {
-        var artifacts = await LoadCueArtifactsAsync(rootPath, inputPath);
-        var retiredLedger = await LoadRetiredLedgerAsync(rootPath);
+        var artifacts = await CanonicalJsonLoader.LoadArtifactsAsync(rootPath, inputPath);
+        var retiredLedger = await CanonicalJsonLoader.LoadRetiredLedgerAsync(rootPath);
         var report = RepositoryValidator.Validate(rootPath, profile, artifacts, retiredLedger);
 
         foreach (var finding in report.Findings)
@@ -129,7 +69,7 @@ public static class CommandDispatcher
 
     private static async Task<int> RunValidateEvidenceAsync(string rootPath, IReadOnlyList<string> evidencePaths)
     {
-        var artifacts = await LoadCueArtifactsAsync(rootPath, inputPath: null);
+        var artifacts = await CanonicalJsonLoader.LoadArtifactsAsync(rootPath, inputPath: null);
         var catalog = new ArtifactCatalog(artifacts);
         var discovery = EvidenceValidator.DiscoverEvidenceFiles(rootPath, evidencePaths);
 
@@ -166,10 +106,10 @@ public static class CommandDispatcher
         return 0;
     }
 
-    private static async Task<int> RunBuildCatalogAsync(string rootPath, string? inputPath, string? jsonOutputPath, string? cueOutputPath)
+    private static async Task<int> RunBuildCatalogAsync(string rootPath, string? inputPath, string? jsonOutputPath)
     {
-        var artifacts = await LoadCueArtifactsAsync(rootPath, inputPath);
-        var retiredLedger = await LoadRetiredLedgerAsync(rootPath);
+        var artifacts = await CanonicalJsonLoader.LoadArtifactsAsync(rootPath, inputPath);
+        var retiredLedger = await CanonicalJsonLoader.LoadRetiredLedgerAsync(rootPath);
         var report = RepositoryValidator.Validate(rootPath, "core", artifacts, retiredLedger);
 
         foreach (var finding in report.Findings)
@@ -184,19 +124,13 @@ public static class CommandDispatcher
         }
 
         var catalog = new ArtifactCatalog(artifacts);
-        var snapshot = catalog.CreateSnapshot(artifacts);
+        var snapshot = catalog.CreateSnapshot(rootPath, artifacts);
 
         var resolvedJsonOutput = Path.GetFullPath(jsonOutputPath ?? Path.Combine(rootPath, "specs", "generated", "spec-trace-catalog.json"));
-        var resolvedCueOutput = Path.GetFullPath(cueOutputPath ?? Path.Combine(rootPath, "specs", "generated", "spec-trace-catalog.cue"));
-
         Directory.CreateDirectory(Path.GetDirectoryName(resolvedJsonOutput)!);
-        Directory.CreateDirectory(Path.GetDirectoryName(resolvedCueOutput)!);
-
         File.WriteAllText(resolvedJsonOutput, snapshot.ToJson());
-        File.WriteAllText(resolvedCueOutput, CatalogSnapshotWriter.WriteCue(snapshot));
 
         Console.WriteLine($"Wrote {Path.GetRelativePath(rootPath, resolvedJsonOutput).Replace('\\', '/')}");
-        Console.WriteLine($"Wrote {Path.GetRelativePath(rootPath, resolvedCueOutput).Replace('\\', '/')}");
         return 0;
     }
 
@@ -208,10 +142,10 @@ public static class CommandDispatcher
         string outDir,
         IReadOnlyList<string> evidencePaths)
     {
-        var scopedArtifacts = await LoadCueArtifactsAsync(rootPath, inputPath);
+        var scopedArtifacts = await CanonicalJsonLoader.LoadArtifactsAsync(rootPath, inputPath);
         var fullArtifacts = string.IsNullOrWhiteSpace(inputPath)
             ? scopedArtifacts
-            : await LoadCueArtifactsAsync(rootPath, inputPath: null);
+            : await CanonicalJsonLoader.LoadArtifactsAsync(rootPath, inputPath: null);
 
         var evidenceCatalog = new ArtifactCatalog(fullArtifacts);
         var discovery = EvidenceValidator.DiscoverEvidenceFiles(rootPath, evidencePaths);
@@ -238,7 +172,7 @@ public static class CommandDispatcher
             return 1;
         }
 
-        var retiredLedger = await LoadRetiredLedgerAsync(rootPath);
+        var retiredLedger = await CanonicalJsonLoader.LoadRetiredLedgerAsync(rootPath);
         var report = RepositoryValidator.Validate(rootPath, profile, scopedArtifacts, retiredLedger);
         foreach (var finding in report.Findings)
         {
@@ -282,124 +216,6 @@ public static class CommandDispatcher
         return 0;
     }
 
-    private static async Task<List<(string CuePath, ArtifactModel Artifact)>> LoadCueArtifactsAsync(string rootPath, string? inputPath)
-    {
-        var cueFiles = EnumerateCueFiles(rootPath, inputPath)
-            .Select(Path.GetFullPath)
-            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
-            .ToList();
-
-        var artifacts = new List<(string CuePath, ArtifactModel Artifact)>();
-        foreach (var cueFile in cueFiles)
-        {
-            var relativeCuePath = Path.GetRelativePath(rootPath, cueFile).Replace('\\', '/');
-            var artifact = await CueCli.ExportArtifactAsync(rootPath, relativeCuePath, CancellationToken.None);
-            artifacts.Add((cueFile, artifact));
-        }
-
-        return artifacts;
-    }
-
-    private static IEnumerable<string> EnumerateCueFiles(string rootPath, string? inputPath)
-    {
-        if (string.IsNullOrWhiteSpace(inputPath))
-        {
-            return EnumerateCueFilesInDirectory(Path.Combine(rootPath, "specs"), rootPath)
-                .Concat(EnumerateCueFilesInDirectory(Path.Combine(rootPath, "examples"), rootPath));
-        }
-
-        if (File.Exists(inputPath))
-        {
-            return ShouldIncludeCueFile(rootPath, inputPath) ? [inputPath] : [];
-        }
-
-        if (!Directory.Exists(inputPath))
-        {
-            return [];
-        }
-
-        return EnumerateCueFilesInDirectory(inputPath, rootPath);
-    }
-
-    private static IEnumerable<string> EnumerateCueFilesInDirectory(string directory, string rootPath)
-    {
-        if (!Directory.Exists(directory))
-        {
-            return [];
-        }
-
-        return Directory.EnumerateFiles(directory, "*.cue", SearchOption.AllDirectories)
-            .Where(path => ShouldIncludeCueFile(rootPath, path));
-    }
-
-    private static bool ShouldIncludeCueFile(string rootPath, string path)
-    {
-        if (path.Contains($"{Path.DirectorySeparatorChar}generated{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
-        var relativePath = Path.GetRelativePath(rootPath, path).Replace('\\', '/');
-        return relativePath.StartsWith("specs/", StringComparison.OrdinalIgnoreCase) ||
-               relativePath.StartsWith("examples/", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static async Task<RetiredRequirementLedger?> LoadRetiredLedgerAsync(string rootPath)
-    {
-        var ledgerPath = Path.Combine(rootPath, "catalog", "retired-requirements.cue");
-        if (!File.Exists(ledgerPath))
-        {
-            return null;
-        }
-
-        var relativePath = Path.GetRelativePath(rootPath, ledgerPath).Replace('\\', '/');
-        return await CueCli.ExportRetiredLedgerAsync(rootPath, relativePath, CancellationToken.None);
-    }
-
-    private static List<string> DiscoverArtifactMarkdownFiles(string rootPath, string? inputPath)
-    {
-        var markdownFiles = string.IsNullOrWhiteSpace(inputPath)
-            ? EnumerateArtifactMarkdownFiles(Path.Combine(rootPath, "specs"), rootPath)
-                .Concat(EnumerateArtifactMarkdownFiles(Path.Combine(rootPath, "examples"), rootPath))
-            : EnumerateArtifactMarkdownFiles(inputPath, rootPath);
-
-        return markdownFiles
-            .Where(path => !path.Contains($"{Path.DirectorySeparatorChar}generated{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase))
-            .Where(path => Path.GetFileName(path) is not "_index.md" and not "README.md" and not "source-notes.md" and not "REQUIREMENT-GAPS.md")
-            .Where(IsArtifactMarkdownFile)
-            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
-            .ToList();
-    }
-
-    private static IEnumerable<string> EnumerateArtifactMarkdownFiles(string path, string rootPath)
-    {
-        if (File.Exists(path))
-        {
-            var relativePath = Path.GetRelativePath(rootPath, path).Replace('\\', '/');
-            if (relativePath.StartsWith("specs/", StringComparison.OrdinalIgnoreCase) ||
-                relativePath.StartsWith("examples/", StringComparison.OrdinalIgnoreCase))
-            {
-                return [Path.GetFullPath(path)];
-            }
-
-            return [];
-        }
-
-        if (!Directory.Exists(path))
-        {
-            return [];
-        }
-
-        return Directory.EnumerateFiles(path, "*.md", SearchOption.AllDirectories);
-    }
-
-    private static bool IsArtifactMarkdownFile(string path)
-    {
-        var lines = File.ReadLines(path).Take(12).ToList();
-        return lines.Any(line => line.StartsWith("artifact_id:", StringComparison.Ordinal)) &&
-               lines.Any(line => line.StartsWith("artifact_type:", StringComparison.Ordinal));
-    }
-
     private static string? GetOption(string[] args, string optionName)
     {
         for (var index = 0; index < args.Length - 1; index++)
@@ -435,11 +251,6 @@ public static class CommandDispatcher
         return values;
     }
 
-    private static bool HasFlag(string[] args, string flagName)
-    {
-        return args.Any(arg => string.Equals(arg, flagName, StringComparison.OrdinalIgnoreCase));
-    }
-
     private static string? ResolveInputPath(string rootPath, string? inputPath)
     {
         if (string.IsNullOrWhiteSpace(inputPath))
@@ -460,10 +271,8 @@ public static class CommandDispatcher
     private static void PrintUsage()
     {
         Console.WriteLine("Usage:");
-        Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- migrate-markdown [--root <path>] [--input-path <path>]");
-        Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- generate-markdown [--root <path>] [--input-path <path>] [--check]");
         Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- validate [--root <path>] [--input-path <path>] [--profile core|traceable|auditable] [--json-report <path>]");
-        Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- build-catalog [--root <path>] [--input-path <path>] [--json-out <path>] [--cue-out <path>]");
+        Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- build-catalog [--root <path>] [--input-path <path>] [--json-out <path>]");
         Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- validate-evidence [--root <path>] [--evidence-path <file-or-dir>]...");
         Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- generate-attestation [--root <path>] [--input-path <path>] [--profile core|traceable|auditable] [--emit html|json|both] [--out-dir <path>] [--evidence-path <file-or-dir>]...");
     }

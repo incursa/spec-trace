@@ -1,15 +1,13 @@
 # Schemas
 
-These files are compatibility schemas aligned to the canonical CUE model under [`../model/`](../model/).
-
-Authoritative constraints live in CUE. The JSON Schema files in this folder are export and integration surfaces for tools that need JSON-facing contracts.
+These files are compatibility or slice schemas aligned to the authoritative model in [`../model/model.schema.json`](../model/model.schema.json).
 
 ## Canonical Source
 
-- [`../model/model.cue`](../model/model.cue) is the authoritative shared schema package.
-- [`../specs/requirements/spec-trace/SPEC-SCH.md`](../specs/requirements/spec-trace/SPEC-SCH.md) defines the normative validation rules.
+- [`../model/model.schema.json`](../model/model.schema.json) is the authoritative JSON Schema for canonical artifacts.
+- [`../specs/requirements/spec-trace/SPEC-SCH.json`](../specs/requirements/spec-trace/SPEC-SCH.json) defines the normative validation rules.
 
-## Included Compatibility Schemas
+## Included Schemas
 
 - [`artifact-frontmatter.schema.json`](./artifact-frontmatter.schema.json)
 - [`artifact-id-policy.schema.json`](./artifact-id-policy.schema.json)
@@ -17,9 +15,9 @@ Authoritative constraints live in CUE. The JSON Schema files in this folder are 
 - [`requirement-trace-fields.schema.json`](./requirement-trace-fields.schema.json)
 - [`work-item-trace-fields.schema.json`](./work-item-trace-fields.schema.json)
 - [`evidence-snapshot.schema.json`](./evidence-snapshot.schema.json)
+- [`retired-requirement-ledger.schema.json`](./retired-requirement-ledger.schema.json)
 
 ## Notes
 
-- These files do not override the CUE model.
-- Repository-wide reference resolution, duplicate detection, and wrong-target-kind checks happen in the repository validator, not in JSON Schema alone.
-- Markdown is generated from canonical CUE, so any schema or extractor that consumes Markdown should treat it as a derived view.
+- These files do not override the authoritative schema.
+- Repository-wide reference resolution, duplicate detection, reciprocal-link checks, and profile enforcement happen in repository validation on top of JSON Schema.

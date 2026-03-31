@@ -1,4 +1,4 @@
-name: Publish CUE Module
+name: Publish JSON Package
 
 on:
   push:
@@ -7,13 +7,12 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Module version to publish, for example v0.1.0
+        description: Package version label, for example v0.1.0
         required: true
         type: string
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   publish:
@@ -25,7 +24,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Resolve publish version
+      - name: Resolve package version
         id: version
         shell: pwsh
         run: |
@@ -37,7 +36,7 @@ jobs:
           }
 
           if ($version -notmatch '^v\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$') {
-            throw "Publish version '$version' is not a valid semver tag."
+            throw "Package version '$version' is not a valid semver tag."
           }
 
           "value=$version" >> $env:GITHUB_OUTPUT
@@ -47,15 +46,7 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Resolve pinned CUE CLI
-        id: cue
-        shell: pwsh
-        run: |
-          $cue = ./scripts/Resolve-Cue.ps1
-          "path=$cue" >> $env:GITHUB_OUTPUT
-          Add-Content -LiteralPath $env:GITHUB_PATH -Value (Split-Path -Parent $cue)
-
-      - name: Sync publish submodule
+      - name: Sync publish mirror
         shell: pwsh
         run: ./scripts/Sync-PublishModule.ps1
 
@@ -63,77 +54,46 @@ jobs:
         shell: pwsh
         run: dotnet test tests/SpecTrace.Tool.Tests/SpecTrace.Tool.Tests.csproj
 
-      - name: Validate canonical CUE artifacts
+      - name: Validate canonical JSON artifacts
         shell: pwsh
         run: ./scripts/Test-SpecTraceRepository.ps1 -Profile core
 
-      - name: Check generated Markdown
+      - name: Build repository catalog
         shell: pwsh
-        run: ./scripts/Render-SpecTraceMarkdown.ps1 -Check
+        run: ./scripts/Build-SpecTraceCatalog.ps1
 
       - name: Validate evidence snapshots
         shell: pwsh
         run: ./scripts/Validate-SpecTraceEvidence.ps1
 
-      - name: Verify publish submodule is synchronized
+      - name: Render attestation report
+        shell: pwsh
+        run: ./scripts/Render-SpecTraceAttestation.ps1 -Profile core -Emit both
+
+      - name: Verify publish mirror is synchronized
         shell: pwsh
         run: |
           $status = git status --short --untracked-files=all -- publish
           if ($status) {
             $status | Write-Host
-            throw "Publish subtree is not synchronized."
+            throw "Publish mirror is not synchronized."
           }
 
-      - name: Verify publish module metadata is tidy
+      - name: Create publish archive
+        id: archive
         shell: pwsh
         run: |
-          Push-Location publish
-          try {
-            cue mod tidy
+          $artifactDirectory = Join-Path $PWD 'artifacts'
+          New-Item -ItemType Directory -Force -Path $artifactDirectory | Out-Null
+          $archivePath = Join-Path $artifactDirectory "spec-trace-publish-${{ steps.version.outputs.value }}.zip"
+          if (Test-Path -LiteralPath $archivePath) {
+            Remove-Item -LiteralPath $archivePath -Force
           }
-          finally {
-            Pop-Location
-          }
-          $status = git status --short --untracked-files=all -- publish
-          if ($status) {
-            $status | Write-Host
-            throw "Publish subtree changed after cue mod tidy."
-          }
+          Compress-Archive -Path 'publish\*' -DestinationPath $archivePath
+          "path=$archivePath" >> $env:GITHUB_OUTPUT
 
-      - name: Evaluate publish module templates package
-        shell: pwsh
-        run: |
-          Push-Location publish
-          try {
-            cue eval .:templates
-          }
-          finally {
-            Pop-Location
-          }
-
-      - name: Dry-run publish module
-        shell: pwsh
-        run: |
-          Push-Location publish
-          try {
-            cue mod publish '${{ steps.version.outputs.value }}' --dry-run
-          }
-          finally {
-            Pop-Location
-          }
-
-      - name: Log in to the Central Registry
-        uses: cue-labs/registry-login-action@v1
+      - name: Upload publish archive
+        uses: actions/upload-artifact@v4
         with:
-          registry: registry.cue.works
-
-      - name: Publish module
-        shell: pwsh
-        run: |
-          Push-Location publish
-          try {
-            cue mod publish '${{ steps.version.outputs.value }}'
-          }
-          finally {
-            Pop-Location
-          }
+          name: spec-trace-publish-${{ steps.version.outputs.value }}
+          path: ${{ steps.archive.outputs.path }}

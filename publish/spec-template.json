@@ -1,0 +1,18 @@
+{
+  "$schema": "./model/model.schema.json",
+  "artifact_id": "SPEC-EXAMPLE",
+  "artifact_type": "specification",
+  "title": "Example Specification",
+  "domain": "example",
+  "capability": "example-capability",
+  "status": "draft",
+  "owner": "example-team",
+  "purpose": "State the purpose of the specification.",
+  "requirements": [
+    {
+      "id": "REQ-EXAMPLE-0001",
+      "title": "State one requirement",
+      "statement": "The example MUST state one requirement."
+    }
+  ]
+}

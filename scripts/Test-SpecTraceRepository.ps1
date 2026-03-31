@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Validates canonical SpecTrace CUE artifacts.
+Validates canonical SpecTrace JSON artifacts.
 #>
 [CmdletBinding()]
 param(
@@ -22,7 +22,6 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $resolvedRoot = (Resolve-Path -LiteralPath $RootPath).Path
-& (Join-Path $PSScriptRoot 'Resolve-Cue.ps1') -RootPath $resolvedRoot | Out-Null
 
 $arguments = @(
     'run',

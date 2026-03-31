@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace SpecTrace.Tool;
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class SpecTraceAttestationSnapshot
 {
     [JsonPropertyName("schema_version")]
@@ -34,6 +35,7 @@ public sealed class SpecTraceAttestationSnapshot
     public string ToJson() => System.Text.Json.JsonSerializer.Serialize(this, JsonOptions.Default);
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class SpecTraceAttestationRepository
 {
     [JsonPropertyName("root")]
@@ -43,6 +45,7 @@ public sealed class SpecTraceAttestationRepository
     public required string DisplayName { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class SpecTraceAttestationSelection
 {
     [JsonPropertyName("profile")]
@@ -58,6 +61,7 @@ public sealed class SpecTraceAttestationSelection
     public required string OutputDirectory { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class SpecTraceAttestationValidationSummary
 {
     [JsonPropertyName("error_count")]
@@ -70,6 +74,7 @@ public sealed class SpecTraceAttestationValidationSummary
     public required List<Finding> Findings { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class SpecTraceAttestationEvidenceSummary
 {
     [JsonPropertyName("file_count")]
@@ -88,6 +93,7 @@ public sealed class SpecTraceAttestationEvidenceSummary
     public required List<SpecTraceAttestationEvidenceFile> Files { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class SpecTraceAttestationEvidenceFile
 {
     [JsonPropertyName("path")]
@@ -109,6 +115,7 @@ public sealed class SpecTraceAttestationEvidenceFile
     public required int ObservationCount { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class SpecTraceAttestationAggregateSummary
 {
     [JsonPropertyName("specification_count")]
@@ -145,6 +152,7 @@ public sealed class SpecTraceAttestationAggregateSummary
     public required Dictionary<string, int> EvidenceKindCoverage { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class SpecTraceAttestationSpecification
 {
     [JsonPropertyName("artifact_id")]
@@ -159,11 +167,8 @@ public sealed class SpecTraceAttestationSpecification
     [JsonPropertyName("domain")]
     public required string Domain { get; init; }
 
-    [JsonPropertyName("source_cue_path")]
-    public required string SourceCuePath { get; init; }
-
-    [JsonPropertyName("source_markdown_path")]
-    public required string SourceMarkdownPath { get; init; }
+    [JsonPropertyName("source_path")]
+    public required string SourcePath { get; init; }
 
     [JsonPropertyName("findings")]
     public required List<Finding> Findings { get; init; }
@@ -172,6 +177,7 @@ public sealed class SpecTraceAttestationSpecification
     public required List<SpecTraceAttestationRequirement> Requirements { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class SpecTraceAttestationRequirement
 {
     [JsonPropertyName("requirement_id")]
@@ -183,8 +189,8 @@ public sealed class SpecTraceAttestationRequirement
     [JsonPropertyName("statement")]
     public required string Statement { get; init; }
 
-    [JsonPropertyName("source_markdown_path")]
-    public required string SourceMarkdownPath { get; init; }
+    [JsonPropertyName("source_path")]
+    public required string SourcePath { get; init; }
 
     [JsonPropertyName("trace")]
     public required SpecTraceAttestationRequirementTrace Trace { get; init; }
@@ -205,6 +211,7 @@ public sealed class SpecTraceAttestationRequirement
     public required List<Finding> Findings { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class SpecTraceAttestationRequirementTrace
 {
     [JsonPropertyName("satisfied_by")]
@@ -229,6 +236,7 @@ public sealed class SpecTraceAttestationRequirementTrace
     public required List<string> Related { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class SpecTraceAttestationEvidenceKind
 {
     [JsonPropertyName("kind")]

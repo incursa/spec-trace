@@ -61,7 +61,7 @@ internal static class SpecTraceAttestationHtmlWriter
         var reportRoot = Path.GetDirectoryName(detailsPath)!;
         foreach (var specification in snapshot.Specifications)
         {
-            var pagePath = ResolveSpecificationPagePath(reportRoot, specification.SourceMarkdownPath, specification.ArtifactId);
+            var pagePath = ResolveSpecificationPagePath(reportRoot, specification.SourcePath, specification.ArtifactId);
             Directory.CreateDirectory(Path.GetDirectoryName(pagePath)!);
             File.WriteAllText(pagePath, BuildSpecificationHtml(pagePath, reportRoot, snapshot, specification, catalog));
         }
@@ -88,7 +88,7 @@ internal static class SpecTraceAttestationHtmlWriter
             ("Specification", $"{specification.ArtifactId} - {specification.Title}"),
             ("Status", specification.Status),
             ("Domain", specification.Domain),
-            ("Source", LinkToRepoPath(pagePath, snapshot.Repository.Root, specification.SourceMarkdownPath)),
+            ("Source", LinkToRepoPath(pagePath, snapshot.Repository.Root, specification.SourcePath)),
             ("Requirements", FormatInt(specification.Requirements.Count)),
             ("Specification findings", FormatInt(specification.Findings.Count)),
         });
@@ -132,14 +132,14 @@ internal static class SpecTraceAttestationHtmlWriter
         builder.AppendLine($"<p>{Encode(requirement.Statement)}</p>");
         AppendKeyValueTable(builder, null, new[]
         {
-            ("Source", LinkToRepoPath(reportPath, snapshot.Repository.Root, requirement.SourceMarkdownPath, requirement.RequirementId)),
-            ("Satisfied By", RenderReferenceList(reportPath, catalog, requirement.Trace.SatisfiedBy, requirement.SourceMarkdownPath)),
-            ("Implemented By", RenderReferenceList(reportPath, catalog, requirement.Trace.ImplementedBy, requirement.SourceMarkdownPath)),
-            ("Verified By", RenderReferenceList(reportPath, catalog, requirement.Trace.VerifiedBy, requirement.SourceMarkdownPath)),
-            ("Derived From", RenderReferenceList(reportPath, catalog, requirement.Trace.DerivedFrom, requirement.SourceMarkdownPath)),
-            ("Supersedes", RenderReferenceList(reportPath, catalog, requirement.Trace.Supersedes, requirement.SourceMarkdownPath)),
+            ("Source", LinkToRepoPath(reportPath, snapshot.Repository.Root, requirement.SourcePath)),
+            ("Satisfied By", RenderReferenceList(reportPath, catalog, requirement.Trace.SatisfiedBy)),
+            ("Implemented By", RenderReferenceList(reportPath, catalog, requirement.Trace.ImplementedBy)),
+            ("Verified By", RenderReferenceList(reportPath, catalog, requirement.Trace.VerifiedBy)),
+            ("Derived From", RenderReferenceList(reportPath, catalog, requirement.Trace.DerivedFrom)),
+            ("Supersedes", RenderReferenceList(reportPath, catalog, requirement.Trace.Supersedes)),
             ("Upstream Refs", RenderList(requirement.Trace.UpstreamRefs)),
-            ("Related", RenderReferenceList(reportPath, catalog, requirement.Trace.Related, requirement.SourceMarkdownPath)),
+            ("Related", RenderReferenceList(reportPath, catalog, requirement.Trace.Related)),
             ("Evidence", requirement.Evidence.Count == 0 ? "none" : string.Join("<br />", requirement.Evidence.Select(RenderEvidenceKind))),
             ("Issues", requirement.Issues.Count == 0 ? "none" : Encode(string.Join(", ", requirement.Issues))),
         });
@@ -273,7 +273,7 @@ internal static class SpecTraceAttestationHtmlWriter
             "Page",
         }, specifications.Select(specification => new[]
         {
-            $"{Encode(specification.SpecificationId)}<br /><span class=\"muted\">{LinkToRepoPath(reportPath, snapshot.Repository.Root, specification.SourceMarkdownPath)}</span>",
+            $"{Encode(specification.SpecificationId)}<br /><span class=\"muted\">{LinkToRepoPath(reportPath, snapshot.Repository.Root, specification.SourcePath)}</span>",
             Encode(specification.Status),
             FormatInt(specification.Requirements),
             FormatInt(specification.IssueBearingRequirements),
@@ -291,10 +291,10 @@ internal static class SpecTraceAttestationHtmlWriter
         return snapshot.Specifications
             .Select(specification =>
             {
-                var pagePath = ResolveSpecificationPagePath(reportRoot, specification.SourceMarkdownPath, specification.ArtifactId);
+                var pagePath = ResolveSpecificationPagePath(reportRoot, specification.SourcePath, specification.ArtifactId);
                 return new SpecificationSummary(
                     specification.ArtifactId,
-                    specification.SourceMarkdownPath,
+                    specification.SourcePath,
                     specification.Status,
                     specification.Requirements.Count,
                     specification.Requirements.Count(requirement => requirement.Issues.Count > 0),
@@ -307,15 +307,15 @@ internal static class SpecTraceAttestationHtmlWriter
             .ToList();
     }
 
-    private static string ResolveSpecificationPagePath(string reportRoot, string markdownPath, string artifactId)
+    private static string ResolveSpecificationPagePath(string reportRoot, string sourcePath, string artifactId)
     {
-        var normalized = string.IsNullOrWhiteSpace(markdownPath)
+        var normalized = string.IsNullOrWhiteSpace(sourcePath)
             ? artifactId
-            : markdownPath.Replace('\\', '/');
+            : sourcePath.Replace('\\', '/');
 
-        if (normalized.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+        if (normalized.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
         {
-            normalized = normalized[..^3];
+            normalized = normalized[..^5];
         }
 
         return Path.GetFullPath(Path.Combine(reportRoot, normalized.Replace('/', Path.DirectorySeparatorChar), "index.html"));
@@ -439,27 +439,26 @@ internal static class SpecTraceAttestationHtmlWriter
         builder.AppendLine("</html>");
     }
 
-    private static string RenderReferenceList(string reportPath, ArtifactCatalog catalog, IReadOnlyList<string> ids, string sourceMarkdownPath)
+    private static string RenderReferenceList(string reportPath, ArtifactCatalog catalog, IReadOnlyList<string> ids)
     {
         if (ids.Count == 0)
         {
             return "none";
         }
 
-        return string.Join(", ", ids.Select(id => RenderCatalogReference(reportPath, catalog, id, sourceMarkdownPath)));
+        return string.Join(", ", ids.Select(id => RenderCatalogReference(reportPath, catalog, id)));
     }
 
-    private static string RenderCatalogReference(string reportPath, ArtifactCatalog catalog, string id, string sourceMarkdownPath)
+    private static string RenderCatalogReference(string reportPath, ArtifactCatalog catalog, string id)
     {
         if (catalog.TryGetArtifact(id, out var artifact))
         {
-            return LinkToAbsolutePath(reportPath, artifact.SourceMarkdownPath, id);
+            return LinkToAbsolutePath(reportPath, artifact.SourcePath, id);
         }
 
         if (catalog.TryGetRequirement(id, out var requirement))
         {
-            var href = RelativePath(reportPath, requirement.SourceMarkdownPath) + "#" + MarkdownAnchor.CreateRequirementAnchor(requirement.Id, requirement.Title);
-            return $"<a href=\"{Encode(href)}\">{Encode(id)}</a>";
+            return LinkToAbsolutePath(reportPath, requirement.SourcePath, id);
         }
 
         return Encode(id);
@@ -528,7 +527,7 @@ internal static class SpecTraceAttestationHtmlWriter
 
     private sealed record SpecificationSummary(
         string SpecificationId,
-        string SourceMarkdownPath,
+        string SourcePath,
         string Status,
         int Requirements,
         int IssueBearingRequirements,

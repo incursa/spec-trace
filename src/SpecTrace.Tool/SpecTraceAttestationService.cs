@@ -12,7 +12,7 @@ internal static class SpecTraceAttestationService
         string profile,
         string emit,
         string outDir,
-        IReadOnlyList<(string CuePath, ArtifactModel Artifact)> artifacts,
+        IReadOnlyList<(string SourcePath, ArtifactModel Artifact)> artifacts,
         ArtifactCatalog catalog,
         ValidationReport validationReport,
         IReadOnlyList<LoadedEvidenceSnapshot> evidenceSnapshots)
@@ -34,8 +34,8 @@ internal static class SpecTraceAttestationService
         var evidenceByRequirement = BuildEvidenceIndex(evidenceSnapshots);
         var specifications = artifacts
             .Where(item => string.Equals(item.Artifact.ArtifactType, "specification", StringComparison.OrdinalIgnoreCase))
-            .OrderBy(item => item.CuePath, StringComparer.OrdinalIgnoreCase)
-            .Select(item => BuildSpecification(rootPath, item.CuePath, item.Artifact, findingsBySpecification, findingsByRequirement, evidenceByRequirement))
+            .OrderBy(item => item.SourcePath, StringComparer.OrdinalIgnoreCase)
+            .Select(item => BuildSpecification(rootPath, item.SourcePath, item.Artifact, findingsBySpecification, findingsByRequirement, evidenceByRequirement))
             .ToList();
 
         var requirements = specifications.SelectMany(specification => specification.Requirements).ToList();
@@ -118,31 +118,29 @@ internal static class SpecTraceAttestationService
 
     private static SpecTraceAttestationSpecification BuildSpecification(
         string rootPath,
-        string cuePath,
+        string sourcePath,
         ArtifactModel artifact,
         IReadOnlyDictionary<string, List<Finding>> findingsBySpecification,
         IReadOnlyDictionary<string, List<Finding>> findingsByRequirement,
         IReadOnlyDictionary<string, List<EvidenceObservationRecord>> evidenceByRequirement)
     {
-        var markdownPath = Path.ChangeExtension(cuePath, ".md");
         return new SpecTraceAttestationSpecification
         {
             ArtifactId = artifact.ArtifactId,
             Title = artifact.Title,
             Status = artifact.Status,
             Domain = artifact.Domain,
-            SourceCuePath = NormalizeRepoPath(rootPath, cuePath),
-            SourceMarkdownPath = NormalizeRepoPath(rootPath, markdownPath),
+            SourcePath = NormalizeRepoPath(rootPath, sourcePath),
             Findings = findingsBySpecification.TryGetValue(artifact.ArtifactId, out var specFindings) ? specFindings : [],
             Requirements = (artifact.Requirements ?? [])
-                .Select(requirement => BuildRequirement(rootPath, markdownPath, requirement, findingsByRequirement, evidenceByRequirement))
+                .Select(requirement => BuildRequirement(rootPath, sourcePath, requirement, findingsByRequirement, evidenceByRequirement))
                 .ToList(),
         };
     }
 
     private static SpecTraceAttestationRequirement BuildRequirement(
         string rootPath,
-        string markdownPath,
+        string sourcePath,
         RequirementModel requirement,
         IReadOnlyDictionary<string, List<Finding>> findingsByRequirement,
         IReadOnlyDictionary<string, List<EvidenceObservationRecord>> evidenceByRequirement)
@@ -158,7 +156,7 @@ internal static class SpecTraceAttestationService
             RequirementId = requirement.Id,
             Title = requirement.Title,
             Statement = requirement.Statement,
-            SourceMarkdownPath = NormalizeRepoPath(rootPath, markdownPath),
+            SourcePath = NormalizeRepoPath(rootPath, sourcePath),
             Trace = new SpecTraceAttestationRequirementTrace
             {
                 SatisfiedBy = Clone(requirement.Trace?.SatisfiedBy),
@@ -383,16 +381,7 @@ internal static class SpecTraceAttestationService
 
     private static string NormalizeRepoPath(string rootPath, string path)
     {
-        var fullPath = Path.GetFullPath(path);
-        var fullRoot = Path.GetFullPath(rootPath)
-            .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
-
-        if (!fullPath.StartsWith(fullRoot, StringComparison.OrdinalIgnoreCase))
-        {
-            return fullPath.Replace('\\', '/');
-        }
-
-        return Path.GetRelativePath(rootPath, fullPath).Replace('\\', '/');
+        return CanonicalJsonLoader.NormalizeRepoPath(rootPath, path);
     }
 
     private sealed record EvidenceObservationRecord(

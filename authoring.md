@@ -6,35 +6,32 @@ This guide is non-normative. The authoritative standard lives under [`specs/requ
 
 Use the repository in this order:
 
-1. [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/) for the canonical CUE-authored SPEC suite
-2. [`model/`](./model/) and the root `.cue` templates for the canonical shape
-3. generated Markdown siblings, examples, and compatibility schemas for browsing and integration help
-4. root summaries and AI convenience surfaces for navigation
+1. [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/) for the canonical JSON-authored SPEC suite
+2. [`model/model.schema.json`](./model/model.schema.json), the root JSON templates, and [`catalog/retired-requirements.json`](./catalog/retired-requirements.json)
+3. examples, generated outputs, and compatibility schemas
+4. root summaries and AI convenience surfaces
 
-If any lower layer disagrees with the SPEC suite or the shared CUE model, the CUE-authored canonical sources win.
+If any lower layer disagrees with the SPEC suite or the authoritative schema, the SPEC suite and schema win.
 
 ## Canonical Rules
 
-- Author canonical artifacts in `.cue`, not Markdown, YAML, or JSON.
-- Use the shared import path [`github.com/incursa/spec-trace/model@v0`](./model/README.md).
-- Use the root module import path `github.com/incursa/spec-trace@v0:templates` when you want the published template definitions from the `templates` package.
-- The reusable Central Registry artifact is synchronized into [`publish/`](./publish/) and published from that submodule; root canonical specs and examples are intentionally not part of the published package.
-- Keep concrete authored documents mostly data. Prefer straightforward field assignment over clever CUE metaprogramming.
-- Treat generated Markdown as read-only presentation output.
+- Author canonical artifacts in JSON.
+- Validate document shape with [`model/model.schema.json`](./model/model.schema.json).
+- Keep requirements inside specification artifacts.
 - Use stable IDs for cross-file references. Do not use file paths as canonical trace identifiers when an artifact or requirement ID exists.
 - If you rename or delete a referenced ID, fix every referrer in the same change.
+- Treat generated outputs and support docs as non-authoritative.
 
 ## Templates
 
-Start from the matching CUE template:
+Start from the matching JSON template:
 
-- [`spec-template.cue`](./spec-template.cue)
-- [`architecture-template.cue`](./architecture-template.cue)
-- [`work-item-template.cue`](./work-item-template.cue)
-- [`verification-template.cue`](./verification-template.cue)
+- [`spec-template.json`](./spec-template.json)
+- [`architecture-template.json`](./architecture-template.json)
+- [`work-item-template.json`](./work-item-template.json)
+- [`verification-template.json`](./verification-template.json)
 
-The root Markdown templates remain human-readable companion shapes, but the `.cue` templates are the canonical authoring entry points.
-The root `.cue` files now export schema-backed definitions rather than concrete example artifacts, so authored documents should unify their top-level `artifact` value with the matching template definition or with the lower-level `model.#...` definition directly.
+The templates are valid starter artifacts, not schema definitions.
 
 ## Choose The Artifact
 
@@ -45,9 +42,9 @@ Use a specification when you need to define one or more related requirements for
 Read first:
 
 - [`specs/requirements/spec-trace/_index.md`](./specs/requirements/spec-trace/_index.md)
-- [`specs/requirements/spec-trace/SPEC-STD.md`](./specs/requirements/spec-trace/SPEC-STD.md)
-- [`specs/requirements/spec-trace/SPEC-TPL.md`](./specs/requirements/spec-trace/SPEC-TPL.md)
-- [`specs/requirements/spec-trace/SPEC-LAY.md`](./specs/requirements/spec-trace/SPEC-LAY.md)
+- [`specs/requirements/spec-trace/SPEC-STD.json`](./specs/requirements/spec-trace/SPEC-STD.json)
+- [`specs/requirements/spec-trace/SPEC-TPL.json`](./specs/requirements/spec-trace/SPEC-TPL.json)
+- [`specs/requirements/spec-trace/SPEC-LAY.json`](./specs/requirements/spec-trace/SPEC-LAY.json)
 
 ### Requirement
 
@@ -84,42 +81,35 @@ Verification artifacts link through `verifies`. If the listed requirements do no
 ## Reference Rules
 
 - Artifact-to-artifact references use stable artifact IDs such as `SPEC-...`, `ARC-...`, `WI-...`, and `VER-...`.
-- Requirement-to-anything trace uses stable IDs in structured fields such as `satisfied_by`, `implemented_by`, `verified_by`, `derived_from`, `supersedes`, and `related`.
-- Lineage references may point at retired requirement IDs when those IDs are present in the retired ledger at [`catalog/retired-requirements.cue`](./catalog/retired-requirements.cue).
-- Generated Markdown may wrap IDs in repo-local links, but the visible identifier text remains the canonical reference token.
+- Requirement trace uses stable IDs in structured fields such as `satisfied_by`, `implemented_by`, `verified_by`, `derived_from`, `supersedes`, and `related`.
+- Lineage references may point at retired requirement IDs when those IDs are present in [`catalog/retired-requirements.json`](./catalog/retired-requirements.json).
+- Inline identifier references use backticks around stable IDs in string fields. They are lightweight mentions, not structured trace edges.
 
 ## Recommended Workflow
 
 1. Start from the authoritative SPEC files for the behavior you are changing.
-2. Copy the matching `.cue` template or a nearby `.cue` example.
-3. Edit the canonical `.cue` artifact.
+2. Copy the matching JSON template or a nearby JSON example.
+3. Edit the canonical JSON artifact.
 4. Validate the repository:
 
 ```powershell
 ./scripts/Test-SpecTraceRepository.ps1 -Profile core
 ```
 
-5. Generate or verify Markdown output:
-
-```powershell
-./scripts/Render-SpecTraceMarkdown.ps1
-./scripts/Render-SpecTraceMarkdown.ps1 -Check
-```
-
-6. Build a catalog when you need a machine-readable repository index:
+5. Build a catalog when you need a machine-readable repository index:
 
 ```powershell
 ./scripts/Build-SpecTraceCatalog.ps1
 ```
 
-7. Validate generated evidence snapshots when a tool emits `*.evidence.json`:
+6. Validate generated evidence snapshots when a tool emits `*.evidence.json`:
 
 ```powershell
 ./scripts/Validate-SpecTraceEvidence.ps1
 ./scripts/Validate-SpecTraceEvidence.ps1 -EvidencePath ./examples/arithmetic/generated/division-evidence.evidence.json
 ```
 
-8. Generate a derived repository attestation report when you want summary, detail, and per-spec HTML views:
+7. Generate a derived repository attestation report when you want summary, detail, and per-spec HTML views:
 
 ```powershell
 ./scripts/Render-SpecTraceAttestation.ps1
@@ -132,37 +122,27 @@ Verification artifacts link through `verifies`. If the listed requirements do no
 - `./scripts/Test-SpecTraceRepository.ps1 -Profile traceable`
 - `./scripts/Test-SpecTraceRepository.ps1 -Profile auditable`
 - `./scripts/Test-SpecTraceRepository.ps1 -JsonReportPath ./specs/generated/validation-report.json`
-- `./scripts/Build-SpecTraceCatalog.ps1 -JsonOutputPath ./specs/generated/spec-trace-catalog.json -CueOutputPath ./specs/generated/spec-trace-catalog.cue`
+- `./scripts/Build-SpecTraceCatalog.ps1 -JsonOutputPath ./specs/generated/spec-trace-catalog.json`
 - `./scripts/Validate-SpecTraceEvidence.ps1 -EvidencePath ./examples/calculator-int/generated`
 - `./scripts/Render-SpecTraceAttestation.ps1 -InputPath ./examples/calculator-int -Emit both`
 
 ## Evidence Snapshots
 
 - Evidence snapshots are generated JSON, not canonical authored artifacts.
-- The authoritative shape is [`model.#EvidenceSnapshot`](./model/model.cue), and the validator uses CUE first before checking repository references.
+- The authoritative shape is defined by [`model/model.schema.json`](./model/model.schema.json) and [`schemas/evidence-snapshot.schema.json`](./schemas/evidence-snapshot.schema.json).
 - Snapshot `requirement_id` values must point at canonical `REQ-...` identifiers that exist in the repository.
 - Multiple evidence files may overlap on the same requirement. Derived reporting merges them additively by evidence kind rather than treating one file's omission as a negative assertion.
 
-## Markdown And Prose Links
-
-When writing repository prose or browsing generated Markdown:
-
-- prefer relative links for repo-local targets
-- keep backticks inside the link text when monospace styling should remain
-- include a heading anchor when linking to a specific generated requirement section
-
-Those rules apply to prose and generated views. They do not make Markdown the source of truth again.
-
 ## When The Standard Changes
 
-If a change affects canonical field names, identifier rules, template shape, schema contracts, generator behavior, or example patterns, update these surfaces together:
+If a change affects canonical field names, identifier rules, template shape, schema contracts, validator behavior, or example patterns, update these surfaces together:
 
-- the canonical `.cue` artifacts under [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/)
-- the shared model under [`model/`](./model/)
-- root `.cue` templates
-- generated Markdown outputs
+- the canonical JSON artifacts under [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/)
+- the authoritative schema under [`model/`](./model/)
+- the root JSON templates
 - examples
-- validation and generation tooling
+- validation and reporting tooling
 - root guidance and AI convenience surfaces
+- the curated publish mirror under [`publish/`](./publish/)
 
-Record notable reference-package changes in [`CHANGELOG.md`](./CHANGELOG.md).
+Record notable reference-surface changes in [`CHANGELOG.md`](./CHANGELOG.md).

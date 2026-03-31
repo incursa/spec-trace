@@ -4,18 +4,10 @@ namespace SpecTrace.Tool;
 
 internal static class RepositoryValidator
 {
-    private static readonly Regex ApprovedKeywordRegex = new(@"\b(?:MUST NOT|SHALL NOT|SHOULD NOT|MUST|SHALL|SHOULD|MAY)\b", RegexOptions.Compiled);
-    private static readonly Regex DomainRegex = new("^[a-z][a-z0-9-]*$", RegexOptions.Compiled);
-    private static readonly Regex SpecIdRegex = new("^SPEC-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*$", RegexOptions.Compiled);
-    private static readonly Regex RequirementIdRegex = new("^REQ-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$", RegexOptions.Compiled);
-    private static readonly Regex ArchitectureIdRegex = new("^ARC-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$", RegexOptions.Compiled);
-    private static readonly Regex WorkItemIdRegex = new("^WI-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$", RegexOptions.Compiled);
-    private static readonly Regex VerificationIdRegex = new("^VER-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$", RegexOptions.Compiled);
-
     public static ValidationReport Validate(
         string rootPath,
         string profile,
-        IReadOnlyList<(string CuePath, ArtifactModel Artifact)> artifacts,
+        IReadOnlyList<(string SourcePath, ArtifactModel Artifact)> artifacts,
         RetiredRequirementLedger? retiredLedger)
     {
         var findings = new List<Finding>();
@@ -25,26 +17,27 @@ internal static class RepositoryValidator
         var seenArtifactIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var seenRequirementIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var (cuePath, artifact) in artifacts)
+        foreach (var (sourcePath, artifact) in artifacts)
         {
-            ValidateArtifact(cuePath, artifact, rootPath, findings);
+            ValidateArtifactPlacement(sourcePath, artifact, rootPath, findings);
             if (!seenArtifactIds.Add(artifact.ArtifactId))
             {
-                AddError(findings, "duplicate-artifact-id", $"Duplicate artifact ID '{artifact.ArtifactId}'.", cuePath, artifact.ArtifactId, null);
+                AddError(findings, "duplicate-artifact-id", $"Duplicate artifact ID '{artifact.ArtifactId}'.", sourcePath, artifact.ArtifactId, null);
             }
 
             foreach (var requirement in artifact.Requirements ?? [])
             {
                 if (!seenRequirementIds.Add(requirement.Id))
                 {
-                    AddError(findings, "duplicate-requirement-id", $"Duplicate requirement ID '{requirement.Id}'.", cuePath, artifact.ArtifactId, requirement.Id);
+                    AddError(findings, "duplicate-requirement-id", $"Duplicate requirement ID '{requirement.Id}'.", sourcePath, artifact.ArtifactId, requirement.Id);
                 }
             }
+            ValidateRequirementNamespace(sourcePath, artifact, findings);
         }
 
-        foreach (var (cuePath, artifact) in artifacts)
+        foreach (var (sourcePath, artifact) in artifacts)
         {
-            ValidateReferences(cuePath, artifact, profile, catalog, artifactLookup, retiredRequirementIds, findings);
+            ValidateReferences(sourcePath, artifact, profile, catalog, artifactLookup, retiredRequirementIds, findings);
         }
 
         if (string.Equals(profile, "auditable", StringComparison.OrdinalIgnoreCase))
@@ -66,52 +59,36 @@ internal static class RepositoryValidator
         };
     }
 
-    private static void ValidateArtifact(string cuePath, ArtifactModel artifact, string rootPath, List<Finding> findings)
+    private static void ValidateArtifactPlacement(string sourcePath, ArtifactModel artifact, string rootPath, List<Finding> findings)
     {
-        if (!DomainRegex.IsMatch(artifact.Domain))
-        {
-            AddError(findings, "invalid-domain", $"Domain '{artifact.Domain}' must be lowercase kebab-case.", cuePath, artifact.ArtifactId, null);
-        }
-
-        if (!IsValidArtifactId(artifact.ArtifactId, artifact.ArtifactType))
-        {
-            AddError(findings, "invalid-artifact-id", $"Artifact ID '{artifact.ArtifactId}' does not match artifact_type '{artifact.ArtifactType}'.", cuePath, artifact.ArtifactId, null);
-        }
-
-        var relativeCuePath = Path.GetRelativePath(rootPath, cuePath).Replace('\\', '/');
-        var owningDirectory = GetOwningDirectory(relativeCuePath);
+        var relativeSourcePath = Path.GetRelativePath(rootPath, sourcePath).Replace('\\', '/');
+        var owningDirectory = GetOwningDirectory(relativeSourcePath);
         if (!string.IsNullOrWhiteSpace(owningDirectory) &&
             !string.Equals(artifact.Domain, owningDirectory, StringComparison.OrdinalIgnoreCase))
         {
-            AddError(findings, "domain-path-mismatch", $"Domain '{artifact.Domain}' does not align with directory '{owningDirectory}'.", cuePath, artifact.ArtifactId, null);
+            AddError(findings, "domain-path-mismatch", $"Domain '{artifact.Domain}' does not align with directory '{owningDirectory}'.", sourcePath, artifact.ArtifactId, null);
+        }
+    }
+
+    private static void ValidateRequirementNamespace(string sourcePath, ArtifactModel artifact, List<Finding> findings)
+    {
+        if (!string.Equals(artifact.ArtifactType, "specification", StringComparison.OrdinalIgnoreCase))
+        {
+            return;
         }
 
-        if (artifact.ArtifactType == "specification")
+        var specificationNamespace = GetNamespaceFromSpecificationId(artifact.ArtifactId);
+        foreach (var requirement in artifact.Requirements ?? [])
         {
-            var specificationNamespace = GetNamespaceFromSpecificationId(artifact.ArtifactId);
-            foreach (var requirement in artifact.Requirements ?? [])
+            if (!string.Equals(specificationNamespace, GetNamespaceFromRequirementId(requirement.Id), StringComparison.Ordinal))
             {
-                if (!RequirementIdRegex.IsMatch(requirement.Id))
-                {
-                    AddError(findings, "invalid-requirement-id", $"Requirement ID '{requirement.Id}' is invalid.", cuePath, artifact.ArtifactId, requirement.Id);
-                }
-
-                if (!string.Equals(specificationNamespace, GetNamespaceFromRequirementId(requirement.Id), StringComparison.Ordinal))
-                {
-                    AddError(findings, "requirement-namespace-mismatch", $"Requirement '{requirement.Id}' does not align with specification '{artifact.ArtifactId}'.", cuePath, artifact.ArtifactId, requirement.Id);
-                }
-
-                var keywordCount = ApprovedKeywordRegex.Matches(requirement.Statement).Count;
-                if (keywordCount != 1)
-                {
-                    AddError(findings, "invalid-normative-keyword-count", $"Requirement '{requirement.Id}' must contain exactly one approved normative keyword, found {keywordCount}.", cuePath, artifact.ArtifactId, requirement.Id);
-                }
+                AddError(findings, "requirement-namespace-mismatch", $"Requirement '{requirement.Id}' does not align with specification '{artifact.ArtifactId}'.", sourcePath, artifact.ArtifactId, requirement.Id);
             }
         }
     }
 
     private static void ValidateReferences(
-        string cuePath,
+        string sourcePath,
         ArtifactModel artifact,
         string profile,
         ArtifactCatalog catalog,
@@ -119,31 +96,31 @@ internal static class RepositoryValidator
         ISet<string> retiredRequirementIds,
         List<Finding> findings)
     {
-        ValidateReferenceList(cuePath, artifact.ArtifactId, null, "related_artifacts", artifact.RelatedArtifacts, catalog, ReferenceExpectation.Artifact, null, findings);
+        ValidateReferenceList(sourcePath, artifact.ArtifactId, null, "related_artifacts", artifact.RelatedArtifacts, catalog, ReferenceExpectation.Artifact, null, findings);
 
         switch (artifact.ArtifactType)
         {
-            case "architecture":
-                ValidateReferenceList(cuePath, artifact.ArtifactId, null, "satisfies", artifact.Satisfies, catalog, ReferenceExpectation.Requirement, "REQ", findings);
-                break;
-            case "work_item":
-                ValidateReferenceList(cuePath, artifact.ArtifactId, null, "addresses", artifact.Addresses, catalog, ReferenceExpectation.Requirement, "REQ", findings);
-                ValidateReferenceList(cuePath, artifact.ArtifactId, null, "design_links", artifact.DesignLinks, catalog, ReferenceExpectation.Artifact, "ARC", findings);
-                ValidateReferenceList(cuePath, artifact.ArtifactId, null, "verification_links", artifact.VerificationLinks, catalog, ReferenceExpectation.Artifact, "VER", findings);
-                break;
-            case "verification":
-                ValidateReferenceList(cuePath, artifact.ArtifactId, null, "verifies", artifact.Verifies, catalog, ReferenceExpectation.Requirement, "REQ", findings);
-                break;
-        }
+                case "architecture":
+                ValidateReferenceList(sourcePath, artifact.ArtifactId, null, "satisfies", artifact.Satisfies, catalog, ReferenceExpectation.Requirement, "REQ", findings);
+                    break;
+                case "work_item":
+                ValidateReferenceList(sourcePath, artifact.ArtifactId, null, "addresses", artifact.Addresses, catalog, ReferenceExpectation.Requirement, "REQ", findings);
+                ValidateReferenceList(sourcePath, artifact.ArtifactId, null, "design_links", artifact.DesignLinks, catalog, ReferenceExpectation.Artifact, "ARC", findings);
+                ValidateReferenceList(sourcePath, artifact.ArtifactId, null, "verification_links", artifact.VerificationLinks, catalog, ReferenceExpectation.Artifact, "VER", findings);
+                    break;
+                case "verification":
+                ValidateReferenceList(sourcePath, artifact.ArtifactId, null, "verifies", artifact.Verifies, catalog, ReferenceExpectation.Requirement, "REQ", findings);
+                    break;
+            }
 
         foreach (var requirement in artifact.Requirements ?? [])
         {
-            ValidateReferenceList(cuePath, artifact.ArtifactId, requirement.Id, "satisfied_by", requirement.Trace?.SatisfiedBy, catalog, ReferenceExpectation.Artifact, "ARC", findings);
-            ValidateReferenceList(cuePath, artifact.ArtifactId, requirement.Id, "implemented_by", requirement.Trace?.ImplementedBy, catalog, ReferenceExpectation.Artifact, "WI", findings);
-            ValidateReferenceList(cuePath, artifact.ArtifactId, requirement.Id, "verified_by", requirement.Trace?.VerifiedBy, catalog, ReferenceExpectation.Artifact, "VER", findings);
-            ValidateReferenceList(cuePath, artifact.ArtifactId, requirement.Id, "derived_from", requirement.Trace?.DerivedFrom, catalog, ReferenceExpectation.Requirement, "REQ", findings, retiredRequirementIds);
-            ValidateReferenceList(cuePath, artifact.ArtifactId, requirement.Id, "supersedes", requirement.Trace?.Supersedes, catalog, ReferenceExpectation.Requirement, "REQ", findings, retiredRequirementIds);
-            ValidateReferenceList(cuePath, artifact.ArtifactId, requirement.Id, "related", requirement.Trace?.Related, catalog, ReferenceExpectation.Mixed, null, findings);
+            ValidateReferenceList(sourcePath, artifact.ArtifactId, requirement.Id, "satisfied_by", requirement.Trace?.SatisfiedBy, catalog, ReferenceExpectation.Artifact, "ARC", findings);
+            ValidateReferenceList(sourcePath, artifact.ArtifactId, requirement.Id, "implemented_by", requirement.Trace?.ImplementedBy, catalog, ReferenceExpectation.Artifact, "WI", findings);
+            ValidateReferenceList(sourcePath, artifact.ArtifactId, requirement.Id, "verified_by", requirement.Trace?.VerifiedBy, catalog, ReferenceExpectation.Artifact, "VER", findings);
+            ValidateReferenceList(sourcePath, artifact.ArtifactId, requirement.Id, "derived_from", requirement.Trace?.DerivedFrom, catalog, ReferenceExpectation.Requirement, "REQ", findings, retiredRequirementIds);
+            ValidateReferenceList(sourcePath, artifact.ArtifactId, requirement.Id, "supersedes", requirement.Trace?.Supersedes, catalog, ReferenceExpectation.Requirement, "REQ", findings, retiredRequirementIds);
+            ValidateReferenceList(sourcePath, artifact.ArtifactId, requirement.Id, "related", requirement.Trace?.Related, catalog, ReferenceExpectation.Mixed, null, findings);
 
             if (RequiresTraceableCoverage(profile))
             {
@@ -154,24 +131,24 @@ internal static class RepositoryValidator
 
                 if (downstreamCount == 0)
                 {
-                    AddError(findings, "missing-downstream-trace", $"Requirement '{requirement.Id}' must have at least one downstream trace link in profile '{profile}'.", cuePath, artifact.ArtifactId, requirement.Id);
+                    AddError(findings, "missing-downstream-trace", $"Requirement '{requirement.Id}' must have at least one downstream trace link in profile '{profile}'.", sourcePath, artifact.ArtifactId, requirement.Id);
                 }
             }
 
             if (RequiresAuditableCoverage(profile) && (requirement.Trace?.VerifiedBy?.Count ?? 0) == 0)
             {
-                AddError(findings, "missing-verification-coverage", $"Requirement '{requirement.Id}' must have at least one verified_by link in profile 'auditable'.", cuePath, artifact.ArtifactId, requirement.Id);
+                AddError(findings, "missing-verification-coverage", $"Requirement '{requirement.Id}' must have at least one verified_by link in profile 'auditable'.", sourcePath, artifact.ArtifactId, requirement.Id);
             }
 
             if (RequiresAuditableCoverage(profile))
             {
-                ValidateReciprocalLinks(cuePath, artifact.ArtifactId, requirement, artifactLookup, findings);
+                ValidateReciprocalLinks(sourcePath, artifact.ArtifactId, requirement, artifactLookup, findings);
             }
         }
     }
 
     private static void ValidateReciprocalLinks(
-        string cuePath,
+        string sourcePath,
         string artifactId,
         RequirementModel requirement,
         IReadOnlyDictionary<string, ArtifactModel> artifactLookup,
@@ -186,7 +163,7 @@ internal static class RepositoryValidator
 
             if (!(targetArtifact.Satisfies?.Contains(requirement.Id, StringComparer.OrdinalIgnoreCase) ?? false))
             {
-                AddError(findings, "missing-reciprocal-link", $"Requirement '{requirement.Id}' is satisfied_by '{architectureId}', but the architecture artifact does not list the requirement in 'satisfies'.", cuePath, artifactId, requirement.Id);
+                AddError(findings, "missing-reciprocal-link", $"Requirement '{requirement.Id}' is satisfied_by '{architectureId}', but the architecture artifact does not list the requirement in 'satisfies'.", sourcePath, artifactId, requirement.Id);
             }
         }
 
@@ -199,7 +176,7 @@ internal static class RepositoryValidator
 
             if (!(targetArtifact.Addresses?.Contains(requirement.Id, StringComparer.OrdinalIgnoreCase) ?? false))
             {
-                AddError(findings, "missing-reciprocal-link", $"Requirement '{requirement.Id}' is implemented_by '{workItemId}', but the work item does not list the requirement in 'addresses'.", cuePath, artifactId, requirement.Id);
+                AddError(findings, "missing-reciprocal-link", $"Requirement '{requirement.Id}' is implemented_by '{workItemId}', but the work item does not list the requirement in 'addresses'.", sourcePath, artifactId, requirement.Id);
             }
         }
 
@@ -212,12 +189,12 @@ internal static class RepositoryValidator
 
             if (!(targetArtifact.Verifies?.Contains(requirement.Id, StringComparer.OrdinalIgnoreCase) ?? false))
             {
-                AddError(findings, "missing-reciprocal-link", $"Requirement '{requirement.Id}' is verified_by '{verificationId}', but the verification artifact does not list the requirement in 'verifies'.", cuePath, artifactId, requirement.Id);
+                AddError(findings, "missing-reciprocal-link", $"Requirement '{requirement.Id}' is verified_by '{verificationId}', but the verification artifact does not list the requirement in 'verifies'.", sourcePath, artifactId, requirement.Id);
             }
         }
     }
 
-    private static void ValidateOrphans(IReadOnlyList<(string CuePath, ArtifactModel Artifact)> artifacts, List<Finding> findings)
+    private static void ValidateOrphans(IReadOnlyList<(string SourcePath, ArtifactModel Artifact)> artifacts, List<Finding> findings)
     {
         var targetedArtifacts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var (_, artifact) in artifacts)
@@ -241,7 +218,7 @@ internal static class RepositoryValidator
             }
         }
 
-        foreach (var (cuePath, artifact) in artifacts)
+        foreach (var (sourcePath, artifact) in artifacts)
         {
             if (artifact.ArtifactType == "specification")
             {
@@ -250,13 +227,13 @@ internal static class RepositoryValidator
 
             if (!targetedArtifacts.Contains(artifact.ArtifactId))
             {
-                AddError(findings, "orphan-artifact", $"Artifact '{artifact.ArtifactId}' is not targeted by any requirement downstream trace.", cuePath, artifact.ArtifactId, null);
+                AddError(findings, "orphan-artifact", $"Artifact '{artifact.ArtifactId}' is not targeted by any requirement downstream trace.", sourcePath, artifact.ArtifactId, null);
             }
         }
     }
 
     private static void ValidateReferenceList(
-        string cuePath,
+        string sourcePath,
         string artifactId,
         string? requirementId,
         string fieldName,
@@ -272,20 +249,10 @@ internal static class RepositoryValidator
             return;
         }
 
+        _ = expectedPrefix;
+
         foreach (var reference in references)
         {
-            if (string.IsNullOrWhiteSpace(reference))
-            {
-                AddError(findings, "empty-reference", $"Field '{fieldName}' contains an empty reference.", cuePath, artifactId, requirementId);
-                continue;
-            }
-
-            if (expectedPrefix is not null && !reference.StartsWith(expectedPrefix, StringComparison.OrdinalIgnoreCase))
-            {
-                AddError(findings, "wrong-target-kind", $"Field '{fieldName}' requires '{expectedPrefix}' references but found '{reference}'.", cuePath, artifactId, requirementId);
-                continue;
-            }
-
             var resolved = expectation switch
             {
                 ReferenceExpectation.Artifact => catalog.TryGetArtifact(reference, out _),
@@ -304,7 +271,7 @@ internal static class RepositoryValidator
 
             if (!resolved)
             {
-                AddError(findings, "broken-reference", $"Field '{fieldName}' references missing target '{reference}'.", cuePath, artifactId, requirementId);
+                AddError(findings, "broken-reference", $"Field '{fieldName}' references missing target '{reference}'.", sourcePath, artifactId, requirementId);
             }
         }
     }
@@ -320,21 +287,9 @@ internal static class RepositoryValidator
         return string.Equals(profile, "auditable", StringComparison.OrdinalIgnoreCase);
     }
 
-    private static bool IsValidArtifactId(string artifactId, string artifactType)
+    private static string? GetOwningDirectory(string relativeSourcePath)
     {
-        return artifactType switch
-        {
-            "specification" => SpecIdRegex.IsMatch(artifactId),
-            "architecture" => ArchitectureIdRegex.IsMatch(artifactId),
-            "work_item" => WorkItemIdRegex.IsMatch(artifactId),
-            "verification" => VerificationIdRegex.IsMatch(artifactId),
-            _ => false,
-        };
-    }
-
-    private static string? GetOwningDirectory(string relativeCuePath)
-    {
-        var match = Regex.Match(relativeCuePath, @"^(?:specs/requirements|examples)/(?<domain>[^/]+)/");
+        var match = Regex.Match(relativeSourcePath, @"^(?:specs/requirements|examples)/(?<domain>[^/]+)/");
         return match.Success ? match.Groups["domain"].Value : null;
     }
 

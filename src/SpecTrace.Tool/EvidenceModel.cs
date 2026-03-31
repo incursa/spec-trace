@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace SpecTrace.Tool;
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class EvidenceObservationModel
 {
     [JsonPropertyName("kind")]
@@ -17,6 +18,7 @@ public sealed class EvidenceObservationModel
     public string? Summary { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class RequirementEvidenceModel
 {
     [JsonPropertyName("requirement_id")]
@@ -26,6 +28,7 @@ public sealed class RequirementEvidenceModel
     public required List<EvidenceObservationModel> Observations { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class EvidenceProducerModel
 {
     [JsonPropertyName("name")]
@@ -35,6 +38,7 @@ public sealed class EvidenceProducerModel
     public required string Version { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class EvidenceSnapshotModel
 {
     [JsonPropertyName("snapshot_id")]

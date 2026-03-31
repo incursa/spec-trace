@@ -5,20 +5,18 @@ internal sealed class ArtifactCatalog
     private readonly Dictionary<string, CatalogItem> _artifacts;
     private readonly Dictionary<string, CatalogItem> _requirements;
 
-    public ArtifactCatalog(IEnumerable<(string CuePath, ArtifactModel Artifact)> artifacts)
+    public ArtifactCatalog(IEnumerable<(string SourcePath, ArtifactModel Artifact)> artifacts)
     {
         _artifacts = new Dictionary<string, CatalogItem>(StringComparer.OrdinalIgnoreCase);
         _requirements = new Dictionary<string, CatalogItem>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var (cuePath, artifact) in artifacts)
+        foreach (var (sourcePath, artifact) in artifacts)
         {
-            var markdownPath = Path.ChangeExtension(cuePath, ".md");
             _artifacts[artifact.ArtifactId] = new CatalogItem
             {
                 Id = artifact.ArtifactId,
                 Kind = "artifact",
-                SourceCuePath = cuePath,
-                SourceMarkdownPath = markdownPath,
+                SourcePath = sourcePath,
                 Title = artifact.Title,
                 ArtifactType = artifact.ArtifactType,
                 Domain = artifact.Domain,
@@ -30,8 +28,7 @@ internal sealed class ArtifactCatalog
                 {
                     Id = requirement.Id,
                     Kind = "requirement",
-                    SourceCuePath = cuePath,
-                    SourceMarkdownPath = markdownPath,
+                    SourcePath = sourcePath,
                     Title = requirement.Title,
                     ArtifactType = "requirement",
                     ParentArtifactId = artifact.ArtifactId,
@@ -49,21 +46,21 @@ internal sealed class ArtifactCatalog
 
     public bool TryGetRequirement(string id, out CatalogItem item) => _requirements.TryGetValue(id, out item!);
 
-    public CatalogSnapshot CreateSnapshot(IEnumerable<(string CuePath, ArtifactModel Artifact)> artifacts)
+    public CatalogSnapshot CreateSnapshot(string rootPath, IEnumerable<(string SourcePath, ArtifactModel Artifact)> artifacts)
     {
         var entries = new Dictionary<string, CatalogItem>(StringComparer.OrdinalIgnoreCase);
         foreach (var pair in _artifacts.OrderBy(pair => pair.Key, StringComparer.OrdinalIgnoreCase))
         {
-            entries[pair.Key] = pair.Value;
+            entries[pair.Key] = CloneForSnapshot(rootPath, pair.Value);
         }
 
         foreach (var pair in _requirements.OrderBy(pair => pair.Key, StringComparer.OrdinalIgnoreCase))
         {
-            entries[pair.Key] = pair.Value;
+            entries[pair.Key] = CloneForSnapshot(rootPath, pair.Value);
         }
 
         var references = new List<CatalogReference>();
-        foreach (var (_, artifact) in artifacts.OrderBy(item => item.CuePath, StringComparer.OrdinalIgnoreCase))
+        foreach (var (_, artifact) in artifacts.OrderBy(item => item.SourcePath, StringComparer.OrdinalIgnoreCase))
         {
             AddReferences(references, artifact.ArtifactId, "related_artifacts", artifact.RelatedArtifacts, "artifact", null);
 
@@ -106,11 +103,25 @@ internal sealed class ArtifactCatalog
         };
     }
 
-    public string RenderReference(string id, string sourceMarkdownPath)
+    private static CatalogItem CloneForSnapshot(string rootPath, CatalogItem item)
+    {
+        return new CatalogItem
+        {
+            Id = item.Id,
+            Kind = item.Kind,
+            SourcePath = CanonicalJsonLoader.NormalizeRepoPath(rootPath, item.SourcePath),
+            Title = item.Title,
+            ArtifactType = item.ArtifactType,
+            ParentArtifactId = item.ParentArtifactId,
+            Domain = item.Domain,
+        };
+    }
+
+    public string RenderReference(string id, string sourcePath)
     {
         if (TryGetArtifact(id, out var artifact))
         {
-            var relativePath = Path.GetRelativePath(Path.GetDirectoryName(sourceMarkdownPath)!, artifact.SourceMarkdownPath).Replace('\\', '/');
+            var relativePath = Path.GetRelativePath(Path.GetDirectoryName(sourcePath)!, artifact.SourcePath).Replace('\\', '/');
             if (!relativePath.StartsWith('.'))
             {
                 relativePath = $"./{relativePath}";
@@ -121,14 +132,13 @@ internal sealed class ArtifactCatalog
 
         if (TryGetRequirement(id, out var requirement))
         {
-            var relativePath = Path.GetRelativePath(Path.GetDirectoryName(sourceMarkdownPath)!, requirement.SourceMarkdownPath).Replace('\\', '/');
+            var relativePath = Path.GetRelativePath(Path.GetDirectoryName(sourcePath)!, requirement.SourcePath).Replace('\\', '/');
             if (!relativePath.StartsWith('.'))
             {
                 relativePath = $"./{relativePath}";
             }
 
-            var anchor = MarkdownAnchor.CreateRequirementAnchor(requirement.Id, requirement.Title);
-            return $"[`{id}`]({relativePath}#{anchor})";
+            return $"[{id}]({relativePath})";
         }
 
         return $"`{id}`";

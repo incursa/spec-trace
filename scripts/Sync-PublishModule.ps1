@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Synchronizes the reusable CUE publish submodule from the canonical root sources.
+Synchronizes the reusable JSON publish package from the canonical root sources.
 #>
 [CmdletBinding()]
 param(
@@ -17,18 +17,17 @@ New-Item -ItemType Directory -Force -Path $publishRoot | Out-Null
 
 $copyMap = @(
     @{ Source = 'LICENSE'; Destination = 'LICENSE' },
-    @{ Source = 'model\model.cue'; Destination = 'model\model.cue' },
+    @{ Source = 'model\model.schema.json'; Destination = 'model\model.schema.json' },
     @{ Source = 'model\README.md'; Destination = 'model\README.md' },
-    @{ Source = 'spec-template.cue'; Destination = 'spec-template.cue' },
-    @{ Source = 'architecture-template.cue'; Destination = 'architecture-template.cue' },
-    @{ Source = 'work-item-template.cue'; Destination = 'work-item-template.cue' },
-    @{ Source = 'verification-template.cue'; Destination = 'verification-template.cue' }
+    @{ Source = 'spec-template.json'; Destination = 'spec-template.json' },
+    @{ Source = 'architecture-template.json'; Destination = 'architecture-template.json' },
+    @{ Source = 'work-item-template.json'; Destination = 'work-item-template.json' },
+    @{ Source = 'verification-template.json'; Destination = 'verification-template.json' }
 )
 
 $allowedPaths = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
 foreach ($relativePath in @(
-    'README.md',
-    'cue.mod\module.cue'
+    'README.md'
 )) {
     [void]$allowedPaths.Add(($relativePath -replace '[\\/]', '\'))
 }

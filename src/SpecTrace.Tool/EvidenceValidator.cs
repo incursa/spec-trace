@@ -78,6 +78,7 @@ internal static class EvidenceValidator
         ArtifactCatalog catalog,
         CancellationToken cancellationToken)
     {
+        var schemaValidator = JsonSchemaValidator.Load(rootPath);
         var findings = new List<Finding>();
         var snapshots = new List<LoadedEvidenceSnapshot>();
         var seenSnapshotIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -89,31 +90,10 @@ internal static class EvidenceValidator
             var fullPath = Path.GetFullPath(evidenceFile);
             var repoRelativePath = NormalizeRepoPath(rootPath, fullPath);
 
-            try
-            {
-                await CueCli.VetJsonFileAsync(
-                    rootPath,
-                    fullPath,
-                    Path.Combine(rootPath, "model", "model.cue"),
-                    "#EvidenceSnapshot",
-                    cancellationToken);
-            }
-            catch (Exception exception)
-            {
-                findings.Add(CreateError(
-                    "invalid-evidence-schema",
-                    exception.Message,
-                    fullPath,
-                    null));
-                continue;
-            }
-
             EvidenceSnapshotModel snapshot;
             try
             {
-                var json = await File.ReadAllTextAsync(fullPath, cancellationToken);
-                snapshot = JsonSerializer.Deserialize<EvidenceSnapshotModel>(json, JsonOptions.Default)
-                    ?? throw new InvalidOperationException($"JSON evidence file '{repoRelativePath}' could not be deserialized.");
+                snapshot = schemaValidator.LoadEvidenceSnapshot(rootPath, fullPath);
             }
             catch (Exception exception)
             {
@@ -214,16 +194,7 @@ internal static class EvidenceValidator
 
     private static string NormalizeRepoPath(string rootPath, string path)
     {
-        var fullPath = Path.GetFullPath(path);
-        var fullRoot = Path.GetFullPath(rootPath)
-            .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
-
-        if (!fullPath.StartsWith(fullRoot, StringComparison.OrdinalIgnoreCase))
-        {
-            return fullPath.Replace('\\', '/');
-        }
-
-        return Path.GetRelativePath(rootPath, fullPath).Replace('\\', '/');
+        return CanonicalJsonLoader.NormalizeRepoPath(rootPath, path);
     }
 
     private static bool IsBuildArtifactPath(string path)

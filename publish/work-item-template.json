@@ -1,0 +1,21 @@
+{
+  "$schema": "./model/model.schema.json",
+  "artifact_id": "WI-EXAMPLE-0001",
+  "artifact_type": "work_item",
+  "title": "Example Work Item",
+  "domain": "example",
+  "status": "planned",
+  "owner": "example-team",
+  "addresses": [
+    "REQ-EXAMPLE-0001"
+  ],
+  "design_links": [
+    "ARC-EXAMPLE-0001"
+  ],
+  "verification_links": [
+    "VER-EXAMPLE-0001"
+  ],
+  "summary": "Describe the implementation work.",
+  "planned_changes": "List the intended code or configuration changes.",
+  "verification_plan": "Describe how the requirement will be verified."
+}

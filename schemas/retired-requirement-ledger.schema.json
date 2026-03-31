@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "retired-requirement-ledger.schema.json",
+  "title": "Retired Requirement Ledger",
+  "description": "Schema for the retired requirement ledger used during lineage validation.",
+  "type": "object",
+  "required": [
+    "retired_requirements"
+  ],
+  "properties": {
+    "retired_requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^REQ-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "replaced_by": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^REQ-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$"
+            },
+            "minItems": 1
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "patternProperties": {
+          "^x_[A-Za-z0-9_]+$": {}
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "patternProperties": {
+    "^x_[A-Za-z0-9_]+$": {}
+  },
+  "additionalProperties": false
+}

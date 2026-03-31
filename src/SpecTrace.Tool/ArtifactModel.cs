@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace SpecTrace.Tool;
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class ArtifactModel
 {
     [JsonPropertyName("artifact_id")]
@@ -117,6 +118,7 @@ public sealed class ArtifactModel
     public string? StatusSummary { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class RequirementModel
 {
     [JsonPropertyName("id")]
@@ -135,6 +137,7 @@ public sealed class RequirementModel
     public List<string>? Notes { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class RequirementTraceModel
 {
     [JsonPropertyName("satisfied_by")]
@@ -159,6 +162,7 @@ public sealed class RequirementTraceModel
     public List<string>? Related { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class SupplementalSection
 {
     [JsonPropertyName("heading")]
@@ -168,6 +172,7 @@ public sealed class SupplementalSection
     public required string Content { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class CatalogItem
 {
     [JsonPropertyName("id")]
@@ -177,10 +182,7 @@ public sealed class CatalogItem
     public required string Kind { get; init; }
 
     [JsonPropertyName("source_path")]
-    public required string SourceCuePath { get; init; }
-
-    [JsonPropertyName("markdown_path")]
-    public required string SourceMarkdownPath { get; init; }
+    public required string SourcePath { get; init; }
 
     [JsonPropertyName("title")]
     public required string Title { get; init; }
@@ -195,6 +197,7 @@ public sealed class CatalogItem
     public required string Domain { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class CatalogReference
 {
     [JsonPropertyName("source_id")]
@@ -213,6 +216,7 @@ public sealed class CatalogReference
     public string? ExpectedPrefix { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class CatalogSnapshot
 {
     [JsonPropertyName("entries")]
@@ -224,12 +228,14 @@ public sealed class CatalogSnapshot
     public string ToJson() => JsonSerializer.Serialize(this, JsonOptions.Default);
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class RetiredRequirementLedger
 {
     [JsonPropertyName("retired_requirements")]
     public required List<RetiredRequirementRecord> RetiredRequirements { get; init; }
 }
 
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed class RetiredRequirementRecord
 {
     [JsonPropertyName("id")]

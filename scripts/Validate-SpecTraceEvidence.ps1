@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Validates generated SpecTrace evidence snapshots against the canonical CUE schema and repository requirement catalog.
+Validates generated SpecTrace evidence snapshots against the canonical JSON Schema and repository requirement catalog.
 #>
 [CmdletBinding()]
 param(
@@ -15,7 +15,6 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $resolvedRoot = (Resolve-Path -LiteralPath $RootPath).Path
-& (Join-Path $PSScriptRoot 'Resolve-Cue.ps1') -RootPath $resolvedRoot | Out-Null
 
 $arguments = @(
     'run',

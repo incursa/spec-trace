@@ -2,62 +2,58 @@
 
 > AI-readable bootstrap for the `spec-trace` reference repository. This file is non-authoritative. The canonical standard lives under [`./specs/requirements/spec-trace/`](./specs/requirements/spec-trace/).
 
-`spec-trace` is a CUE-first requirements and traceability standard. Canonical authored artifacts are `.cue`; generated Markdown is a readable projection of those artifacts.
+`spec-trace` is a JSON-first requirements and traceability standard. Canonical authored artifacts are `*.json`, and their document shape is validated by [`model/model.schema.json`](./model/model.schema.json).
 
 When working in this repository:
 
-- follow this authority order: canonical SPEC suite, then shared CUE model and `.cue` templates, then generated Markdown and compatibility schemas, then root summaries and AI convenience files
+- follow this authority order: canonical SPEC suite, then the authoritative JSON Schema and root JSON templates, then examples and generated outputs, then root summaries and AI convenience files
 - keep requirements inside specification artifacts
-- author canonical artifacts in `.cue`, not Markdown, YAML, or JSON
-- treat generated Markdown as read-only output
+- author canonical artifacts in JSON
+- treat generated outputs as derived material
 - use stable IDs for references and update referrers when an ID changes
-- if your tool can only ingest a single file, generate a bundled Markdown view with [`./scripts/Export-SpecTraceBundle.ps1`](./scripts/Export-SpecTraceBundle.ps1)
 
 ## Canonical Standard
 
-- [`_index.md`](./specs/requirements/spec-trace/_index.md): canonical entry point to the SPEC suite
-- [`SPEC-STD.md`](./specs/requirements/spec-trace/SPEC-STD.md): core definitions, authority model, and publication rules
-- [`SPEC-ID.md`](./specs/requirements/spec-trace/SPEC-ID.md): identifier policy
-- [`SPEC-LIN.md`](./specs/requirements/spec-trace/SPEC-LIN.md): requirement lineage and evolution
-- [`SPEC-PRF.md`](./specs/requirements/spec-trace/SPEC-PRF.md): repository conformance profiles
-- [`SPEC-RPT.md`](./specs/requirements/spec-trace/SPEC-RPT.md): derived reporting dimensions and attestation semantics
-- [`SPEC-LAY.md`](./specs/requirements/spec-trace/SPEC-LAY.md): repository layout guidance
-- [`SPEC-TPL.md`](./specs/requirements/spec-trace/SPEC-TPL.md): canonical field model and generated Markdown rendering rules
-- [`SPEC-SCH.md`](./specs/requirements/spec-trace/SPEC-SCH.md): schema and validation rules
-- [`SPEC-EVD.md`](./specs/requirements/spec-trace/SPEC-EVD.md): generated evidence snapshots
-- [`SPEC-EXM.md`](./specs/requirements/spec-trace/SPEC-EXM.md): worked-example expectations
+- [`_index.md`](./specs/requirements/spec-trace/_index.md): entry point to the SPEC suite
+- [`SPEC-STD.json`](./specs/requirements/spec-trace/SPEC-STD.json): core definitions, authority model, and publication rules
+- [`SPEC-ID.json`](./specs/requirements/spec-trace/SPEC-ID.json): identifier policy
+- [`SPEC-LIN.json`](./specs/requirements/spec-trace/SPEC-LIN.json): requirement lineage and evolution
+- [`SPEC-PRF.json`](./specs/requirements/spec-trace/SPEC-PRF.json): repository conformance profiles
+- [`SPEC-RPT.json`](./specs/requirements/spec-trace/SPEC-RPT.json): derived reporting dimensions and attestation semantics
+- [`SPEC-LAY.json`](./specs/requirements/spec-trace/SPEC-LAY.json): repository layout guidance
+- [`SPEC-TPL.json`](./specs/requirements/spec-trace/SPEC-TPL.json): canonical field model and requirement grammar
+- [`SPEC-SCH.json`](./specs/requirements/spec-trace/SPEC-SCH.json): schema and validation rules
+- [`SPEC-EVD.json`](./specs/requirements/spec-trace/SPEC-EVD.json): generated evidence snapshots
+- [`SPEC-EXM.json`](./specs/requirements/spec-trace/SPEC-EXM.json): worked-example expectations
 
 ## Shared Model And Templates
 
-- [`model/README.md`](./model/README.md): canonical shared CUE package
-- [`spec-template.cue`](./spec-template.cue): `templates.#SpecificationTemplate`
-- [`architecture-template.cue`](./architecture-template.cue): `templates.#ArchitectureTemplate`
-- [`work-item-template.cue`](./work-item-template.cue): `templates.#WorkItemTemplate`
-- [`verification-template.cue`](./verification-template.cue): `templates.#VerificationTemplate`
-- [`catalog/retired-requirements.cue`](./catalog/retired-requirements.cue): retired requirement ledger for lineage validation
-- Central Registry imports come from the curated [`publish/`](./publish/) submodule, not from the repository's canonical SPEC or example trees:
-  - `github.com/incursa/spec-trace/model@v0`
-  - `github.com/incursa/spec-trace@v0:templates`
+- [`model/model.schema.json`](./model/model.schema.json): authoritative JSON Schema
+- [`model/README.md`](./model/README.md): model notes
+- [`spec-template.json`](./spec-template.json)
+- [`architecture-template.json`](./architecture-template.json)
+- [`work-item-template.json`](./work-item-template.json)
+- [`verification-template.json`](./verification-template.json)
+- [`catalog/retired-requirements.json`](./catalog/retired-requirements.json): retired requirement ledger for lineage validation
 
 ## Commands
 
-- [`scripts/Resolve-Cue.ps1`](./scripts/Resolve-Cue.ps1): install or locate the pinned CUE CLI
-- [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1): validate canonical CUE artifacts
-- [`scripts/Render-SpecTraceMarkdown.ps1`](./scripts/Render-SpecTraceMarkdown.ps1): generate or check Markdown output
-- [`scripts/Build-SpecTraceCatalog.ps1`](./scripts/Build-SpecTraceCatalog.ps1): emit a repository-wide catalog as CUE and JSON
-- [`scripts/Convert-MarkdownArtifactsToCue.ps1`](./scripts/Convert-MarkdownArtifactsToCue.ps1): migration helper
-- [`scripts/Export-SpecTraceBundle.ps1`](./scripts/Export-SpecTraceBundle.ps1): bundle generated specification Markdown into a single file
+- [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1): validate canonical JSON artifacts and repository-level integrity
+- [`scripts/Build-SpecTraceCatalog.ps1`](./scripts/Build-SpecTraceCatalog.ps1): emit a repository-wide catalog as JSON
+- [`scripts/Validate-SpecTraceEvidence.ps1`](./scripts/Validate-SpecTraceEvidence.ps1): validate evidence snapshots
+- [`scripts/Render-SpecTraceAttestation.ps1`](./scripts/Render-SpecTraceAttestation.ps1): generate attestation output
+- [`scripts/Sync-PublishModule.ps1`](./scripts/Sync-PublishModule.ps1): sync the curated publish mirror
 
 ## Worked Examples
 
 - [`examples/README.md`](./examples/README.md): example index
-- [`examples/payments/SPEC-PAY-ACH.md`](./examples/payments/SPEC-PAY-ACH.md): product-style example
-- [`examples/calculator-int/SPEC-CALC-INT.md`](./examples/calculator-int/SPEC-CALC-INT.md): fuller technical example
-- [`examples/arithmetic/SPEC-MATH-DIV.md`](./examples/arithmetic/SPEC-MATH-DIV.md): smallest end-to-end slice
+- [`examples/payments/SPEC-PAY-ACH.json`](./examples/payments/SPEC-PAY-ACH.json): product-style example
+- [`examples/calculator-int/SPEC-CALC-INT.json`](./examples/calculator-int/SPEC-CALC-INT.json): fuller technical example
+- [`examples/arithmetic/SPEC-MATH-DIV.json`](./examples/arithmetic/SPEC-MATH-DIV.json): smallest end-to-end slice
 
 ## Compatibility Surfaces
 
-- [`schemas/README.md`](./schemas/README.md): compatibility JSON Schema entry point
+- [`schemas/README.md`](./schemas/README.md): compatibility schema entry point
 - [`artifact-id-policy.json`](./artifact-id-policy.json): compatibility identifier export
 
 ## AI Helpers

@@ -1,9 +1,7 @@
-# CUE Model
+# JSON Schema Model
 
-This package is the canonical schema layer for authored `spec-trace` artifacts.
+This directory contains the authoritative schema layer for authored `spec-trace` artifacts.
 
-- [`model.cue`](./model.cue) defines the shared artifact, requirement, trace, evidence, retired-ID ledger, and catalog shapes used by canonical `.cue` documents and validation tooling.
-- The import path is `github.com/incursa/spec-trace/model@v0`.
-- Concrete authored artifacts should unify a top-level `artifact` value with one of the exported definitions, for example `model.#Specification` or `model.#WorkItem`.
-
-JSON, YAML, and Markdown may still be produced as derived outputs or integration views, but the CUE definitions in this package are authoritative.
+- [`model.schema.json`](./model.schema.json) defines the shared artifact, requirement, trace, evidence, retired-ledger, and catalog shapes used by canonical JSON documents and validation tooling.
+- Canonical authored artifacts are JSON documents.
+- Repository tooling uses this schema first and then applies repository-level cross-file validation.

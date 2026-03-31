@@ -5,44 +5,41 @@ This file describes the recommended layout for repositories that adopt the stand
 ## Default Layout
 
 ```text
-cue.mod/
 model/
+  model.schema.json
 catalog/
-  retired-requirements.cue
-/specs
-  /requirements
-    /<domain>/
+  retired-requirements.json
+specs/
+  requirements/
+    <domain>/
       _index.md
-      SPEC-<DOMAIN>[-<GROUPING>...].cue
-      SPEC-<DOMAIN>[-<GROUPING>...].md
-  /architecture
-    /<domain>/
-      <readable-file-name>.cue
-      <readable-file-name>.md
-  /work-items
-    /<domain>/
-      <readable-file-name>.cue
-      <readable-file-name>.md
-  /verification
-    /<domain>/
-      <readable-file-name>.cue
-      <readable-file-name>.md
-  /generated
-    spec-trace-catalog.cue
+      SPEC-<DOMAIN>[-<GROUPING>...].json
+  architecture/
+    <domain>/
+      <readable-file-name>.json
+  work-items/
+    <domain>/
+      <readable-file-name>.json
+  verification/
+    <domain>/
+      <readable-file-name>.json
+  generated/
     spec-trace-catalog.json
-    traceability-matrix.md
-    verification-coverage.md
-/examples
-  /<domain>/
-    *.cue
-    *.md
+    validation-report.json
+examples/
+  <domain>/
+    *.json
+    *.evidence.json
+    generated/
+      *.md
+      *.json
 ```
 
 ## Layout Rules
 
 ### Canonical Source
 
-Canonical authored artifacts live in `.cue` files. Generated Markdown may sit beside the source `.cue` file for readability, but contributors should edit the `.cue` file.
+Canonical authored artifacts live in JSON files. Support docs may live beside them for navigation or explanation, but contributors should edit the JSON file.
 
 ### Specifications
 
@@ -50,7 +47,7 @@ Place specifications under `/specs/requirements/<domain>/`.
 
 - organize by stable domain first
 - organize by capability, behavior area, interface, or narrow concern second
-- keep one specification artifact per `.cue` file
+- keep one specification artifact per `.json` file
 - include the full specification ID in the specification filename
 
 ### Architecture
@@ -79,9 +76,8 @@ Examples:
 
 - repository catalogs
 - validation reports
-- traceability matrices
+- attestation output
 - coverage rollups
-- bundled Markdown views
 
 Those files are derived outputs, not canonical authored artifacts.
 
@@ -89,7 +85,7 @@ Those files are derived outputs, not canonical authored artifacts.
 
 File names should stay stable and readable.
 
-- Specification `.cue` files should include the full specification ID.
+- Specification `.json` files should include the full specification ID.
 - Architecture, work-item, and verification artifact filenames may use readable stable names.
 - Avoid dates, sprint numbers, and owner names in canonical filenames.
 - Keep traceability anchored on stable IDs in the artifact content, not on the file name.
@@ -98,7 +94,7 @@ File names should stay stable and readable.
 
 [`_index.md`](./specs/requirements/spec-trace/_index.md) files are optional navigation aids.
 
-They may summarize a domain and link the generated Markdown views, but they do not replace the underlying canonical `.cue` artifacts.
+They may summarize a domain and link canonical JSON artifacts, but they do not replace the underlying source files.
 
 ## Traceability Loop
 

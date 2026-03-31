@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Builds a repository-wide SpecTrace catalog from canonical CUE artifacts.
+Builds a repository-wide SpecTrace catalog from canonical JSON artifacts.
 #>
 [CmdletBinding()]
 param(
@@ -11,17 +11,13 @@ param(
     [string]$InputPath,
 
     [Parameter()]
-    [string]$JsonOutputPath,
-
-    [Parameter()]
-    [string]$CueOutputPath
+    [string]$JsonOutputPath
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $resolvedRoot = (Resolve-Path -LiteralPath $RootPath).Path
-& (Join-Path $PSScriptRoot 'Resolve-Cue.ps1') -RootPath $resolvedRoot | Out-Null
 
 $arguments = @(
     'run',
@@ -39,10 +35,6 @@ if (-not [string]::IsNullOrWhiteSpace($InputPath)) {
 
 if (-not [string]::IsNullOrWhiteSpace($JsonOutputPath)) {
     $arguments += @('--json-out', $JsonOutputPath)
-}
-
-if (-not [string]::IsNullOrWhiteSpace($CueOutputPath)) {
-    $arguments += @('--cue-out', $CueOutputPath)
 }
 
 & dotnet @arguments
