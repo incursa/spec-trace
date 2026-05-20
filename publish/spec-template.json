@@ -12,7 +12,13 @@
     {
       "id": "REQ-EXAMPLE-0001",
       "title": "State one requirement",
-      "statement": "The example MUST state one requirement."
+      "statement": "The example MUST state one requirement.",
+      "coverage": {
+        "positive": "required",
+        "negative": "optional",
+        "edge": "required",
+        "fuzz": "deferred"
+      }
     }
   ]
 }

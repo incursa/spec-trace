@@ -26,6 +26,7 @@ If you find a mismatch, follow the higher-authority source and fix the lower-aut
 - To change canonical field names, identifier rules, templates, schemas, or example patterns, propagate the change across specs, schemas, tooling, examples, and publish surfaces in the same change set.
 - To run repository-wide validation, use [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1).
 - To emit a machine-readable repository catalog, use [`scripts/Build-SpecTraceCatalog.ps1`](./scripts/Build-SpecTraceCatalog.ps1).
+- To resolve a portable topic view into machine-readable JSON, use [`scripts/Resolve-SpecTraceTopicView.ps1`](./scripts/Resolve-SpecTraceTopicView.ps1).
 - To validate generated evidence snapshots, use [`scripts/Validate-SpecTraceEvidence.ps1`](./scripts/Validate-SpecTraceEvidence.ps1).
 - To generate attestation output, use [`scripts/Render-SpecTraceAttestation.ps1`](./scripts/Render-SpecTraceAttestation.ps1).
 - To synchronize the reusable publish mirror, use [`scripts/Sync-PublishModule.ps1`](./scripts/Sync-PublishModule.ps1).
@@ -33,6 +34,7 @@ If you find a mismatch, follow the higher-authority source and fix the lower-aut
 ## Working Rules
 
 - Keep requirements inside specification artifacts.
+- Requirements may carry optional `coverage` expectations for positive, negative, edge, and fuzz evidence; keep those expectations in the requirement record, not in evidence snapshots.
 - Author canonical artifacts in JSON.
 - Validate canonical document shape with [`model/model.schema.json`](./model/model.schema.json).
 - Treat generated outputs as derived material.

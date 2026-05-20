@@ -1,3 +1,4 @@
+using System.Text.Json;
 using SpecTrace.Tool;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
@@ -37,6 +38,12 @@ public sealed class CommandDispatcherTests : IDisposable
       "id": "REQ-SAMPLE-0001",
       "title": "Carry one keyword",
       "statement": "The sample MUST carry one keyword.",
+      "coverage": {
+        "positive": "required",
+        "negative": "optional",
+        "edge": "required",
+        "fuzz": "not_applicable"
+      },
       "trace": {
         "satisfied_by": [
           "ARC-SAMPLE-0001"
@@ -154,6 +161,73 @@ public sealed class CommandDispatcherTests : IDisposable
     }
 
     [Fact]
+    public async Task ValidateRejectsInvalidCoverageStatusViaJsonSchema()
+    {
+        WriteJson("specs/requirements/sample/SPEC-SAMPLE.json", """
+{
+  "artifact_id": "SPEC-SAMPLE",
+  "artifact_type": "specification",
+  "title": "Spec",
+  "domain": "sample",
+  "capability": "sample-capability",
+  "status": "draft",
+  "owner": "sample-team",
+  "purpose": "Purpose.",
+  "requirements": [
+    {
+      "id": "REQ-SAMPLE-0001",
+      "title": "Invalid coverage status",
+      "statement": "The sample MUST validate.",
+      "coverage": {
+        "positive": "required",
+        "negative": "sometimes",
+        "edge": "required",
+        "fuzz": "optional"
+      }
+    }
+  ]
+}
+""");
+
+        var exitCode = await CommandDispatcher.RunAsync(["validate", "--root", _rootPath, "--profile", "core"]);
+        Assert.Equal(1, exitCode);
+    }
+
+    [Fact]
+    public async Task ValidateRejectsUnexpectedCoverageKeyViaJsonSchema()
+    {
+        WriteJson("specs/requirements/sample/SPEC-SAMPLE.json", """
+{
+  "artifact_id": "SPEC-SAMPLE",
+  "artifact_type": "specification",
+  "title": "Spec",
+  "domain": "sample",
+  "capability": "sample-capability",
+  "status": "draft",
+  "owner": "sample-team",
+  "purpose": "Purpose.",
+  "requirements": [
+    {
+      "id": "REQ-SAMPLE-0001",
+      "title": "Unexpected coverage key",
+      "statement": "The sample MUST validate.",
+      "coverage": {
+        "positive": "required",
+        "negative": "optional",
+        "edge": "required",
+        "fuzz": "optional",
+        "benchmark": "required"
+      }
+    }
+  ]
+}
+""");
+
+        var exitCode = await CommandDispatcher.RunAsync(["validate", "--root", _rootPath, "--profile", "core"]);
+        Assert.Equal(1, exitCode);
+    }
+
+    [Fact]
     public async Task BuildCatalogWritesJsonOutput()
     {
         WriteJson("specs/requirements/sample/SPEC-SAMPLE.json", SpecificationJson("""
@@ -254,6 +328,248 @@ public sealed class CommandDispatcherTests : IDisposable
         Assert.Contains("SPEC-SAMPLE", json, StringComparison.Ordinal);
         Assert.Contains("REQ-SAMPLE-0001", json, StringComparison.Ordinal);
         Assert.DoesNotContain("markdown_path", json, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ResolveTopicViewWritesMachineReadableSelectionResult()
+    {
+        WriteJson("specs/requirements/sample/SPEC-SAMPLE.json", SpecificationJson("""
+{
+  "artifact_id": "SPEC-SAMPLE",
+  "artifact_type": "specification",
+  "title": "Sample Specification",
+  "domain": "sample",
+  "capability": "sample-capability",
+  "status": "draft",
+  "owner": "sample-team",
+  "purpose": "Resolve a topic view.",
+  "requirements": [
+    {
+      "id": "REQ-SAMPLE-0001",
+      "title": "Carry one keyword",
+      "statement": "The sample MUST mention TLS behavior.",
+      "trace": {
+        "related": [
+          "REQ-SAMPLE-0002"
+        ]
+      }
+    },
+    {
+      "id": "REQ-SAMPLE-0002",
+      "title": "Carry another keyword",
+      "statement": "The sample MUST mention QUIC behavior."
+    }
+  ]
+}
+"""));
+
+        var originalOut = Console.Out;
+        var originalErr = Console.Error;
+        using var stdout = new StringWriter();
+        using var stderr = new StringWriter();
+        Console.SetOut(stdout);
+        Console.SetError(stderr);
+
+        try
+        {
+            var exitCode = await CommandDispatcher.RunAsync([
+                "resolve-topic-view",
+                "--root", _rootPath,
+                "--topic-view-json", """
+{
+  "name": "sample-topic",
+  "match": {
+    "literal": {
+      "fields": [
+        "requirement.statement"
+      ],
+      "value": "TLS",
+      "case": "insensitive"
+    }
+  }
+}
+"""
+            ]);
+
+            Assert.Equal(0, exitCode);
+
+            var json = stdout.ToString().Trim();
+            using var document = JsonDocument.Parse(json);
+            var root = document.RootElement;
+
+            Assert.Equal("1", root.GetProperty("version").GetString());
+            Assert.Equal("inline", root.GetProperty("input").GetProperty("kind").GetString());
+            Assert.Equal(1, root.GetProperty("summary").GetProperty("selected_count").GetInt32());
+            Assert.Equal(1, root.GetProperty("summary").GetProperty("matched_count").GetInt32());
+            Assert.Equal(0, root.GetProperty("summary").GetProperty("warning_count").GetInt32());
+            Assert.Empty(root.GetProperty("findings").EnumerateArray());
+
+            var validator = JsonSchemaValidator.Load(RepositoryRoot);
+            var resultPath = WriteTempJson(json);
+            try
+            {
+                var resultDocument = validator.LoadTopicViewResult(RepositoryRoot, resultPath);
+                Assert.Equal("1", resultDocument.GetProperty("version").GetString());
+            }
+            finally
+            {
+                File.Delete(resultPath);
+            }
+
+            var selected = root.GetProperty("selected_requirements").EnumerateArray().Single();
+            Assert.Equal("REQ-SAMPLE-0001", selected.GetProperty("requirement_id").GetString());
+            Assert.Equal("SPEC-SAMPLE", selected.GetProperty("artifact_id").GetString());
+            Assert.True(selected.GetProperty("selection").GetProperty("selected").GetBoolean());
+            Assert.True(selected.GetProperty("selection").GetProperty("matched").GetBoolean());
+            Assert.False(selected.GetProperty("selection").GetProperty("explicit_include").GetBoolean());
+            Assert.False(selected.GetProperty("selection").GetProperty("explicit_exclude").GetBoolean());
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+            Console.SetError(originalErr);
+        }
+    }
+
+    [Fact]
+    public async Task ResolveTopicViewReportsUnknownExplicitRequirementIdsAsWarnings()
+    {
+        WriteJson("specs/requirements/sample/SPEC-SAMPLE.json", SpecificationJson("""
+{
+  "artifact_id": "SPEC-SAMPLE",
+  "artifact_type": "specification",
+  "title": "Sample Specification",
+  "domain": "sample",
+  "capability": "sample-capability",
+  "status": "draft",
+  "owner": "sample-team",
+  "purpose": "Resolve a topic view.",
+  "requirements": [
+    {
+      "id": "REQ-SAMPLE-0001",
+      "title": "Carry one keyword",
+      "statement": "The sample MUST mention TLS behavior."
+    }
+  ]
+}
+"""));
+
+        var originalOut = Console.Out;
+        var originalErr = Console.Error;
+        using var stdout = new StringWriter();
+        using var stderr = new StringWriter();
+        Console.SetOut(stdout);
+        Console.SetError(stderr);
+
+        try
+        {
+            var exitCode = await CommandDispatcher.RunAsync([
+                "resolve-topic-view",
+                "--root", _rootPath,
+                "--topic-view-json", """
+{
+  "name": "sample-topic",
+  "include_requirements": [
+    "REQ-SAMPLE-9999"
+  ]
+}
+"""
+            ]);
+
+            Assert.Equal(0, exitCode);
+
+            var json = stdout.ToString().Trim();
+            using var document = JsonDocument.Parse(json);
+            var root = document.RootElement;
+
+            Assert.Equal(0, root.GetProperty("summary").GetProperty("selected_count").GetInt32());
+            Assert.Equal(1, root.GetProperty("summary").GetProperty("warning_count").GetInt32());
+
+            var finding = root.GetProperty("findings").EnumerateArray().Single();
+            Assert.Equal("warning", finding.GetProperty("severity").GetString());
+            Assert.Equal("unknown-explicit-include", finding.GetProperty("code").GetString());
+            Assert.Equal("REQ-SAMPLE-9999", finding.GetProperty("requirement_id").GetString());
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+            Console.SetError(originalErr);
+        }
+    }
+
+    [Fact]
+    public async Task ResolveTopicViewReportsExplicitMembershipConflictsAsWarnings()
+    {
+        WriteJson("specs/requirements/sample/SPEC-SAMPLE.json", SpecificationJson("""
+{
+  "artifact_id": "SPEC-SAMPLE",
+  "artifact_type": "specification",
+  "title": "Sample Specification",
+  "domain": "sample",
+  "capability": "sample-capability",
+  "status": "draft",
+  "owner": "sample-team",
+  "purpose": "Resolve a topic view.",
+  "requirements": [
+    {
+      "id": "REQ-SAMPLE-0001",
+      "title": "Carry one keyword",
+      "statement": "The sample MUST mention TLS behavior."
+    }
+  ]
+}
+"""));
+
+        var originalOut = Console.Out;
+        var originalErr = Console.Error;
+        using var stdout = new StringWriter();
+        using var stderr = new StringWriter();
+        Console.SetOut(stdout);
+        Console.SetError(stderr);
+
+        try
+        {
+            var exitCode = await CommandDispatcher.RunAsync([
+                "resolve-topic-view",
+                "--root", _rootPath,
+                "--topic-view-json", """
+{
+  "name": "sample-topic",
+  "include_requirements": [
+    "REQ-SAMPLE-0001"
+  ],
+  "exclude_requirements": [
+    "REQ-SAMPLE-0001"
+  ]
+}
+"""
+            ]);
+
+            Assert.Equal(0, exitCode);
+
+            var json = stdout.ToString().Trim();
+            using var document = JsonDocument.Parse(json);
+            var root = document.RootElement;
+
+            Assert.Equal(0, root.GetProperty("summary").GetProperty("selected_count").GetInt32());
+            Assert.Equal(1, root.GetProperty("summary").GetProperty("warning_count").GetInt32());
+            Assert.Equal(1, root.GetProperty("summary").GetProperty("conflict_count").GetInt32());
+
+            var finding = root.GetProperty("findings").EnumerateArray().Single();
+            Assert.Equal("explicit-membership-conflict", finding.GetProperty("code").GetString());
+            Assert.Equal("REQ-SAMPLE-0001", finding.GetProperty("requirement_id").GetString());
+
+            var excluded = root.GetProperty("explicitly_excluded_requirements").EnumerateArray().Single();
+            Assert.Equal("REQ-SAMPLE-0001", excluded.GetProperty("requirement_id").GetString());
+            Assert.False(excluded.GetProperty("selection").GetProperty("selected").GetBoolean());
+            Assert.True(excluded.GetProperty("selection").GetProperty("explicit_include").GetBoolean());
+            Assert.True(excluded.GetProperty("selection").GetProperty("explicit_exclude").GetBoolean());
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+            Console.SetError(originalErr);
+        }
     }
 
     [Fact]
@@ -476,6 +792,14 @@ public sealed class CommandDispatcherTests : IDisposable
         var path = Path.Combine(_rootPath, relativePath.Replace('/', Path.DirectorySeparatorChar));
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         File.WriteAllText(path, content);
+    }
+
+    private static string WriteTempJson(string content)
+    {
+        var path = Path.Combine(Path.GetTempPath(), "spec-trace-topic-view-tests", $"{Guid.NewGuid():N}.json");
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.WriteAllText(path, content);
+        return path;
     }
 
     private static void CopyDirectory(string sourceDirectory, string destinationDirectory)

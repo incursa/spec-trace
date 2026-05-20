@@ -4,6 +4,8 @@
 
 `spec-trace` is a JSON-first requirements and traceability standard. Canonical authored artifacts are `*.json`, and their document shape is validated by [`model/model.schema.json`](./model/model.schema.json).
 
+Requirements may also carry optional `coverage` expectations for positive, negative, edge, and fuzz evidence dimensions. Those expectations are authored metadata, not generated evidence.
+
 When working in this repository:
 
 - follow this authority order: canonical SPEC suite, then the authoritative JSON Schema and root JSON templates, then examples and generated outputs, then root summaries and AI convenience files
@@ -40,6 +42,7 @@ When working in this repository:
 
 - [`scripts/Test-SpecTraceRepository.ps1`](./scripts/Test-SpecTraceRepository.ps1): validate canonical JSON artifacts and repository-level integrity
 - [`scripts/Build-SpecTraceCatalog.ps1`](./scripts/Build-SpecTraceCatalog.ps1): emit a repository-wide catalog as JSON
+- [`scripts/Resolve-SpecTraceTopicView.ps1`](./scripts/Resolve-SpecTraceTopicView.ps1): resolve a portable topic view into machine-readable JSON
 - [`scripts/Validate-SpecTraceEvidence.ps1`](./scripts/Validate-SpecTraceEvidence.ps1): validate evidence snapshots
 - [`scripts/Render-SpecTraceAttestation.ps1`](./scripts/Render-SpecTraceAttestation.ps1): generate attestation output
 - [`scripts/Sync-PublishModule.ps1`](./scripts/Sync-PublishModule.ps1): sync the curated publish mirror

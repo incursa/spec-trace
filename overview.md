@@ -21,10 +21,11 @@ Each requirement:
 - has a stable `REQ-...` identifier
 - has a short descriptive title
 - has a compact normative clause in `statement`
+- may carry optional `coverage` expectations for positive, negative, edge, and fuzz evidence dimensions
 - may carry optional `trace`
 - may carry optional `notes`
 
-The clause is the normative content. The title is a scan aid. `notes` carry rationale, caveats, and examples.
+The `coverage` object records expected evidence dimensions for the requirement, not actual test or code evidence. The clause is the normative content. The title is a scan aid. `notes` carry rationale, caveats, and examples.
 
 ### Architecture, Work Item, Verification
 
@@ -43,6 +44,12 @@ The canonical authored form is a JSON record:
   "id": "REQ-EXAMPLE-0001",
   "title": "Short label",
   "statement": "The system MUST do something directly testable.",
+  "coverage": {
+    "positive": "required",
+    "negative": "optional",
+    "edge": "required",
+    "fuzz": "deferred"
+  },
   "trace": {
     "satisfied_by": ["ARC-EXAMPLE-0001"],
     "implemented_by": ["WI-EXAMPLE-0001"],

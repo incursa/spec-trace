@@ -13,7 +13,7 @@
     "coverage"
   ],
   "purpose": "Define how repositories can generate useful coverage, progress, and attestation reporting from the canonical trace graph without turning that reporting into a new artifact family or overloading the conformance profiles.",
-  "scope": "This specification covers reporting dimensions, staged adoption semantics,\nsource-coverage reporting, evidence-kind reporting, local policy attestation\nstates, and the rule that current-state evidence remains derived from\nrepository truth rather than hand-maintained canonical status fields.",
+  "scope": "This specification covers reporting dimensions, staged adoption semantics,\nauthored requirement coverage expectations, source-coverage reporting,\nevidence-kind reporting, local policy attestation states, and the rule that\ncurrent-state evidence remains derived from repository truth rather than\nhand-maintained canonical status fields.",
   "context": "Teams need to answer different questions at different stages of delivery. Greenfield repositories may have good requirements before they have implementation. Brownfield repositories may have tests and code before they have work-item history. The standard therefore needs a reporting layer that stays grounded in the canonical graph and real evidence without forcing every repository into the same maturity narrative.",
   "requirements": [
     {
@@ -22,7 +22,8 @@
       "statement": "Coverage, attestation, and current-state status views MUST be treated as derived reporting over the canonical repository graph and evidence sources rather than as new canonical requirement metadata.",
       "notes": [
         "Derived reporting answers current-state questions without changing the requirement text.",
-        "Derived reporting does not create a fifth artifact family."
+        "Derived reporting does not create a fifth artifact family.",
+        "A requirement's authored `coverage` object is canonical requirement metadata, not a report output or evidence snapshot."
       ]
     },
     {
@@ -96,6 +97,21 @@
         "A requirement may lack `unit_test` evidence because no matching test exists.",
         "A requirement may also lack current `benchmark` evidence because no benchmark\nsnapshot was collected for the evaluated scope.",
         "These are different reporting outcomes even when neither one satisfies a\nlocal policy gate."
+      ]
+    },
+    {
+      "id": "REQ-RPT-0010",
+      "title": "Emit machine-readable topic view results when practical",
+      "statement": "Derived reporting SHOULD be able to emit a machine-readable topic-view selection result that records the normalized topic view input, repository root, summary counts, selected requirements, explicit exclusions, and provenance for each selected or excluded requirement.",
+      "trace": {
+        "related": [
+          "SPEC-TOP",
+          "SPEC-SCH"
+        ]
+      },
+      "notes": [
+        "A report may still provide a human-readable rendering alongside the machine-readable result.",
+        "The machine-readable result is what downstream automation and LLM-assisted lookup should prefer."
       ]
     }
   ]

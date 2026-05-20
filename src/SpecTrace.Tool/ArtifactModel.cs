@@ -130,11 +130,30 @@ public sealed class RequirementModel
     [JsonPropertyName("statement")]
     public required string Statement { get; init; }
 
+    [JsonPropertyName("coverage")]
+    public RequirementCoverageModel? Coverage { get; init; }
+
     [JsonPropertyName("trace")]
     public RequirementTraceModel? Trace { get; init; }
 
     [JsonPropertyName("notes")]
     public List<string>? Notes { get; init; }
+}
+
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed class RequirementCoverageModel
+{
+    [JsonPropertyName("positive")]
+    public required string Positive { get; init; }
+
+    [JsonPropertyName("negative")]
+    public required string Negative { get; init; }
+
+    [JsonPropertyName("edge")]
+    public required string Edge { get; init; }
+
+    [JsonPropertyName("fuzz")]
+    public required string Fuzz { get; init; }
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]

@@ -1,0 +1,363 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "topic-view-result.schema.json",
+  "title": "Topic View Result",
+  "description": "Portable machine-readable output for topic-view lookup tooling.",
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requirementId": {
+      "type": "string",
+      "pattern": "^REQ-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$"
+    },
+    "topicViewCaseMode": {
+      "type": "string",
+      "enum": [
+        "sensitive",
+        "insensitive"
+      ]
+    },
+    "topicViewSelector": {
+      "type": "string",
+      "enum": [
+        "requirement.id",
+        "requirement.title",
+        "requirement.statement",
+        "requirement.notes",
+        "requirement.trace.upstream_refs",
+        "requirement.trace.related",
+        "requirement.trace.derived_from",
+        "requirement.trace.supersedes",
+        "requirement.trace.satisfied_by",
+        "requirement.trace.implemented_by",
+        "requirement.trace.verified_by",
+        "artifact.artifact_id",
+        "artifact.title",
+        "artifact.capability",
+        "artifact.tags"
+      ]
+    },
+    "topicViewSelectorList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/topicViewSelector"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "topicViewRequirementIdList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/requirementId"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "topicViewReason": {
+      "type": "object",
+      "required": [
+        "kind",
+        "message"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "predicate",
+            "explicit_include",
+            "explicit_exclude"
+          ]
+        },
+        "message": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "operator": {
+          "type": "string",
+          "enum": [
+            "all",
+            "any",
+            "not",
+            "literal",
+            "regex",
+            "requirement_ids"
+          ]
+        },
+        "fields": {
+          "$ref": "#/$defs/topicViewSelectorList"
+        },
+        "value": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "pattern": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "case": {
+          "$ref": "#/$defs/topicViewCaseMode"
+        },
+        "matched_values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "requirement_ids": {
+          "$ref": "#/$defs/topicViewRequirementIdList"
+        }
+      },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "topicViewSelectionState": {
+      "type": "object",
+      "required": [
+        "selected",
+        "matched",
+        "explicit_include",
+        "explicit_exclude"
+      ],
+      "properties": {
+        "selected": {
+          "type": "boolean"
+        },
+        "matched": {
+          "type": "boolean"
+        },
+        "explicit_include": {
+          "type": "boolean"
+        },
+        "explicit_exclude": {
+          "type": "boolean"
+        }
+      },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "topicViewRequirementResult": {
+      "type": "object",
+      "required": [
+        "requirement_id",
+        "title",
+        "artifact_id",
+        "artifact_title",
+        "artifact_type",
+        "domain",
+        "source_path",
+        "selection",
+        "reasons"
+      ],
+      "properties": {
+        "requirement_id": {
+          "$ref": "#/$defs/requirementId"
+        },
+        "title": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "artifact_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "artifact_title": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "artifact_type": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "domain": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "source_path": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "selection": {
+          "$ref": "#/$defs/topicViewSelectionState"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/topicViewReason"
+          },
+          "minItems": 1
+        }
+      },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "topicViewFinding": {
+      "type": "object",
+      "required": [
+        "severity",
+        "code",
+        "message"
+      ],
+      "properties": {
+        "severity": {
+          "type": "string",
+          "enum": [
+            "warning",
+            "error"
+          ]
+        },
+        "code": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "message": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "requirement_id": {
+          "$ref": "#/$defs/requirementId"
+        },
+        "artifact_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "source_path": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "required": [
+    "version",
+    "root_path",
+    "input",
+    "topic_view",
+    "summary",
+    "findings",
+    "selected_requirements",
+    "explicitly_excluded_requirements"
+  ],
+  "properties": {
+    "version": {
+      "$ref": "#/$defs/nonEmptyString"
+    },
+    "root_path": {
+      "$ref": "#/$defs/nonEmptyString"
+    },
+    "input": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "inline",
+            "path"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "path"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "path"
+            ]
+          }
+        }
+      ],
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "topic_view": {
+      "type": "object"
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "artifact_count",
+        "requirement_count",
+        "selected_count",
+        "matched_count",
+        "explicit_include_count",
+        "explicit_exclude_count",
+        "conflict_count"
+      ],
+      "properties": {
+        "artifact_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "requirement_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "selected_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "matched_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "explicit_include_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "explicit_exclude_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "conflict_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warning_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/topicViewFinding"
+      }
+    },
+    "selected_requirements": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/topicViewRequirementResult"
+      }
+    },
+    "explicitly_excluded_requirements": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/topicViewRequirementResult"
+      }
+    }
+  },
+  "patternProperties": {
+    "^x_[A-Za-z0-9_]+$": {}
+  },
+  "additionalProperties": false
+}

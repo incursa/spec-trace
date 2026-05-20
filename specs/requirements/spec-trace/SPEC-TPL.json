@@ -13,7 +13,7 @@
     "json"
   ],
   "purpose": "Define the canonical JSON field model and requirement grammar used by the standard.",
-  "scope": "This specification covers canonical JSON field names, requirement record shape, normative keyword usage, optional trace data, requirement title guidance, trace-field semantics, lineage and upstream-reference labels, inline identifier reference syntax inside JSON string fields, and the reference JSON templates for specification, architecture, work-item, and verification artifacts.",
+  "scope": "This specification covers canonical JSON field names, requirement record shape, normative keyword usage, optional coverage expectations, optional trace data, requirement title guidance, trace-field semantics, lineage and upstream-reference labels, inline identifier reference syntax inside JSON string fields, and the reference JSON templates for specification, architecture, work-item, and verification artifacts.",
   "context": "The standard needs predictable authored data, but the requirement itself should not be hidden under record-management boilerplate. Core JSON fields stay fixed, and repositories may add optional local extension fields when they do not redefine the core shape.",
   "requirements": [
     {
@@ -255,6 +255,25 @@
       "notes": [
         "Whole-document links remain appropriate when the target is the specification artifact as a whole.",
         "This rule governs navigation precision in derived views, not identifier extraction from canonical JSON strings."
+      ]
+    },
+    {
+      "id": "REQ-TPL-0033",
+      "title": "Allow requirement coverage expectations",
+      "statement": "The canonical requirement form MAY add an optional `coverage` object after the normative `statement` field.",
+      "coverage": {
+        "positive": "required",
+        "negative": "required",
+        "edge": "optional",
+        "fuzz": "not_applicable"
+      },
+      "notes": [
+        "The `coverage` object records expected evidence dimensions for the requirement, not actual code, test, or runtime evidence.",
+        "When authors use `coverage`, they MUST include the `positive`, `negative`, `edge`, and `fuzz` keys so omitted dimensions are represented explicitly by `not_applicable` or `deferred`.",
+        "The initial canonical coverage dimensions are `positive`, `negative`, `edge`, and `fuzz`.",
+        "The initial canonical coverage statuses are `required`, `optional`, `not_applicable`, and `deferred`.",
+        "Use `required` when the dimension is expected as part of normal verification, `optional` when it is useful but not mandatory, `not_applicable` when the dimension does not meaningfully apply, and `deferred` when the expectation is intentionally postponed.",
+        "Performance and other non-functional concerns should usually be modeled as separate requirements rather than implied through a functional requirement's coverage settings."
       ]
     }
   ]

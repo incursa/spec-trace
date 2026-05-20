@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "model.schema.json",
   "title": "SpecTrace Canonical Artifact Model",
-  "description": "Authoritative JSON Schema for canonical SpecTrace artifacts, evidence snapshots, retired requirement ledgers, and generated catalogs.",
+  "description": "Authoritative JSON Schema for canonical SpecTrace artifacts, topic-view selection objects, evidence snapshots, retired requirement ledgers, and generated catalogs.",
   "oneOf": [
     {
       "$ref": "#/$defs/specificationArtifact"
@@ -79,6 +79,15 @@
         "not_observed",
         "not_collected",
         "unsupported"
+      ]
+    },
+    "coverageStatus": {
+      "type": "string",
+      "enum": [
+        "required",
+        "optional",
+        "not_applicable",
+        "deferred"
       ]
     },
     "specificationId": {
@@ -239,6 +248,34 @@
       },
       "additionalProperties": false
     },
+    "requirementCoverage": {
+      "type": "object",
+      "description": "Expected coverage dimensions for a requirement. This is authored expectation metadata, not actual test, code, or runtime evidence.",
+      "required": [
+        "positive",
+        "negative",
+        "edge",
+        "fuzz"
+      ],
+      "properties": {
+        "positive": {
+          "$ref": "#/$defs/coverageStatus"
+        },
+        "negative": {
+          "$ref": "#/$defs/coverageStatus"
+        },
+        "edge": {
+          "$ref": "#/$defs/coverageStatus"
+        },
+        "fuzz": {
+          "$ref": "#/$defs/coverageStatus"
+        }
+      },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
     "requirement": {
       "type": "object",
       "required": [
@@ -255,6 +292,9 @@
         },
         "statement": {
           "$ref": "#/$defs/requirementStatement"
+        },
+        "coverage": {
+          "$ref": "#/$defs/requirementCoverage"
         },
         "trace": {
           "$ref": "#/$defs/requirementTrace"
@@ -715,6 +755,273 @@
           "$ref": "#/$defs/requirementEvidenceList"
         }
       },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "topicViewCaseMode": {
+      "type": "string",
+      "enum": [
+        "sensitive",
+        "insensitive"
+      ]
+    },
+    "topicViewSelector": {
+      "type": "string",
+      "enum": [
+        "requirement.id",
+        "requirement.title",
+        "requirement.statement",
+        "requirement.notes",
+        "requirement.trace.upstream_refs",
+        "requirement.trace.related",
+        "requirement.trace.derived_from",
+        "requirement.trace.supersedes",
+        "requirement.trace.satisfied_by",
+        "requirement.trace.implemented_by",
+        "requirement.trace.verified_by",
+        "artifact.artifact_id",
+        "artifact.title",
+        "artifact.capability",
+        "artifact.tags"
+      ]
+    },
+    "topicViewSelectorList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/topicViewSelector"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "topicViewRequirementIdList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/requirementId"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "topicViewLiteralClause": {
+      "type": "object",
+      "required": [
+        "fields",
+        "value",
+        "case"
+      ],
+      "properties": {
+        "fields": {
+          "$ref": "#/$defs/topicViewSelectorList"
+        },
+        "value": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "case": {
+          "$ref": "#/$defs/topicViewCaseMode"
+        }
+      },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "topicViewRegexClause": {
+      "type": "object",
+      "required": [
+        "fields",
+        "pattern",
+        "case"
+      ],
+      "properties": {
+        "fields": {
+          "$ref": "#/$defs/topicViewSelectorList"
+        },
+        "pattern": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "case": {
+          "$ref": "#/$defs/topicViewCaseMode"
+        }
+      },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "topicViewRequirementIdsClause": {
+      "type": "object",
+      "required": [
+        "values"
+      ],
+      "properties": {
+        "values": {
+          "$ref": "#/$defs/topicViewRequirementIdList"
+        }
+      },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "topicViewPredicate": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/topicViewAllPredicate"
+        },
+        {
+          "$ref": "#/$defs/topicViewAnyPredicate"
+        },
+        {
+          "$ref": "#/$defs/topicViewNotPredicate"
+        },
+        {
+          "$ref": "#/$defs/topicViewLiteralPredicate"
+        },
+        {
+          "$ref": "#/$defs/topicViewRegexPredicate"
+        },
+        {
+          "$ref": "#/$defs/topicViewRequirementIdsPredicate"
+        }
+      ]
+    },
+    "topicViewAllPredicate": {
+      "type": "object",
+      "required": [
+        "all"
+      ],
+      "properties": {
+        "all": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/topicViewPredicate"
+          },
+          "minItems": 1
+        }
+      },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "topicViewAnyPredicate": {
+      "type": "object",
+      "required": [
+        "any"
+      ],
+      "properties": {
+        "any": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/topicViewPredicate"
+          },
+          "minItems": 1
+        }
+      },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "topicViewNotPredicate": {
+      "type": "object",
+      "required": [
+        "not"
+      ],
+      "properties": {
+        "not": {
+          "$ref": "#/$defs/topicViewPredicate"
+        }
+      },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "topicViewLiteralPredicate": {
+      "type": "object",
+      "required": [
+        "literal"
+      ],
+      "properties": {
+        "literal": {
+          "$ref": "#/$defs/topicViewLiteralClause"
+        }
+      },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "topicViewRegexPredicate": {
+      "type": "object",
+      "required": [
+        "regex"
+      ],
+      "properties": {
+        "regex": {
+          "$ref": "#/$defs/topicViewRegexClause"
+        }
+      },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "topicViewRequirementIdsPredicate": {
+      "type": "object",
+      "required": [
+        "requirement_ids"
+      ],
+      "properties": {
+        "requirement_ids": {
+          "$ref": "#/$defs/topicViewRequirementIdsClause"
+        }
+      },
+      "patternProperties": {
+        "^x_[A-Za-z0-9_]+$": {}
+      },
+      "additionalProperties": false
+    },
+    "topicViewDefinition": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "description": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "match": {
+          "$ref": "#/$defs/topicViewPredicate"
+        },
+        "include_requirements": {
+          "$ref": "#/$defs/topicViewRequirementIdList"
+        },
+        "exclude_requirements": {
+          "$ref": "#/$defs/topicViewRequirementIdList"
+        }
+      },
+      "allOf": [
+        {
+          "anyOf": [
+            {
+              "required": [
+                "match"
+              ]
+            },
+            {
+              "required": [
+                "include_requirements"
+              ]
+            }
+          ]
+        }
+      ],
       "patternProperties": {
         "^x_[A-Za-z0-9_]+$": {}
       },

@@ -55,10 +55,31 @@ Each requirement should carry:
 - `id`
 - `title`
 - `statement`
+- optional `coverage`
 - optional `trace`
 - optional `notes`
 
 Use the clause for the normative behavior. Use `notes` for rationale, examples, and clarifications.
+
+### Coverage
+
+Use `coverage` when you want to state which evidence dimensions you expect a requirement to have, not which evidence already exists.
+
+If you use `coverage`, include all four keys. Use `not_applicable` or `deferred` when a dimension does not need active coverage instead of omitting that key.
+
+- `positive` covers normal success cases.
+- `negative` covers rejection, error, or invalid-input cases.
+- `edge` covers boundary conditions and other edge cases.
+- `fuzz` covers randomized, robustness, or adversarial checks.
+
+Use these statuses inside the coverage object:
+
+- `required` means the dimension is expected and should be provided.
+- `optional` means the dimension is useful but not mandatory.
+- `not_applicable` means the dimension does not make sense for the requirement.
+- `deferred` means the dimension is expected later but is intentionally not required yet.
+
+Coverage is authored expectation metadata. It does not report actual code coverage, test results, or runtime evidence. If a performance or other non-functional concern needs explicit treatment, model it as a separate requirement instead of implying it through the coverage settings on a functional requirement.
 
 ### Architecture
 
@@ -82,6 +103,7 @@ Verification artifacts link through `verifies`. If the listed requirements do no
 
 - Artifact-to-artifact references use stable artifact IDs such as `SPEC-...`, `ARC-...`, `WI-...`, and `VER-...`.
 - Requirement trace uses stable IDs in structured fields such as `satisfied_by`, `implemented_by`, `verified_by`, `derived_from`, `supersedes`, and `related`.
+- Requirement coverage uses the canonical keys `positive`, `negative`, `edge`, and `fuzz` with the status values `required`, `optional`, `not_applicable`, and `deferred`.
 - Lineage references may point at retired requirement IDs when those IDs are present in [`catalog/retired-requirements.json`](./catalog/retired-requirements.json).
 - Inline identifier references use backticks around stable IDs in string fields. They are lightweight mentions, not structured trace edges.
 
@@ -102,14 +124,20 @@ Verification artifacts link through `verifies`. If the listed requirements do no
 ./scripts/Build-SpecTraceCatalog.ps1
 ```
 
-6. Validate generated evidence snapshots when a tool emits `*.evidence.json`:
+6. Resolve a portable topic view when you want a machine-readable requirement slice:
+
+```powershell
+./scripts/Resolve-SpecTraceTopicView.ps1 -TopicViewPath ./specs/requirements/spec-trace/SPEC-TOP.json
+```
+
+7. Validate generated evidence snapshots when a tool emits `*.evidence.json`:
 
 ```powershell
 ./scripts/Validate-SpecTraceEvidence.ps1
 ./scripts/Validate-SpecTraceEvidence.ps1 -EvidencePath ./examples/arithmetic/generated/division-evidence.evidence.json
 ```
 
-7. Generate a derived repository attestation report when you want summary, detail, and per-spec HTML views:
+8. Generate a derived repository attestation report when you want summary, detail, and per-spec HTML views:
 
 ```powershell
 ./scripts/Render-SpecTraceAttestation.ps1
@@ -123,6 +151,7 @@ Verification artifacts link through `verifies`. If the listed requirements do no
 - `./scripts/Test-SpecTraceRepository.ps1 -Profile auditable`
 - `./scripts/Test-SpecTraceRepository.ps1 -JsonReportPath ./specs/generated/validation-report.json`
 - `./scripts/Build-SpecTraceCatalog.ps1 -JsonOutputPath ./specs/generated/spec-trace-catalog.json`
+- `./scripts/Resolve-SpecTraceTopicView.ps1 -TopicViewJson '{ "name": "sample", "include_requirements": ["REQ-SAMPLE-0001"] }'`
 - `./scripts/Validate-SpecTraceEvidence.ps1 -EvidencePath ./examples/calculator-int/generated`
 - `./scripts/Render-SpecTraceAttestation.ps1 -InputPath ./examples/calculator-int -Emit both`
 

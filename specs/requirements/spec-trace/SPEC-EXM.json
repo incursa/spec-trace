@@ -13,7 +13,7 @@
     "reference-material"
   ],
   "purpose": "Define what the worked examples must demonstrate so the standard feels concrete instead of ceremonial.",
-  "scope": "This specification covers the example sets, the traceability chain they demonstrate, inline identifier reference examples, and the requirement that the examples stay aligned with the canonical templates and schemas.",
+  "scope": "This specification covers the example sets, the traceability chain they demonstrate, requirement coverage expectations, inline identifier reference examples, and the requirement that the examples stay aligned with the canonical templates and schemas.",
   "context": "Examples are where readers decide whether the standard is practical. The package therefore needs both a product-style example and a narrow technical example.",
   "requirements": [
     {
@@ -84,6 +84,22 @@
       "notes": [
         "Useful dimensions include downstream trace, verification coverage,\nevidence-by-kind, and source coverage when the example includes source\nmaterial.",
         "The view remains derived output and does not become a fifth artifact family."
+      ]
+    },
+    {
+      "id": "REQ-EXM-0011",
+      "title": "Demonstrate requirement coverage expectations",
+      "statement": "Worked examples SHOULD show `coverage` expectations on requirements when the example needs to distinguish expected positive, negative, edge, or fuzz evidence dimensions.",
+      "coverage": {
+        "positive": "required",
+        "negative": "optional",
+        "edge": "optional",
+        "fuzz": "deferred"
+      },
+      "notes": [
+        "Example coverage expectations remain authored metadata; generated evidence snapshots and reporting views are separate.",
+        "Examples can use `required`, `optional`, `not_applicable`, and `deferred` to show the intended distinction.",
+        "If a concern such as performance needs its own evidence model, it SHOULD usually be represented as a separate requirement instead of being implied through coverage settings on a functional requirement."
       ]
     }
   ]

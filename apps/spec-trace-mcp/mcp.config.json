@@ -1,0 +1,7 @@
+{
+  "displayName": "SpecTrace Documentation",
+  "serverName": "spec-trace-docs",
+  "namespace": "spec-trace",
+  "packageName": "@incursa/spec-trace-mcp",
+  "summary": "A deterministic Cloudflare Worker MCP docs server built from SpecTrace markdown documentation."
+}

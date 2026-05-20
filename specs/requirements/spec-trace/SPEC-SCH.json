@@ -13,13 +13,13 @@
     "tooling"
   ],
   "purpose": "Define the authoritative JSON Schema contracts and repository validation rules that support the standard without prescribing one service or database.",
-  "scope": "This specification covers the authoritative JSON Schema package, repository-wide catalog validation, generated evidence snapshot contracts, inline identifier reference handling inside canonical JSON string fields, and the validation capabilities expected from tooling.",
-  "context": "The standard depends on compact requirement records, explicit trace links, lightweight upstream lineage, and repository-level graph checks. Tooling needs an authoritative schema and a repository-wide catalog so references behave like foreign keys instead of loose prose.",
+  "scope": "This specification covers the authoritative JSON Schema package, repository-wide catalog validation, generated evidence snapshot contracts, topic-view definition contracts, requirement coverage expectations, inline identifier reference handling inside canonical JSON string fields, and the validation capabilities expected from tooling.",
+  "context": "The standard depends on compact requirement records, explicit trace links, lightweight upstream lineage, portable derived-view selection objects, and repository-level graph checks. Tooling needs authoritative schemas and a repository-wide catalog so references behave like foreign keys instead of loose prose.",
   "requirements": [
     {
       "id": "REQ-SCH-0001",
       "title": "Provide schemas for the core extracted shapes",
-      "statement": "The reference package MUST provide authoritative JSON Schema definitions for canonical artifact metadata, identifier policy metadata, compact requirement records, requirement trace fields, generated evidence snapshots, and work-item trace fields."
+      "statement": "The reference package MUST provide authoritative JSON Schema definitions for canonical artifact metadata, identifier policy metadata, compact requirement records, requirement trace fields, generated evidence snapshots, topic-view definitions, and work-item trace fields."
     },
     {
       "id": "REQ-SCH-0002",
@@ -223,6 +223,64 @@
           "SPEC-EVD"
         ]
       }
+    },
+    {
+      "id": "REQ-SCH-0028",
+      "title": "Validate requirement coverage expectations",
+      "statement": "The authoritative JSON Schema MUST validate an optional `coverage` object on requirements that requires the `positive`, `negative`, `edge`, and `fuzz` keys and limits their values to `required`, `optional`, `not_applicable`, and `deferred`.",
+      "coverage": {
+        "positive": "required",
+        "negative": "required",
+        "edge": "required",
+        "fuzz": "not_applicable"
+      },
+      "notes": [
+        "The `coverage` object is requirement-side expectation metadata, not test or runtime evidence.",
+        "Repositories can omit `coverage` when they do not want to state expectations yet."
+      ]
+    },
+    {
+      "id": "REQ-SCH-0029",
+      "title": "Provide a schema for topic view definitions",
+      "statement": "The reference package MUST provide authoritative JSON Schema definitions for portable topic view definitions, including the standard top-level keys, the closed selector vocabulary, recursive boolean operators, literal and regex predicates, exact requirement identifier predicates, and explicit include and exclude arrays.",
+      "trace": {
+        "related": [
+          "SPEC-TOP"
+        ]
+      },
+      "notes": [
+        "The schema validates structure and operator composition rather than any one user interface syntax.",
+        "Portable selectors are limited to the standard vocabulary defined by `SPEC-TOP`."
+      ]
+    },
+    {
+      "id": "REQ-SCH-0030",
+      "title": "Validate topic view definitions with the shared schema",
+      "statement": "Validation tooling SHOULD be able to validate portable topic view definitions against the shared schema and report malformed operators, case modes, requirement identifiers, or selector lists, including selectors outside the portable vocabulary.",
+      "trace": {
+        "related": [
+          "SPEC-TOP"
+        ]
+      },
+      "notes": [
+        "This keeps derived selection objects testable without prescribing one authoring UI.",
+        "A tool may expose the validation capability through a command, an API, or a library call."
+      ]
+    },
+    {
+      "id": "REQ-SCH-0031",
+      "title": "Provide a schema for topic view result objects",
+      "statement": "The reference package MUST provide authoritative JSON Schema definitions for portable topic-view result objects, including normalized input metadata, repository root context, summary counts, selected requirements, explicit exclusions, and match provenance when reported.",
+      "trace": {
+        "related": [
+          "SPEC-TOP",
+          "SPEC-RPT"
+        ]
+      },
+      "notes": [
+        "This schema defines the machine-readable result emitted by topic-view lookup tooling.",
+        "The result contract stays subordinate to the input selection semantics."
+      ]
     }
   ]
 }

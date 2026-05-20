@@ -32,6 +32,7 @@ It demonstrates:
 
 - a single specification file containing multiple related requirements
 - compact requirement clauses
+- authored `coverage` expectations on requirements where the example needs to distinguish positive, negative, edge, or fuzz evidence
 - traceability to architecture, work items, verification, and generated evidence
 - optional upstream lineage and source references where the requirement history needs it
 - inline identifier references in clauses, `notes`, and descriptive prose
@@ -44,6 +45,7 @@ It demonstrates:
 
 - a single narrow specification file
 - method-level and edge-case requirements
+- authored `coverage` expectations that stay separate from generated evidence
 - stable requirement IDs that can be referenced directly by tooling-produced evidence
 - inline identifier references that keep shared rules visible without duplicating trace blocks
 - verification artifacts with one shared status per artifact

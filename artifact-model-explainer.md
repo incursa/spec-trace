@@ -14,6 +14,7 @@ The standard uses four core artifact families:
 - `architecture` means how the requirement is intended to be satisfied
 - `work_item` means what implementation work is or was done
 - `verification` means how the requirement was checked and what shared outcome was recorded
+- requirements may also carry a `coverage` object that says which evidence dimensions are expected
 
 Those are different roles on purpose. None of them replaces the requirement text itself.
 
@@ -50,6 +51,7 @@ Use these distinctions:
 - `Upstream Refs` are upstream provenance
 - `Derived From` and `Supersedes` are lineage
 - generated evidence snapshots record implementation observations such as `unit_test`, `code_ref`, `benchmark`, or `manual_test`
+- requirement `coverage` expectations are authored metadata, not evidence; they describe what kinds of evidence are expected, not what already exists
 
 Only `Satisfied By`, `Implemented By`, and `Verified By` are canonical downstream trace edges.
 

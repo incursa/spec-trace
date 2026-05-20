@@ -1,0 +1,11 @@
+{
+  "name": "spec-trace",
+  "private": true,
+  "scripts": {
+    "build:mcp": "npm --prefix apps/spec-trace-mcp run build:mcp",
+    "dev:mcp": "npm --prefix apps/spec-trace-mcp run dev:mcp",
+    "test": "npm --prefix apps/spec-trace-mcp run test && dotnet test spec-trace.sln",
+    "verify": "npm run build:mcp && npm test",
+    "deploy:mcp": "npm --prefix apps/spec-trace-mcp run deploy:mcp"
+  }
+}

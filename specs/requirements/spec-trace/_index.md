@@ -11,6 +11,7 @@ Canonical entry points:
 - [`SPEC-LIN.json`](./SPEC-LIN.json) - trace lineage and requirement evolution
 - [`SPEC-PRF.json`](./SPEC-PRF.json) - conformance profiles and enforcement levels
 - [`SPEC-RPT.json`](./SPEC-RPT.json) - derived reporting dimensions and attestation views
+- [`SPEC-TOP.json`](./SPEC-TOP.json) - topic views and JSON selection semantics
 - [`SPEC-EVD.json`](./SPEC-EVD.json) - generated evidence snapshots and merge semantics
 - [`SPEC-LAY.json`](./SPEC-LAY.json) - repository layout and artifact placement
 - [`SPEC-TPL.json`](./SPEC-TPL.json) - canonical field model and requirement grammar

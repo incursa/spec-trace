@@ -1,0 +1,7 @@
+name = "spec-trace-docs"
+main = "dist/mcp/worker.mjs"
+compatibility_date = "2026-04-01"
+
+[vars]
+# Keep any Cloudflare route or load-balancer path aligned with this prefix.
+MCP_PATH_PREFIX = "/spec-trace"

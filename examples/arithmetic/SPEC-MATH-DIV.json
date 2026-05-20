@@ -22,6 +22,12 @@
       "id": "REQ-MATH-DIV-0001",
       "title": "Require numerator and denominator inputs",
       "statement": "Each divide request MUST provide both a numerator and a denominator value.",
+      "coverage": {
+        "positive": "required",
+        "negative": "required",
+        "edge": "optional",
+        "fuzz": "not_applicable"
+      },
       "trace": {
         "satisfied_by": [
           "ARC-MATH-DIV-0001"
@@ -45,6 +51,12 @@
       "id": "REQ-MATH-DIV-0002",
       "title": "Return the quotient for a non-zero denominator",
       "statement": "The divide operation MUST return `numerator / denominator` when the denominator is not `0`.",
+      "coverage": {
+        "positive": "required",
+        "negative": "required",
+        "edge": "required",
+        "fuzz": "optional"
+      },
       "trace": {
         "satisfied_by": [
           "ARC-MATH-DIV-0001"
@@ -64,6 +76,12 @@
       "id": "REQ-MATH-DIV-0003",
       "title": "Reject a zero denominator",
       "statement": "The divide operation MUST reject `denominator = 0` with a divide-by-zero error.",
+      "coverage": {
+        "positive": "required",
+        "negative": "required",
+        "edge": "required",
+        "fuzz": "optional"
+      },
       "trace": {
         "satisfied_by": [
           "ARC-MATH-DIV-0001"

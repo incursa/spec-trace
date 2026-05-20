@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace SpecTrace.Tool;
 
 public static class CommandDispatcher
@@ -21,6 +23,11 @@ public static class CommandDispatcher
                 "validate" => await RunValidateAsync(rootPath, inputPath, GetOption(args, "--profile") ?? "core", GetOption(args, "--json-report")),
                 "build-catalog" => await RunBuildCatalogAsync(rootPath, inputPath, GetOption(args, "--json-out")),
                 "validate-evidence" => await RunValidateEvidenceAsync(rootPath, GetOptionValues(args, "--evidence-path")),
+                "resolve-topic-view" => await RunResolveTopicViewAsync(
+                    rootPath,
+                    inputPath,
+                    GetOption(args, "--topic-view-path"),
+                    GetOption(args, "--topic-view-json")),
                 "generate-attestation" => await RunGenerateAttestationAsync(
                     rootPath,
                     inputPath,
@@ -216,6 +223,42 @@ public static class CommandDispatcher
         return 0;
     }
 
+    private static async Task<int> RunResolveTopicViewAsync(string rootPath, string? inputPath, string? topicViewPath, string? topicViewJson)
+    {
+        var hasPath = !string.IsNullOrWhiteSpace(topicViewPath);
+        var hasJson = !string.IsNullOrWhiteSpace(topicViewJson);
+
+        if (hasPath == hasJson)
+        {
+            Console.Error.WriteLine("Provide exactly one of --topic-view-path or --topic-view-json.");
+            return 1;
+        }
+
+        var artifacts = await CanonicalJsonLoader.LoadArtifactsAsync(rootPath, inputPath);
+        var schemaValidator = JsonSchemaValidator.Load(rootPath);
+        var resolvedTopicViewPath = hasPath
+            ? ResolveTopicViewPath(rootPath, topicViewPath!)
+            : null;
+        var topicViewInput = hasPath
+            ? new TopicViewInputModel
+            {
+                Kind = "path",
+                Path = CanonicalJsonLoader.NormalizeRepoPath(rootPath, resolvedTopicViewPath!),
+            }
+            : new TopicViewInputModel
+            {
+                Kind = "inline",
+            };
+
+        var topicViewDefinition = hasPath
+            ? schemaValidator.LoadTopicViewDefinition(rootPath, resolvedTopicViewPath!)
+            : LoadTopicViewFromJson(rootPath, topicViewJson!);
+
+        var result = TopicViewResolver.Resolve(rootPath, topicViewInput, topicViewDefinition, artifacts);
+        Console.WriteLine(result.ToJson());
+        return 0;
+    }
+
     private static string? GetOption(string[] args, string optionName)
     {
         for (var index = 0; index < args.Length - 1; index++)
@@ -274,6 +317,34 @@ public static class CommandDispatcher
         Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- validate [--root <path>] [--input-path <path>] [--profile core|traceable|auditable] [--json-report <path>]");
         Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- build-catalog [--root <path>] [--input-path <path>] [--json-out <path>]");
         Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- validate-evidence [--root <path>] [--evidence-path <file-or-dir>]...");
+        Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- resolve-topic-view [--root <path>] [--input-path <path>] (--topic-view-path <path> | --topic-view-json <json>)");
         Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- generate-attestation [--root <path>] [--input-path <path>] [--profile core|traceable|auditable] [--emit html|json|both] [--out-dir <path>] [--evidence-path <file-or-dir>]...");
+    }
+
+    private static JsonElement LoadTopicViewFromJson(string rootPath, string json)
+    {
+        var tempPath = Path.Combine(Path.GetTempPath(), $"spec-trace-topic-view-{Guid.NewGuid():N}.json");
+        File.WriteAllText(tempPath, json);
+
+        try
+        {
+            return JsonSchemaValidator.Load(rootPath).LoadTopicViewDefinition(rootPath, tempPath);
+        }
+        finally
+        {
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
+        }
+    }
+
+    private static string ResolveTopicViewPath(string rootPath, string topicViewPath)
+    {
+        var fullPath = Path.IsPathRooted(topicViewPath)
+            ? topicViewPath
+            : Path.Combine(rootPath, topicViewPath);
+
+        return Path.GetFullPath(fullPath);
     }
 }

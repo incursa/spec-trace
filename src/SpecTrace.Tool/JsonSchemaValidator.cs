@@ -11,12 +11,16 @@ internal sealed class JsonSchemaValidator
     private readonly JsonSchema _artifactSchema;
     private readonly JsonSchema _evidenceSchema;
     private readonly JsonSchema _retiredLedgerSchema;
+    private readonly JsonSchema _topicViewSchema;
+    private readonly JsonSchema _topicViewResultSchema;
 
-    private JsonSchemaValidator(JsonSchema artifactSchema, JsonSchema evidenceSchema, JsonSchema retiredLedgerSchema)
+    private JsonSchemaValidator(JsonSchema artifactSchema, JsonSchema evidenceSchema, JsonSchema retiredLedgerSchema, JsonSchema topicViewSchema, JsonSchema topicViewResultSchema)
     {
         _artifactSchema = artifactSchema;
         _evidenceSchema = evidenceSchema;
         _retiredLedgerSchema = retiredLedgerSchema;
+        _topicViewSchema = topicViewSchema;
+        _topicViewResultSchema = topicViewResultSchema;
     }
 
     public static JsonSchemaValidator Load(string rootPath)
@@ -26,7 +30,9 @@ internal sealed class JsonSchemaValidator
             _cached ??= new JsonSchemaValidator(
                 LoadSchema(Path.Combine(rootPath, "model", "model.schema.json")),
                 LoadSchema(Path.Combine(rootPath, "schemas", "evidence-snapshot.schema.json")),
-                LoadSchema(Path.Combine(rootPath, "schemas", "retired-requirement-ledger.schema.json")));
+                LoadSchema(Path.Combine(rootPath, "schemas", "retired-requirement-ledger.schema.json")),
+                LoadSchema(Path.Combine(rootPath, "schemas", "topic-view.schema.json")),
+                LoadSchema(Path.Combine(rootPath, "schemas", "topic-view-result.schema.json")));
 
             return _cached;
         }
@@ -45,6 +51,16 @@ internal sealed class JsonSchemaValidator
     public EvidenceSnapshotModel LoadEvidenceSnapshot(string rootPath, string jsonPath)
     {
         return LoadAndDeserialize<EvidenceSnapshotModel>(_evidenceSchema, rootPath, jsonPath, "evidence snapshot");
+    }
+
+    public JsonElement LoadTopicViewDefinition(string rootPath, string jsonPath)
+    {
+        return LoadAndDeserialize<JsonElement>(_topicViewSchema, rootPath, jsonPath, "topic view definition");
+    }
+
+    public JsonElement LoadTopicViewResult(string rootPath, string jsonPath)
+    {
+        return LoadAndDeserialize<JsonElement>(_topicViewResultSchema, rootPath, jsonPath, "topic view result");
     }
 
     private static T LoadAndDeserialize<T>(JsonSchema schema, string rootPath, string jsonPath, string documentKind)

@@ -15,6 +15,7 @@ The canonical standard lives under [`specs/requirements/spec-trace/`](./specs/re
 
 - The canonical static model uses four artifact families: `specification`, `architecture`, `work_item`, and `verification`.
 - Requirements are the smallest normative unit and live inside a specification artifact.
+- Requirements may optionally declare `coverage` expectations for positive, negative, edge, and fuzz evidence dimensions.
 - Requirement clauses use the approved uppercase keyword set: `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, and `MAY`.
 - Structured trace uses stable IDs. `Satisfied By`, `Implemented By`, and `Verified By` are downstream trace. `Derived From` and `Supersedes` are lineage. `Upstream Refs` are provenance. `Related` is a loose association.
 - Generated evidence snapshots, coverage rollups, attestation views, and catalogs are derived outputs.
@@ -36,6 +37,7 @@ Concrete artifacts live under [`specs/`](./specs/) and [`examples/`](./examples/
 ```powershell
 ./scripts/Test-SpecTraceRepository.ps1 -Profile core
 ./scripts/Build-SpecTraceCatalog.ps1
+./scripts/Resolve-SpecTraceTopicView.ps1
 ./scripts/Validate-SpecTraceEvidence.ps1
 ./scripts/Render-SpecTraceAttestation.ps1
 ./scripts/Sync-PublishModule.ps1
@@ -47,6 +49,7 @@ Useful variants:
 - `./scripts/Test-SpecTraceRepository.ps1 -Profile auditable`
 - `./scripts/Test-SpecTraceRepository.ps1 -JsonReportPath ./specs/generated/validation-report.json`
 - `./scripts/Build-SpecTraceCatalog.ps1 -JsonOutputPath ./specs/generated/spec-trace-catalog.json`
+- `./scripts/Resolve-SpecTraceTopicView.ps1 -TopicViewPath ./specs/requirements/spec-trace/SPEC-TOP.json`
 - `./scripts/Validate-SpecTraceEvidence.ps1 -EvidencePath ./examples/arithmetic/generated/division-evidence.evidence.json`
 - `./scripts/Render-SpecTraceAttestation.ps1 -Profile core -OutDir ./artifacts/spec-trace/attestation`
 
@@ -74,3 +77,16 @@ The repository validation path is deterministic and local:
 ## Publishing
 
 [`publish/`](./publish/) is synchronized from the root schema and templates by [`scripts/Sync-PublishModule.ps1`](./scripts/Sync-PublishModule.ps1). It intentionally excludes the self-specification suite, examples, and repository tooling so downstream consumers can package or mirror just the reusable schema and template surface.
+
+## MCP Docs Server
+
+The repository now includes a deterministic, markdown-first MCP docs server under [`apps/spec-trace-mcp/`](./apps/spec-trace-mcp/).
+
+- Authored docs live in [`apps/spec-trace-mcp/content/`](./apps/spec-trace-mcp/content/)
+- Server identity is centralized in [`apps/spec-trace-mcp/mcp.config.json`](./apps/spec-trace-mcp/mcp.config.json)
+- The public MCP path prefix defaults to `/spec-trace` and is configurable in [`apps/spec-trace-mcp/wrangler.toml`](./apps/spec-trace-mcp/wrangler.toml)
+- Build the compiled MCP artifacts with `npm run build:mcp`
+- Run the combined repository test suite with `npm test`
+- The server README covers local development, authoring rules, the build pipeline, tests, and Cloudflare deployment
+
+The server exposes the repository-specific docs surface as browsable HTML and MCP resources without any LLM calls, runtime crawling, or database lookups.

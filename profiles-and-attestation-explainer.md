@@ -34,6 +34,8 @@ The lineage and provenance fields are different:
 
 Generated evidence is different again. Evidence snapshots may record `unit_test`, `code_ref`, `manual_test`, `benchmark`, `fuzz`, or other repository-policy observations, but they are derived outputs rather than part of the canonical downstream trace graph.
 
+Requirement `coverage` is different from both. It lives on the authored requirement record and expresses expected evidence dimensions such as positive, negative, edge, and fuzz coverage using status values like required, optional, not_applicable, and deferred.
+
 ## Profiles In Practice
 
 The canonical profile names are `core`, `traceable`, and `auditable`.
@@ -63,7 +65,7 @@ That does not automatically mean:
 - a release gate used by every repository
 - that every implementation detail has been hand-cataloged in the requirement
 
-Live status comes from derived evidence reporting, not from the canonical requirement text.
+Live status comes from derived evidence reporting, not from the canonical requirement text. Requirement `coverage` only states the expected evidence dimensions; it does not report whether those dimensions have already been satisfied.
 
 ## Incremental Adoption
 

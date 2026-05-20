@@ -1,0 +1,245 @@
+{
+  "artifact_id": "SPEC-TOP",
+  "artifact_type": "specification",
+  "title": "Topic Views and JSON Selection Semantics",
+  "domain": "spec-trace",
+  "capability": "topic-views",
+  "status": "draft",
+  "owner": "spec-trace-maintainers",
+  "tags": [
+    "spec-trace",
+    "reporting",
+    "topic-views",
+    "query"
+  ],
+  "purpose": "Define a portable JSON selection model for derived topic views so repositories can slice requirements by concern without hand-maintained per-requirement tags.",
+  "scope": "This specification covers derived topic views, the canonical JSON selection-object model, standard top-level keys, predicate grammar, boolean operator semantics, literal and regular-expression matching, exact identifier matching, declared field selectors, explicit requirement inclusion and exclusion, deterministic evaluation order, and match provenance for derived requirement slices.",
+  "context": "Large requirement sets need trustworthy alternate views such as protocol-area, subsystem, or priority slices. Hand-maintained tags drift, but a derived selection model can be regenerated from canonical repository state, refined with explicit overrides, and audited through match provenance. That only works when the selection object has concrete portable semantics rather than tool-specific intuition.",
+  "supplemental_sections": [
+    {
+      "heading": "Illustrative Topic View Definition",
+      "content": "The following non-normative example shows the intended JSON-first shape for a derived topic view.\n\n```json\n{\n  \"name\": \"tls-topic\",\n  \"description\": \"Select requirements related to TLS behavior in QUIC.\",\n  \"match\": {\n    \"all\": [\n      {\n        \"any\": [\n          {\n            \"literal\": {\n              \"fields\": [\n                \"requirement.title\",\n                \"requirement.statement\",\n                \"requirement.notes\",\n                \"requirement.trace.upstream_refs\"\n              ],\n              \"value\": \"TLS\",\n              \"case\": \"insensitive\"\n            }\n          },\n          {\n            \"regex\": {\n              \"fields\": [\n                \"requirement.statement\",\n                \"requirement.notes\",\n                \"requirement.trace.upstream_refs\"\n              ],\n              \"pattern\": \"\\\\b(handshake|certificate|resumption|0-RTT|key schedule)\\\\b\",\n              \"case\": \"insensitive\"\n            }\n          }\n        ]\n      },\n      {\n        \"not\": {\n          \"requirement_ids\": {\n            \"values\": [\n              \"REQ-QUIC-LOSS-0017\"\n            ]\n          }\n        }\n      }\n    ]\n  },\n  \"include_requirements\": [\n    \"REQ-QUIC-TLS-0001\"\n  ],\n  \"exclude_requirements\": [\n    \"REQ-QUIC-LOSS-0017\"\n  ]\n}\n```\n\nTooling may expose other authoring syntaxes, but the canonical interchange form remains a JSON object with explicit operators and fields."
+    },
+    {
+      "heading": "Evaluation Summary",
+      "content": "The following non-normative summary captures the intended evaluation flow for one requirement candidate.\n\n1. Build the evaluation context from the requirement record and its containing specification artifact.\n2. Evaluate the optional `match` predicate recursively against that context.\n3. Mark the requirement as explicitly included when its identifier appears in `include_requirements`.\n4. Mark the requirement as explicitly excluded when its identifier appears in `exclude_requirements`.\n5. Produce the final result by applying the recursive `match` result, then explicit inclusion, then explicit exclusion.\n\nThis summary is subordinate to the normative `REQ-TOP-...` clauses."
+    },
+    {
+      "heading": "Initial Standard Field Selectors",
+      "content": "The portable selector vocabulary for topic-view evaluation is limited to `requirement.id`, `requirement.title`, `requirement.statement`, `requirement.notes`, `requirement.trace.upstream_refs`, `requirement.trace.related`, `requirement.trace.derived_from`, `requirement.trace.supersedes`, `requirement.trace.satisfied_by`, `requirement.trace.implemented_by`, `requirement.trace.verified_by`, `artifact.artifact_id`, `artifact.title`, `artifact.capability`, and `artifact.tags`.\n\nTool-specific authoring conveniences may map to this vocabulary, but portable topic-view definitions do not add additional selector names."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "REQ-TOP-0001",
+      "title": "Keep topic views derived rather than hand-maintained tags",
+      "statement": "Topic views MUST be treated as derived selection and reporting inputs over canonical repository artifacts rather than as hand-maintained per-requirement tag state.",
+      "trace": {
+        "related": [
+          "SPEC-STD",
+          "SPEC-RPT"
+        ]
+      },
+      "notes": [
+        "A repository may still cache or publish the resulting requirement slice as a derived output.",
+        "The topic view definition is an input to derived reporting, not a new canonical requirement field."
+      ]
+    },
+    {
+      "id": "REQ-TOP-0002",
+      "title": "Use one standard top-level JSON object shape",
+      "statement": "A portable topic view definition MUST use a JSON object whose standard top-level keys are `name`, `description`, `match`, `include_requirements`, and `exclude_requirements`.",
+      "notes": [
+        "`name` is required.",
+        "`description`, `match`, `include_requirements`, and `exclude_requirements` are optional unless another requirement in this specification makes one necessary for validity."
+      ]
+    },
+    {
+      "id": "REQ-TOP-0003",
+      "title": "Require one positive selection path",
+      "statement": "A topic view definition MUST provide at least one of `match` or `include_requirements`.",
+      "notes": [
+        "`exclude_requirements` may refine the final selection, but it MUST NOT be the only selection path."
+      ]
+    },
+    {
+      "id": "REQ-TOP-0004",
+      "title": "Allow alternate authoring syntaxes only as projections",
+      "statement": "Tooling MAY offer query strings, forms, or other authoring surfaces when they preserve the full meaning of the canonical JSON selection model.",
+      "notes": [
+        "A UI may compile user input into the JSON selection object before evaluation or persistence.",
+        "Lossy projection is not acceptable for the canonical interchange form."
+      ]
+    },
+    {
+      "id": "REQ-TOP-0005",
+      "title": "Evaluate topic views per requirement",
+      "statement": "Topic-view evaluation MUST evaluate each canonical requirement independently while making the requirement's containing specification artifact available as evaluation context.",
+      "notes": [
+        "The evaluated unit is the requirement.",
+        "Artifact fields are available because topic views often need specification-level capability or tag context."
+      ]
+    },
+    {
+      "id": "REQ-TOP-0006",
+      "title": "Use one operator per predicate object",
+      "statement": "Each predicate object in `match` MUST contain exactly one of `all`, `any`, `not`, `literal`, `regex`, or `requirement_ids`."
+    },
+    {
+      "id": "REQ-TOP-0007",
+      "title": "Support explicit boolean composition",
+      "statement": "The canonical selection model MUST support conjunction, disjunction, and negation through the `all`, `any`, and `not` predicate operators.",
+      "notes": [
+        "Operator names such as `all`, `any`, and `not` are one valid expression style.",
+        "The semantics matter more than any one UI syntax."
+      ]
+    },
+    {
+      "id": "REQ-TOP-0008",
+      "title": "Define conjunction semantics",
+      "statement": "An `all` predicate MUST evaluate to true only when every child predicate in its array evaluates to true for the current requirement.",
+      "notes": [
+        "An `all` predicate array contains one or more child predicates."
+      ]
+    },
+    {
+      "id": "REQ-TOP-0009",
+      "title": "Define disjunction semantics",
+      "statement": "An `any` predicate MUST evaluate to true when at least one child predicate in its array evaluates to true for the current requirement.",
+      "notes": [
+        "An `any` predicate array contains one or more child predicates."
+      ]
+    },
+    {
+      "id": "REQ-TOP-0010",
+      "title": "Define negation semantics",
+      "statement": "A `not` predicate MUST evaluate to the logical negation of its single child predicate for the current requirement."
+    },
+    {
+      "id": "REQ-TOP-0011",
+      "title": "Keep predicates grounded in canonical fields",
+      "statement": "Text-match predicates MUST target named canonical requirement fields or named containing-artifact fields rather than only opaque rendered document text.",
+      "trace": {
+        "related": [
+          "SPEC-TPL",
+          "SPEC-SCH"
+        ]
+      },
+      "notes": [
+        "This keeps topic-view membership explainable against stable source fields.",
+        "Tooling may still offer whole-document convenience search as a non-canonical assistive feature."
+      ]
+    },
+    {
+      "id": "REQ-TOP-0012",
+      "title": "Define the initial standard field-selector vocabulary",
+      "statement": "The standard field-selector vocabulary for portable topic-view definitions MUST be limited to `requirement.id`, `requirement.title`, `requirement.statement`, `requirement.notes`, `requirement.trace.upstream_refs`, `requirement.trace.related`, `requirement.trace.derived_from`, `requirement.trace.supersedes`, `requirement.trace.satisfied_by`, `requirement.trace.implemented_by`, `requirement.trace.verified_by`, `artifact.artifact_id`, `artifact.title`, `artifact.capability`, and `artifact.tags`."
+    },
+    {
+      "id": "REQ-TOP-0013",
+      "title": "Treat missing optional fields as empty",
+      "statement": "When a selected optional field is absent from the current requirement or containing artifact, evaluation MUST treat that selector as yielding no values for the current requirement."
+    },
+    {
+      "id": "REQ-TOP-0014",
+      "title": "Match arrays by member",
+      "statement": "When a selected field yields an array of strings or identifiers, a text or identifier predicate MUST evaluate that field as zero or more independent values and succeed when any one value matches."
+    },
+    {
+      "id": "REQ-TOP-0015",
+      "title": "Support literal matching over declared fields",
+      "statement": "A `literal` predicate MUST declare one or more field selectors, one `value` string, and one `case` mode."
+    },
+    {
+      "id": "REQ-TOP-0016",
+      "title": "Define literal substring semantics",
+      "statement": "A `literal` predicate MUST evaluate to true when at least one selected field value contains the declared literal character sequence after applying the declared case mode.",
+      "notes": [
+        "A literal predicate performs plain substring matching rather than regular-expression evaluation."
+      ]
+    },
+    {
+      "id": "REQ-TOP-0017",
+      "title": "Use explicit case modes for text predicates",
+      "statement": "The `case` mode for `literal` and `regex` predicates MUST be either `sensitive` or `insensitive`."
+    },
+    {
+      "id": "REQ-TOP-0018",
+      "title": "Use one regex dialect for portable matching",
+      "statement": "A `regex` predicate MUST declare one or more field selectors, one `pattern` string, one `case` mode, and ECMAScript regular expression syntax compatible with the JSON Schema regex model.",
+      "notes": [
+        "Tooling should reject patterns it cannot evaluate faithfully rather than silently reinterpret them with a different engine-specific meaning."
+      ]
+    },
+    {
+      "id": "REQ-TOP-0019",
+      "title": "Define regex match semantics",
+      "statement": "A `regex` predicate MUST evaluate to true when at least one selected field value matches the declared pattern after applying the declared case mode."
+    },
+    {
+      "id": "REQ-TOP-0020",
+      "title": "Support exact identifier-set matching",
+      "statement": "A `requirement_ids` predicate MUST evaluate to true when the current requirement identifier exactly matches one of the `REQ-...` identifiers listed in its `values` array."
+    },
+    {
+      "id": "REQ-TOP-0021",
+      "title": "Support explicit requirement overrides",
+      "statement": "A topic view definition MUST support explicit requirement inclusion and explicit requirement exclusion by `REQ-...` identifier through the `include_requirements` and `exclude_requirements` arrays."
+    },
+    {
+      "id": "REQ-TOP-0022",
+      "title": "Define deterministic override precedence",
+      "statement": "When `match`, `include_requirements`, and `exclude_requirements` disagree, explicit exclusion MUST take precedence over explicit inclusion and predicate results.",
+      "notes": [
+        "A repository may also report contradictory explicit membership as a lint or warning.",
+        "Explicit inclusion still allows curated addition of true positives that broad predicates miss."
+      ]
+    },
+    {
+      "id": "REQ-TOP-0023",
+      "title": "Define final membership order",
+      "statement": "Final topic-view membership MUST be evaluated in this order for each requirement: recursive `match` result, then explicit inclusion, then explicit exclusion, then final decision.",
+      "notes": [
+        "If `match` is absent, its result is false.",
+        "A requirement is included when it is not explicitly excluded and either the recursive `match` result is true or the requirement is explicitly included."
+      ]
+    },
+    {
+      "id": "REQ-TOP-0024",
+      "title": "Allow curated explicit-only views",
+      "statement": "A topic view definition MAY rely only on explicit requirement inclusion, optionally paired with explicit exclusions, without any search predicate.",
+      "notes": [
+        "This supports curated views such as top-priority slices."
+      ]
+    },
+    {
+      "id": "REQ-TOP-0025",
+      "title": "Keep topic-view evaluation reproducible",
+      "statement": "Topic-view evaluation MUST be deterministic for a given repository state and topic view definition."
+    },
+    {
+      "id": "REQ-TOP-0026",
+      "title": "Report match provenance when practical",
+      "statement": "Tooling that evaluates a topic view SHOULD be able to report which predicates, explicit overrides, literals, or regular expressions caused each included or excluded requirement outcome.",
+      "trace": {
+        "related": [
+          "SPEC-RPT",
+          "SPEC-SCH"
+        ]
+      },
+      "notes": [
+        "Provenance is what makes a regenerated topic view auditable rather than a black box.",
+        "A human reviewer should be able to inspect why a requirement is or is not in the view."
+      ]
+    },
+    {
+      "id": "REQ-TOP-0027",
+      "title": "Allow local conveniences without widening the portable schema",
+      "statement": "Tooling MAY expose local convenience selectors or authoring shortcuts in non-portable surfaces when those conveniences compile to the standard field-selector vocabulary before persistence or exchange.",
+      "notes": [
+        "This leaves room for repository-specific authoring helpers without creating a second portable selector language.",
+        "Portable tooling should treat non-standard selector names as an authoring-time concern rather than a canonical interchange concern."
+      ]
+    }
+  ]
+}
