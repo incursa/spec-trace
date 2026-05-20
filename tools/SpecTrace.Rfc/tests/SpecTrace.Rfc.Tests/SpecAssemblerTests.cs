@@ -174,6 +174,58 @@ public sealed class SpecAssemblerTests
     }
 
     [Fact]
+    public void AssembleIgnoresSectionStyleHintWithoutSourceSection()
+    {
+        var ledger = new[]
+        {
+            new SourceUnit
+            {
+                SourceUnitId = "RFC8999-S5P1-B3-P3-S1",
+                SourceId = "RFC8999",
+                Section = "5.1",
+                SectionTitle = "Long Header",
+                BlockIndex = 3,
+                ParagraphIndex = 3,
+                SentenceIndex = 1,
+                BlockKind = "paragraph",
+                Text = "The Version field MUST contain a 32-bit version.",
+                SourceUrl = "https://www.rfc-editor.org/rfc/rfc8999.html#section-5.1",
+                TextHash = "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+            },
+        }.ToDictionary(unit => unit.SourceUnitId, StringComparer.Ordinal);
+
+        var artifact = SpecAssembler.AssembleFromCandidates(
+            [
+                new CandidateDecision
+                {
+                    SourceUnitId = "RFC8999-S5P1-B3-P3-S1",
+                    Decision = "emit",
+                    Requirements =
+                    [
+                        new CandidateRequirement
+                        {
+                            ProposedIdHint = "REQ-QUIC-RFC8999-0001",
+                            Title = "Version Field",
+                            Statement = "The Version field MUST contain a 32-bit version.",
+                        },
+                    ],
+                },
+            ],
+            ledger,
+            new SpecAssemblyOptions
+            {
+                SpecId = "SPEC-QUIC-RFC8999",
+                Domain = "quic",
+                Capability = "quic-rfc8999",
+                Title = "QUIC RFC 8999 Requirements",
+                Owner = "protocol-team",
+                Purpose = "Capture QUIC RFC 8999 requirements.",
+            });
+
+        Assert.Equal("REQ-QUIC-RFC8999-S5P1-0001", Assert.Single(artifact.Requirements).Id);
+    }
+
+    [Fact]
     public void AssembleRejectsStatementsWithMultipleNormativeKeywords()
     {
         var ledger = new Dictionary<string, SourceUnit>(StringComparer.Ordinal);

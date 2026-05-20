@@ -118,7 +118,7 @@ public static class SpecAssembler
             if (!_options.IgnoreIdHints &&
                 !string.IsNullOrWhiteSpace(candidate.ProposedIdHint) &&
                 CandidateRules.IsRequirementId(candidate.ProposedIdHint) &&
-                RequirementHintAllowed(candidate.ProposedIdHint) &&
+                RequirementHintAllowed(candidate.ProposedIdHint, sourceUnitIds) &&
                 _usedIds.Add(candidate.ProposedIdHint))
             {
                 return candidate.ProposedIdHint;
@@ -165,12 +165,14 @@ public static class SpecAssembler
             return null;
         }
 
-        private bool RequirementHintAllowed(string requirementId)
+        private bool RequirementHintAllowed(string requirementId, IReadOnlyList<string> sourceUnitIds)
         {
             if (string.Equals(_options.IdStyle, "section", StringComparison.OrdinalIgnoreCase))
             {
                 var prefix = _options.RequirementPrefix ?? $"REQ-{_specificationNamespace}";
-                return requirementId.StartsWith(prefix + "-", StringComparison.Ordinal);
+                var sourceUnit = ResolveFirstSourceUnit(sourceUnitIds);
+                var sectionKey = sourceUnit is null ? "S0" : RfcSegmenter.SectionKey(sourceUnit.Section);
+                return requirementId.StartsWith($"{prefix}-{sectionKey}-", StringComparison.Ordinal);
             }
 
             if (!string.IsNullOrWhiteSpace(_options.RequirementPrefix))
