@@ -18,11 +18,15 @@ public sealed class CodexExtractionOptions
 
     public string WorkingDirectory { get; init; } = Directory.GetCurrentDirectory();
 
-    public int BatchSize { get; init; } = 50;
+    public int BatchSize { get; init; } = 1;
 
     public int MaxBatchRetries { get; init; } = 2;
 
     public int BatchTimeoutSeconds { get; init; } = 300;
+
+    public string ExtractionScope { get; init; } = "candidate-units";
+
+    public string AiMode { get; init; } = "codex";
 
     public string? RawOutputDirectory { get; init; }
 }

@@ -169,7 +169,8 @@ public static class SpecAssembler
         {
             if (string.Equals(_options.IdStyle, "section", StringComparison.OrdinalIgnoreCase))
             {
-                return true;
+                var prefix = _options.RequirementPrefix ?? $"REQ-{_specificationNamespace}";
+                return requirementId.StartsWith(prefix + "-", StringComparison.Ordinal);
             }
 
             if (!string.IsNullOrWhiteSpace(_options.RequirementPrefix))

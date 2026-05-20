@@ -122,6 +122,58 @@ public sealed class SpecAssemblerTests
     }
 
     [Fact]
+    public void AssembleIgnoresSectionHintOutsideSpecificationNamespace()
+    {
+        var ledger = new[]
+        {
+            new SourceUnit
+            {
+                SourceUnitId = "RFC8999-SA-B13-P13-S2",
+                SourceId = "RFC8999",
+                Section = "A",
+                SectionTitle = "Version Negotiation Packet",
+                BlockIndex = 13,
+                ParagraphIndex = 13,
+                SentenceIndex = 2,
+                BlockKind = "paragraph",
+                Text = "A receiver MUST ignore unused bits.",
+                SourceUrl = "https://www.rfc-editor.org/rfc/rfc8999.html#appendix-A",
+                TextHash = "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+            },
+        }.ToDictionary(unit => unit.SourceUnitId, StringComparer.Ordinal);
+
+        var artifact = SpecAssembler.AssembleFromCandidates(
+            [
+                new CandidateDecision
+                {
+                    SourceUnitId = "RFC8999-SA-B13-P13-S2",
+                    Decision = "emit",
+                    Requirements =
+                    [
+                        new CandidateRequirement
+                        {
+                            ProposedIdHint = "REQ-RFC8999-SA-0001",
+                            Title = "Ignore unused bits",
+                            Statement = "A receiver MUST ignore unused bits.",
+                        },
+                    ],
+                },
+            ],
+            ledger,
+            new SpecAssemblyOptions
+            {
+                SpecId = "SPEC-QUIC-RFC8999",
+                Domain = "quic",
+                Capability = "quic-rfc8999",
+                Title = "QUIC RFC 8999 Requirements",
+                Owner = "protocol-team",
+                Purpose = "Capture QUIC RFC 8999 requirements.",
+            });
+
+        Assert.Equal("REQ-QUIC-RFC8999-SA-0001", Assert.Single(artifact.Requirements).Id);
+    }
+
+    [Fact]
     public void AssembleRejectsStatementsWithMultipleNormativeKeywords()
     {
         var ledger = new Dictionary<string, SourceUnit>(StringComparer.Ordinal);
