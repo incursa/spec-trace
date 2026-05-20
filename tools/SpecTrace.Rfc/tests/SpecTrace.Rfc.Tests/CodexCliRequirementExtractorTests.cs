@@ -6,7 +6,51 @@ namespace SpecTrace.Rfc.Tests;
 public sealed class CodexCliRequirementExtractorTests
 {
     [Fact]
-    public async Task ExtractAsyncWithAiDisabledPreservesOneDecisionPerSourceUnit()
+    public async Task ExtractAsyncDefaultsToAiReviewForEverySourceUnit()
+    {
+        var tempDirectory = Path.Combine(Path.GetTempPath(), "spec-trace-rfc-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDirectory);
+        try
+        {
+            var ledgerPath = Path.Combine(tempDirectory, "ledger.jsonl");
+            var promptPath = Path.Combine(tempDirectory, "prompt.md");
+            var candidatesPath = Path.Combine(tempDirectory, "candidates.jsonl");
+            await File.WriteAllTextAsync(promptPath, "Extract requirements.");
+            await Jsonl.WriteAsync(
+                ledgerPath,
+                new[]
+                {
+                    SourceUnit("RFC8999-S5P1-B5-P5-S1", blockKind: "figure", text: "Packet { Field (8) }"),
+                    SourceUnit("RFC8999-S5P1-B6-P6-S1", text: "The first bit of a long header packet MUST be set to 1."),
+                    SourceUnit("RFC8999-S5P1-B7-P7-S1", text: "Note."),
+                });
+
+            var count = await new CodexCliRequirementExtractor().ExtractAsync(new CodexExtractionOptions
+            {
+                LedgerPath = ledgerPath,
+                OutputPath = candidatesPath,
+                PromptPath = promptPath,
+                SchemaPath = Path.Combine(tempDirectory, "schema.json"),
+                AiMode = "off",
+            });
+
+            var decisions = await Jsonl.ReadAsync<CandidateDecision>(candidatesPath);
+
+            Assert.Equal(3, count);
+            Assert.All(decisions, decision =>
+            {
+                Assert.Equal("needs_human_review", decision.Decision);
+                Assert.Contains("ai_disabled_candidate_unit", decision.ReviewFlags);
+            });
+        }
+        finally
+        {
+            Directory.Delete(tempDirectory, recursive: true);
+        }
+    }
+
+    [Fact]
+    public async Task ExtractAsyncCanUseOptInDeterministicFigureExtraction()
     {
         var tempDirectory = Path.Combine(Path.GetTempPath(), "spec-trace-rfc-tests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(tempDirectory);
@@ -33,7 +77,7 @@ Long Header Packet {
                         text: "The first bit of a long header packet MUST be set to 1."),
                     SourceUnit(
                         "RFC8999-S5P1-B7-P7-S1",
-                        text: "This sentence is explanatory."),
+                        text: "Note."),
                 });
 
             var count = await new CodexCliRequirementExtractor().ExtractAsync(new CodexExtractionOptions
@@ -43,6 +87,8 @@ Long Header Packet {
                 PromptPath = promptPath,
                 SchemaPath = Path.Combine(tempDirectory, "schema.json"),
                 AiMode = "off",
+                ExtractionScope = "functional",
+                DeterministicExtractionMode = "figures",
             });
 
             var decisions = await Jsonl.ReadAsync<CandidateDecision>(candidatesPath);

@@ -83,7 +83,8 @@ internal static class RfcCommandDispatcher
             BatchSize = batchSize,
             MaxBatchRetries = int.Parse(GetOption(args, "--max-batch-retries") ?? "2"),
             BatchTimeoutSeconds = int.Parse(GetOption(args, "--batch-timeout-seconds") ?? "300"),
-            ExtractionScope = GetOption(args, "--extraction-scope") ?? "candidate-units",
+            ExtractionScope = GetOption(args, "--extraction-scope") ?? "all",
+            DeterministicExtractionMode = GetOption(args, "--deterministic-extraction") ?? "off",
             AiMode = GetOption(args, "--ai-mode") ?? "codex",
             CodexCommand = GetOption(args, "--codex") ?? "codex",
             Model = GetOption(args, "--model") ?? "gpt-5.4-mini",
@@ -238,7 +239,7 @@ internal static class RfcCommandDispatcher
         Console.WriteLine("  spec-rfc ingest --rfc <number> --out <source.json> [--source-id <id>] [--title <title>]");
         Console.WriteLine("  spec-rfc ingest --source <path-or-url> --out <source.json> [--source-id <id>] [--title <title>]");
         Console.WriteLine("  spec-rfc segment --source <source.json> --out <source-ledger.jsonl>");
-        Console.WriteLine("  spec-rfc extract --ledger <source-ledger.jsonl> --out <candidates.jsonl> [--extraction-scope candidate-units|all] [--ai-mode codex|off] [--batch-size 1] [--max-batch-retries 2] [--batch-timeout-seconds 300] [--model gpt-5.4-mini] [--reasoning-effort xhigh] [--raw-out-dir <dir>]");
+        Console.WriteLine("  spec-rfc extract --ledger <source-ledger.jsonl> --out <candidates.jsonl> [--extraction-scope all|functional|normative] [--deterministic-extraction off|figures] [--ai-mode codex|off] [--batch-size 1] [--max-batch-retries 2] [--batch-timeout-seconds 300] [--model gpt-5.4-mini] [--reasoning-effort xhigh] [--raw-out-dir <dir>]");
         Console.WriteLine("  spec-rfc review-pack --ledger <source-ledger.jsonl> --candidates <candidates.jsonl> --out <review.md>");
         Console.WriteLine("  spec-rfc assemble --ledger <source-ledger.jsonl> (--candidates <candidates.jsonl> | --review <review-decisions.jsonl>) --spec-id <SPEC-ID> --out <SPEC-ID.json> [--domain <domain>] [--capability <capability>] [--id-style section|namespace]");
         Console.WriteLine("  spec-rfc validate [--root <repo>] [--input-path <path>] [--profile core|traceable|auditable]");

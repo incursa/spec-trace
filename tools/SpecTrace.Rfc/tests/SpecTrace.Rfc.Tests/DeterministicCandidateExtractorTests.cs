@@ -25,15 +25,39 @@ Long Header Packet {
         Assert.NotNull(decision);
         Assert.Equal("emit", decision.Decision);
         Assert.Contains("deterministic_figure_extraction", decision.ReviewFlags);
-        Assert.Equal(8, decision.Requirements.Count);
+        Assert.Equal(10, decision.Requirements.Count);
         Assert.Contains(decision.Requirements, requirement =>
             requirement.Statement == "The first bit of a QUIC long header packet MUST be set to 1.");
         Assert.Contains(decision.Requirements, requirement =>
             requirement.Statement == "The other seven bits in the first byte of a QUIC long header packet MUST be version-specific.");
         Assert.Contains(decision.Requirements, requirement =>
-            requirement.Statement == "The Destination Connection ID field MUST follow its length byte and be between 0 and 255 bytes long.");
+            requirement.Statement == "The Destination Connection ID field MUST follow its length byte.");
+        Assert.Contains(decision.Requirements, requirement =>
+            requirement.Statement == "The Destination Connection ID field MUST be between 0 and 255 bytes long.");
         Assert.All(decision.Requirements, requirement =>
             Assert.Equal(1, CandidateRules.CountNormativeKeywords(requirement.Statement)));
+    }
+
+    [Fact]
+    public void ExtractedPacketStructureRequirementsKeepFieldPositionAndSizeSeparate()
+    {
+        var sourceUnit = Figure("""
+Long Header Packet {
+  Destination Connection ID Length (8),
+  Destination Connection ID (0..2040),
+}
+""");
+
+        var requirements = DeterministicCandidateExtractor.TryExtract(sourceUnit)!.Requirements;
+
+        Assert.Contains(requirements, requirement =>
+            requirement.Title == "Destination Connection ID Position" &&
+            requirement.Statement == "The Destination Connection ID field MUST follow its length byte.");
+        Assert.Contains(requirements, requirement =>
+            requirement.Title == "Destination Connection ID Size" &&
+            requirement.Statement == "The Destination Connection ID field MUST be between 0 and 255 bytes long.");
+        Assert.DoesNotContain(requirements, requirement =>
+            requirement.Statement.Contains("follow its length byte and be", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -64,11 +88,14 @@ Transport Parameter {
     }
 
     [Theory]
-    [InlineData("paragraph", "This is explanatory.", false)]
+    [InlineData("paragraph", "This is explanatory.", true)]
+    [InlineData("paragraph", "Short.", false)]
     [InlineData("paragraph", "An endpoint MUST validate the field.", true)]
+    [InlineData("paragraph", "The default for this transport parameter is 0, which indicates that the endpoint does not support DATAGRAM frames.", true)]
+    [InlineData("paragraph", "QUIC uses various frame types to transmit data within packets.", true)]
     [InlineData("table", "Field | Value", true)]
     [InlineData("figure", "Packet { Field (8) }", true)]
-    public void CandidateScopeOnlySendsLikelyRequirementUnitsToAi(string blockKind, string text, bool expected)
+    public void FunctionalScopeSendsReviewableNonBoilerplateUnitsToAi(string blockKind, string text, bool expected)
     {
         var sourceUnit = new SourceUnit
         {
@@ -89,7 +116,49 @@ Transport Parameter {
     }
 
     [Fact]
-    public void CandidateScopeSkipsNonNormativeNotationFigures()
+    public void FunctionalScopeKeepsAbstractBehaviorForReview()
+    {
+        var sourceUnit = new SourceUnit
+        {
+            SourceUnitId = "RFC9000-S0-B4-P4-S2",
+            SourceId = "RFC9000",
+            Section = "0",
+            SectionTitle = "",
+            BlockIndex = 4,
+            ParagraphIndex = 4,
+            SentenceIndex = 2,
+            BlockKind = "paragraph",
+            Text = "QUIC provides applications with flow-controlled streams for structured communication.",
+            SourceUrl = "https://www.rfc-editor.org/rfc/rfc9000.html",
+            TextHash = "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+        };
+
+        Assert.True(DeterministicCandidateExtractor.ShouldSendToAi(sourceUnit));
+    }
+
+    [Fact]
+    public void FunctionalScopeSkipsLegalFrontMatter()
+    {
+        var sourceUnit = new SourceUnit
+        {
+            SourceUnitId = "RFC9000-S0-B11-P11-S1",
+            SourceId = "RFC9000",
+            Section = "0",
+            SectionTitle = "Front Matter",
+            BlockIndex = 11,
+            ParagraphIndex = 11,
+            SentenceIndex = 1,
+            BlockKind = "paragraph",
+            Text = "This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents.",
+            SourceUrl = "https://www.rfc-editor.org/rfc/rfc9000.html",
+            TextHash = "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+        };
+
+        Assert.False(DeterministicCandidateExtractor.ShouldSendToAi(sourceUnit));
+    }
+
+    [Fact]
+    public void FunctionalScopeKeepsNotationForReview()
     {
         var sourceUnit = new SourceUnit
         {
@@ -106,7 +175,43 @@ Transport Parameter {
             TextHash = "sha256:0000000000000000000000000000000000000000000000000000000000000000",
         };
 
-        Assert.False(DeterministicCandidateExtractor.ShouldSendToAi(sourceUnit));
+        Assert.True(DeterministicCandidateExtractor.ShouldSendToAi(sourceUnit));
+    }
+
+    [Fact]
+    public void FunctionalScopeSkipsPureCaptionsButNotFigureDescription()
+    {
+        var caption = new SourceUnit
+        {
+            SourceUnitId = "RFC9001-S4-B5-P5-S1",
+            SourceId = "RFC9001",
+            Section = "4",
+            SectionTitle = "Carrying TLS Messages",
+            BlockIndex = 5,
+            ParagraphIndex = 5,
+            SentenceIndex = 1,
+            BlockKind = "paragraph",
+            Text = "Table 1: Encryption Keys by Packet Type",
+            SourceUrl = "https://www.rfc-editor.org/rfc/rfc9001.html#section-4",
+            TextHash = "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+        };
+        var description = new SourceUnit
+        {
+            SourceUnitId = "RFC9001-S4-B5-P5-S2",
+            SourceId = "RFC9001",
+            Section = "4",
+            SectionTitle = "Carrying TLS Messages",
+            BlockIndex = 5,
+            ParagraphIndex = 5,
+            SentenceIndex = 2,
+            BlockKind = "paragraph",
+            Text = "Table 1 shows encryption keys by packet type.",
+            SourceUrl = "https://www.rfc-editor.org/rfc/rfc9001.html#section-4",
+            TextHash = "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+        };
+
+        Assert.False(DeterministicCandidateExtractor.ShouldSendToAi(caption));
+        Assert.True(DeterministicCandidateExtractor.ShouldSendToAi(description));
     }
 
     private static SourceUnit Figure(string text)

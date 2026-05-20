@@ -24,7 +24,9 @@ public sealed class CodexExtractionOptions
 
     public int BatchTimeoutSeconds { get; init; } = 300;
 
-    public string ExtractionScope { get; init; } = "candidate-units";
+    public string ExtractionScope { get; init; } = "all";
+
+    public string DeterministicExtractionMode { get; init; } = "off";
 
     public string AiMode { get; init; } = "codex";
 

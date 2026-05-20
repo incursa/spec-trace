@@ -26,6 +26,7 @@ public sealed class CodexCliRequirementExtractor
 
         ValidateExtractionScope(options.ExtractionScope);
         ValidateAiMode(options.AiMode);
+        ValidateDeterministicExtractionMode(options.DeterministicExtractionMode);
 
         var ledger = await Jsonl.ReadAsync<SourceUnit>(options.LedgerPath, cancellationToken);
         EnsureUniqueSourceUnitIds(ledger);
@@ -36,12 +37,15 @@ public sealed class CodexCliRequirementExtractor
 
         foreach (var sourceUnit in ledger)
         {
-            var deterministicDecision = DeterministicCandidateExtractor.TryExtract(sourceUnit);
-            if (deterministicDecision is not null)
+            if (ShouldExtractDeterministically(options, sourceUnit))
             {
-                CandidateRules.ValidateDecision(deterministicDecision);
-                decisionsBySourceUnitId[sourceUnit.SourceUnitId] = deterministicDecision;
-                continue;
+                var deterministicDecision = DeterministicCandidateExtractor.TryExtract(sourceUnit);
+                if (deterministicDecision is not null)
+                {
+                    CandidateRules.ValidateDecision(deterministicDecision);
+                    decisionsBySourceUnitId[sourceUnit.SourceUnitId] = deterministicDecision;
+                    continue;
+                }
             }
 
             if (ShouldSendToAi(options, sourceUnit))
@@ -86,9 +90,11 @@ public sealed class CodexCliRequirementExtractor
     private static void ValidateExtractionScope(string extractionScope)
     {
         if (!string.Equals(extractionScope, "all", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(extractionScope, "candidate-units", StringComparison.OrdinalIgnoreCase))
+            !string.Equals(extractionScope, "functional", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(extractionScope, "candidate-units", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(extractionScope, "normative", StringComparison.OrdinalIgnoreCase))
         {
-            throw new InvalidOperationException("--extraction-scope must be one of: all, candidate-units.");
+            throw new InvalidOperationException("--extraction-scope must be one of: all, functional, candidate-units, normative.");
         }
     }
 
@@ -98,6 +104,15 @@ public sealed class CodexCliRequirementExtractor
             !string.Equals(aiMode, "off", StringComparison.OrdinalIgnoreCase))
         {
             throw new InvalidOperationException("--ai-mode must be one of: codex, off.");
+        }
+    }
+
+    private static void ValidateDeterministicExtractionMode(string deterministicExtractionMode)
+    {
+        if (!string.Equals(deterministicExtractionMode, "off", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(deterministicExtractionMode, "figures", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException("--deterministic-extraction must be one of: off, figures.");
         }
     }
 
@@ -117,9 +132,17 @@ public sealed class CodexCliRequirementExtractor
         return options.ExtractionScope switch
         {
             var scope when string.Equals(scope, "all", StringComparison.OrdinalIgnoreCase) => true,
+            var scope when string.Equals(scope, "functional", StringComparison.OrdinalIgnoreCase) => DeterministicCandidateExtractor.ShouldSendToAi(sourceUnit),
             var scope when string.Equals(scope, "candidate-units", StringComparison.OrdinalIgnoreCase) => DeterministicCandidateExtractor.ShouldSendToAi(sourceUnit),
+            var scope when string.Equals(scope, "normative", StringComparison.OrdinalIgnoreCase) => DeterministicCandidateExtractor.HasNormativeKeywordOrStructuredBlock(sourceUnit),
             _ => false,
         };
+    }
+
+    private static bool ShouldExtractDeterministically(CodexExtractionOptions options, SourceUnit sourceUnit)
+    {
+        return string.Equals(options.DeterministicExtractionMode, "figures", StringComparison.OrdinalIgnoreCase) &&
+               string.Equals(sourceUnit.BlockKind, "figure", StringComparison.Ordinal);
     }
 
     private static CandidateDecision NeedsAiReview(SourceUnit sourceUnit)

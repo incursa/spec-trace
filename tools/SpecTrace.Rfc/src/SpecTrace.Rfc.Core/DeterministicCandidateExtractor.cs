@@ -9,6 +9,7 @@ public static class DeterministicCandidateExtractor
         @"^(?<name>[A-Za-z][A-Za-z0-9 _/-]*?)\s*\((?<length>[^)]+)\)(?:\s*=\s*(?<value>[^,]+))?(?:\s*\.\.\.)?$",
         RegexOptions.Compiled);
     private static readonly Regex NormativeKeyword = new(@"\b(?:MUST NOT|SHALL NOT|SHOULD NOT|MUST|SHALL|SHOULD|MAY)\b", RegexOptions.Compiled);
+    private static readonly Regex CaptionOnly = new(@"^(?:Figure|Table)\s+\d+\s*(?::.*)?$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     public static CandidateDecision? TryExtract(SourceUnit sourceUnit)
     {
@@ -59,11 +60,7 @@ public static class DeterministicCandidateExtractor
             var fixedValue = fieldMatch.Groups["value"].Success
                 ? fieldMatch.Groups["value"].Value.Trim()
                 : null;
-            var requirement = BuildRequirement(structureName, fieldName, length, fixedValue, previousFieldName);
-            if (requirement is not null)
-            {
-                requirements.Add(requirement);
-            }
+            requirements.AddRange(BuildRequirements(structureName, fieldName, length, fixedValue, previousFieldName));
 
             previousFieldName = fieldName;
         }
@@ -81,8 +78,24 @@ public static class DeterministicCandidateExtractor
 
     public static bool ShouldSendToAi(SourceUnit sourceUnit)
     {
+        if (IsDocumentBoilerplate(sourceUnit))
+        {
+            return false;
+        }
+
         var hasNormativeKeyword = NormativeKeyword.IsMatch(sourceUnit.Text);
-        if (IsNotationOnlySection(sourceUnit) && !hasNormativeKeyword)
+        if (string.Equals(sourceUnit.BlockKind, "figure", StringComparison.Ordinal) ||
+            string.Equals(sourceUnit.BlockKind, "table", StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        return hasNormativeKeyword || IsReviewableSourceUnit(sourceUnit);
+    }
+
+    public static bool HasNormativeKeywordOrStructuredBlock(SourceUnit sourceUnit)
+    {
+        if (IsDocumentBoilerplate(sourceUnit))
         {
             return false;
         }
@@ -93,7 +106,7 @@ public static class DeterministicCandidateExtractor
             return true;
         }
 
-        return hasNormativeKeyword;
+        return NormativeKeyword.IsMatch(sourceUnit.Text);
     }
 
     public static CandidateDecision Skip(SourceUnit sourceUnit)
@@ -107,7 +120,7 @@ public static class DeterministicCandidateExtractor
         };
     }
 
-    private static CandidateRequirement? BuildRequirement(
+    private static IEnumerable<CandidateRequirement> BuildRequirements(
         string structureName,
         string fieldName,
         string length,
@@ -121,49 +134,59 @@ public static class DeterministicCandidateExtractor
                 string.Equals(length, "1", StringComparison.Ordinal) &&
                 (fixedValue is "0" or "1"))
             {
-                return Requirement(
+                yield return Requirement(
                     title: "Header Form Bit",
                     statement: $"The first bit of a {structureDisplayName} MUST be set to {fixedValue}.");
+                yield break;
             }
 
-            return Requirement(
+            yield return Requirement(
                 title: $"{fieldName} fixed value",
                 statement: $"The {fieldName} field in a {structureDisplayName} MUST be set to {fixedValue}.");
+            yield break;
         }
 
         if (fieldName.Contains("Version-Specific Data", StringComparison.OrdinalIgnoreCase))
         {
-            return Requirement(
+            yield return Requirement(
                 title: "Version-Specific Remainder",
                 statement: $"The remainder of a {structureDisplayName} MUST contain version-specific content.");
+            yield break;
         }
 
         if (fieldName.Contains("Version-Specific", StringComparison.OrdinalIgnoreCase))
         {
             if (string.Equals(length, "7", StringComparison.Ordinal))
             {
-                return Requirement(
+                yield return Requirement(
                     title: fieldName,
                     statement: $"The other seven bits in the first byte of a {structureDisplayName} MUST be version-specific.");
+                yield break;
             }
 
-            return Requirement(
+            yield return Requirement(
                 title: fieldName,
                 statement: $"The {fieldName} field in a {structureDisplayName} MUST be version-specific.");
+            yield break;
         }
 
         if (TryDescribeRange(length, out var rangeDescription))
         {
             if (fieldName.EndsWith("Connection ID", StringComparison.OrdinalIgnoreCase))
             {
-                return Requirement(
+                yield return Requirement(
+                    title: $"{fieldName} Position",
+                    statement: $"The {fieldName} field MUST follow its length byte.");
+                yield return Requirement(
                     title: $"{fieldName} Size",
-                    statement: $"The {fieldName} field MUST follow its length byte and be {rangeDescription}.");
+                    statement: $"The {fieldName} field MUST be {rangeDescription}.");
+                yield break;
             }
 
-            return Requirement(
+            yield return Requirement(
                 title: $"{fieldName} Size",
                 statement: $"The {fieldName} field in a {structureDisplayName} MUST be {rangeDescription}.");
+            yield break;
         }
 
         if (int.TryParse(length, out var bitLength))
@@ -171,9 +194,10 @@ public static class DeterministicCandidateExtractor
             if (string.Equals(fieldName, "Version", StringComparison.OrdinalIgnoreCase) &&
                 bitLength == 32)
             {
-                return Requirement(
+                yield return Requirement(
                     title: "Version Field",
                     statement: $"The four bytes after the first byte in a {structureDisplayName} MUST contain a 32-bit Version field.");
+                yield break;
             }
 
             if (fieldName.EndsWith(" Length", StringComparison.OrdinalIgnoreCase) &&
@@ -181,17 +205,19 @@ public static class DeterministicCandidateExtractor
                 !string.IsNullOrWhiteSpace(previousFieldName))
             {
                 var encodedFieldName = fieldName[..^" Length".Length];
-                return Requirement(
+                yield return Requirement(
                     title: $"{fieldName} Encoding",
                     statement: $"The byte after the {previousFieldName} field MUST encode the {encodedFieldName} length as an 8-bit unsigned integer.");
+                yield break;
             }
 
-            return Requirement(
+            yield return Requirement(
                 title: fieldName,
                 statement: $"A {structureDisplayName} MUST contain {ArticleFor($"{bitLength}-bit")} {bitLength}-bit {fieldName} field.");
+            yield break;
         }
 
-        return Requirement(
+        yield return Requirement(
             title: fieldName,
             statement: $"The {fieldName} field in a {structureDisplayName} MUST be present.");
     }
@@ -284,8 +310,65 @@ public static class DeterministicCandidateExtractor
             : "a";
     }
 
-    private static bool IsNotationOnlySection(SourceUnit sourceUnit)
+    private static bool IsDocumentBoilerplate(SourceUnit sourceUnit)
     {
-        return string.Equals(sourceUnit.SectionTitle, "Notational Conventions", StringComparison.OrdinalIgnoreCase);
+        var text = sourceUnit.Text.Trim();
+        if (string.Equals(sourceUnit.Section, "0", StringComparison.Ordinal) &&
+            IsFrontMatterBoilerplateText(text))
+        {
+            return true;
+        }
+
+        if (IsBoilerplateSectionTitle(sourceUnit.SectionTitle))
+        {
+            return true;
+        }
+
+        return CaptionOnly.IsMatch(text);
+    }
+
+    private static bool IsReviewableSourceUnit(SourceUnit sourceUnit)
+    {
+        var text = sourceUnit.Text.Trim();
+        if (text.Length < 12)
+        {
+            return false;
+        }
+
+        return sourceUnit.BlockKind is "paragraph" or "list_item" or "figure" or "table";
+    }
+
+    private static bool IsBoilerplateSectionTitle(string sectionTitle)
+    {
+        return sectionTitle.Contains("References", StringComparison.OrdinalIgnoreCase) ||
+               sectionTitle.Equals("Acknowledgments", StringComparison.OrdinalIgnoreCase) ||
+               sectionTitle.Equals("Acknowledgements", StringComparison.OrdinalIgnoreCase) ||
+               sectionTitle.Equals("Contributors", StringComparison.OrdinalIgnoreCase) ||
+               sectionTitle.Equals("Authors' Addresses", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsFrontMatterBoilerplateText(string text)
+    {
+        if (text.Length < 12)
+        {
+            return true;
+        }
+
+        return text.Equals("Abstract", StringComparison.OrdinalIgnoreCase) ||
+               text.Equals("Status of This Memo", StringComparison.OrdinalIgnoreCase) ||
+               text.Equals("Copyright Notice", StringComparison.OrdinalIgnoreCase) ||
+               text.StartsWith("Internet Engineering Task Force", StringComparison.OrdinalIgnoreCase) ||
+               text.StartsWith("Request for Comments:", StringComparison.OrdinalIgnoreCase) ||
+               text.StartsWith("ISSN:", StringComparison.OrdinalIgnoreCase) ||
+               text.StartsWith("Copyright (c)", StringComparison.OrdinalIgnoreCase) ||
+               text.StartsWith("All rights reserved", StringComparison.OrdinalIgnoreCase) ||
+               text.StartsWith("This document is a product of the Internet Engineering Task Force", StringComparison.OrdinalIgnoreCase) ||
+               text.StartsWith("It represents the consensus of the IETF community", StringComparison.OrdinalIgnoreCase) ||
+               text.StartsWith("It has received public review", StringComparison.OrdinalIgnoreCase) ||
+               text.StartsWith("Further information on Internet Standards", StringComparison.OrdinalIgnoreCase) ||
+               text.StartsWith("Information about the current status of this document", StringComparison.OrdinalIgnoreCase) ||
+               text.StartsWith("This document is subject to BCP 78", StringComparison.OrdinalIgnoreCase) ||
+               text.StartsWith("Please review these documents carefully", StringComparison.OrdinalIgnoreCase) ||
+               text.StartsWith("Code Components extracted from this document", StringComparison.OrdinalIgnoreCase);
     }
 }

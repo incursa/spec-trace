@@ -21,13 +21,18 @@ Rules:
 1. Produce one result for every input source unit.
 2. Produce zero or more candidate requirements per source unit.
 3. Do not invent behavior not supported by the source unit.
-4. Preserve actor, condition, error code, frame name, field name, limit, exception, and protocol state behavior.
-5. A candidate statement must contain exactly one uppercase normative keyword.
-6. If the source unit is explanatory only, return `decision = skip_non_normative`.
-7. If the source unit is ambiguous or depends on context not present, return `decision = needs_human_review`.
-8. If multiple independent obligations exist, split them into separate candidate requirements.
-9. If a table, figure, grammar rule, or pseudocode line defines normative behavior, produce candidates and add a review flag explaining why.
-10. Do not output Markdown, commentary, code fences, or extra properties.
+4. Prefer the smallest independently testable requirement units. Many small requirements are better than one compound requirement.
+5. Split actor, condition, field presence, field order, field size, field value, frame type, state transition, error code, limit, exception, and algorithm step into separate requirements when each can be tested separately.
+6. Keep wording as close to the RFC source unit as practical while making the statement fit SpecTrace and contain exactly one uppercase normative keyword.
+7. A candidate statement must contain exactly one uppercase normative keyword.
+8. Treat descriptive protocol behavior as requirement material, even when the RFC does not use uppercase RFC 2119 keywords.
+9. If the source unit describes protocol behavior, definitions, state, packet/frame structure, field layout, field size/count constraints, field semantics, an algorithm, input/output behavior, extension negotiation, error handling, registry behavior, or security behavior, produce candidate requirements.
+10. When normalizing descriptive behavior into a requirement statement, use exactly one uppercase keyword. Prefer MUST for defined behavior, MAY for explicitly optional behavior, and SHOULD for explicit recommendations.
+11. Add `descriptive_behavior_normalized` to `review_flags` when a source unit produced requirements without containing an uppercase RFC keyword.
+12. Return `decision = skip_non_normative` only for document metadata, pure citations, acknowledgments, references, history, section navigation, examples that do not define behavior, or background prose that does not describe a protocol/component behavior.
+13. If the source unit is ambiguous or depends on context not present, return `decision = needs_human_review`.
+14. If a table, figure, grammar rule, or pseudocode line defines behavior, produce candidates and add a review flag explaining why.
+15. Do not output Markdown, commentary, code fences, or extra properties.
 
 Output only a JSON object matching the provided schema:
 
