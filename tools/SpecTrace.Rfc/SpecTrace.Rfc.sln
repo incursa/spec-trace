@@ -1,0 +1,39 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTrace.Rfc.Core", "src\SpecTrace.Rfc.Core\SpecTrace.Rfc.Core.csproj", "{47B4E32E-F967-4F35-A384-627648F58C01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTrace.Rfc.Ai", "src\SpecTrace.Rfc.Ai\SpecTrace.Rfc.Ai.csproj", "{9AC6D981-3F0D-4E7A-9294-2FE5D74DD6E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTrace.Rfc.Cli", "src\SpecTrace.Rfc.Cli\SpecTrace.Rfc.Cli.csproj", "{24D7D50E-9132-4248-81CC-1F628C71F0EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecTrace.Rfc.Tests", "tests\SpecTrace.Rfc.Tests\SpecTrace.Rfc.Tests.csproj", "{E5CD8B1C-F29D-48F4-9EA2-89745DD70377}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{47B4E32E-F967-4F35-A384-627648F58C01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47B4E32E-F967-4F35-A384-627648F58C01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47B4E32E-F967-4F35-A384-627648F58C01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47B4E32E-F967-4F35-A384-627648F58C01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AC6D981-3F0D-4E7A-9294-2FE5D74DD6E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AC6D981-3F0D-4E7A-9294-2FE5D74DD6E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AC6D981-3F0D-4E7A-9294-2FE5D74DD6E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AC6D981-3F0D-4E7A-9294-2FE5D74DD6E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24D7D50E-9132-4248-81CC-1F628C71F0EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24D7D50E-9132-4248-81CC-1F628C71F0EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24D7D50E-9132-4248-81CC-1F628C71F0EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24D7D50E-9132-4248-81CC-1F628C71F0EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5CD8B1C-F29D-48F4-9EA2-89745DD70377}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5CD8B1C-F29D-48F4-9EA2-89745DD70377}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5CD8B1C-F29D-48F4-9EA2-89745DD70377}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5CD8B1C-F29D-48F4-9EA2-89745DD70377}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

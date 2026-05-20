@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "candidate-requirements.schema.json",
+  "title": "SpecTrace RFC Candidate Requirement Batch",
+  "type": "object",
+  "required": [
+    "results"
+  ],
+  "properties": {
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/candidateDecision"
+      },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "coverageStatus": {
+      "type": "string",
+      "enum": [
+        "required",
+        "optional",
+        "not_applicable",
+        "deferred"
+      ]
+    },
+    "coverage": {
+      "type": "object",
+      "required": [
+        "positive",
+        "negative",
+        "edge",
+        "fuzz"
+      ],
+      "properties": {
+        "positive": {
+          "$ref": "#/$defs/coverageStatus"
+        },
+        "negative": {
+          "$ref": "#/$defs/coverageStatus"
+        },
+        "edge": {
+          "$ref": "#/$defs/coverageStatus"
+        },
+        "fuzz": {
+          "$ref": "#/$defs/coverageStatus"
+        }
+      },
+      "additionalProperties": false
+    },
+    "requirementStatement": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidateRequirement": {
+      "type": "object",
+      "required": [
+        "proposed_id_hint",
+        "title",
+        "statement",
+        "coverage",
+        "upstream_refs",
+        "notes"
+      ],
+      "properties": {
+        "proposed_id_hint": {
+          "type": "string",
+          "pattern": "^REQ-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "statement": {
+          "$ref": "#/$defs/requirementStatement"
+        },
+        "coverage": {
+          "$ref": "#/$defs/coverage"
+        },
+        "upstream_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "candidateDecision": {
+      "type": "object",
+      "required": [
+        "source_unit_id",
+        "decision",
+        "requirements",
+        "review_flags"
+      ],
+      "properties": {
+        "source_unit_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "emit",
+            "skip_non_normative",
+            "skip_duplicate",
+            "merge_with_previous",
+            "split_required",
+            "needs_human_review",
+            "gap"
+          ]
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/candidateRequirement"
+          }
+        },
+        "review_flags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "artifact_id": "SPEC-QUIC-RFC8999",
+  "artifact_type": "specification",
+  "title": "RFC 8999 Example Requirements",
+  "domain": "quic",
+  "capability": "quic-rfc8999",
+  "status": "draft",
+  "owner": "spec-maintainers",
+  "purpose": "Demonstrate RFC workbench assembly output without making this example authoritative.",
+  "requirements": [
+    {
+      "id": "REQ-QUIC-RFC8999-S1-0001",
+      "title": "Use stable requirement identifiers",
+      "statement": "QUIC implementations MUST use stable requirement identifiers when converting RFC text into SpecTrace requirements.",
+      "coverage": {
+        "positive": "required",
+        "negative": "required",
+        "edge": "optional",
+        "fuzz": "deferred"
+      },
+      "trace": {
+        "upstream_refs": [
+          "RFC 8999 §1 RFC8999-S1-B1-P1-S1",
+          "https://www.rfc-editor.org/rfc/rfc8999.html#section-1"
+        ]
+      },
+      "notes": [
+        "This is a synthetic example record for the RFC workbench pipeline."
+      ]
+    }
+  ]
+}

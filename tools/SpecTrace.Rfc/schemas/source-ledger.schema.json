@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "source-ledger.schema.json",
+  "title": "SpecTrace RFC Source Ledger Record",
+  "type": "object",
+  "required": [
+    "source_unit_id",
+    "source_id",
+    "section",
+    "section_title",
+    "block_index",
+    "paragraph_index",
+    "sentence_index",
+    "block_kind",
+    "text",
+    "text_hash"
+  ],
+  "properties": {
+    "source_unit_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9-]+-S[A-Z0-9]+(?:P[A-Z0-9]+)*-B[0-9]+-P[0-9]+-S[0-9]+$"
+    },
+    "source_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "section": {
+      "type": "string",
+      "minLength": 1
+    },
+    "section_title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "block_index": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "paragraph_index": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "sentence_index": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "block_kind": {
+      "type": "string",
+      "enum": [
+        "paragraph",
+        "list_item",
+        "table",
+        "figure"
+      ]
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "text_hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  },
+  "additionalProperties": false
+}
