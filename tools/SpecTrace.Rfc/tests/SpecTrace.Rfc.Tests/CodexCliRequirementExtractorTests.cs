@@ -120,6 +120,89 @@ Long Header Packet {
     }
 
     [Fact]
+    public async Task ExtractAsyncCanResumeExistingCandidateDecisions()
+    {
+        var tempDirectory = Path.Combine(Path.GetTempPath(), "spec-trace-rfc-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDirectory);
+        try
+        {
+            var ledgerPath = Path.Combine(tempDirectory, "ledger.jsonl");
+            var promptPath = Path.Combine(tempDirectory, "prompt.md");
+            var candidatesPath = Path.Combine(tempDirectory, "candidates.jsonl");
+            await File.WriteAllTextAsync(promptPath, "Extract requirements.");
+            await Jsonl.WriteAsync(
+                ledgerPath,
+                new[]
+                {
+                    SourceUnit("RFC8999-S1-B1-P1-S1", text: "QUIC is a connection-oriented protocol between two endpoints."),
+                    SourceUnit("RFC8999-S1-B1-P1-S2", text: "Those endpoints exchange UDP datagrams."),
+                });
+
+            await Jsonl.WriteAsync(
+                candidatesPath,
+                new[]
+                {
+                    new CandidateDecision
+                    {
+                        SourceUnitId = "RFC8999-S1-B1-P1-S1",
+                        Decision = "emit",
+                        Requirements =
+                        [
+                            new CandidateRequirement
+                            {
+                                ProposedIdHint = "REQ-QUIC-RFC8999-S1-0001",
+                                Title = "Connection-Oriented Protocol",
+                                Statement = "QUIC MUST be a connection-oriented protocol between two endpoints.",
+                                Coverage = new RequirementCoverage
+                                {
+                                    Positive = "required",
+                                    Negative = "required",
+                                    Edge = "optional",
+                                    Fuzz = "deferred",
+                                },
+                                UpstreamRefs =
+                                [
+                                    "RFC 8999 §1 RFC8999-S1-B1-P1-S1",
+                                ],
+                            },
+                        ],
+                        ReviewFlags = ["descriptive_behavior_normalized"],
+                    },
+                });
+
+            var count = await new CodexCliRequirementExtractor().ExtractAsync(new CodexExtractionOptions
+            {
+                LedgerPath = ledgerPath,
+                OutputPath = candidatesPath,
+                PromptPath = promptPath,
+                SchemaPath = Path.Combine(tempDirectory, "schema.json"),
+                AiMode = "off",
+                Resume = true,
+            });
+
+            var decisions = await Jsonl.ReadAsync<CandidateDecision>(candidatesPath);
+
+            Assert.Equal(2, count);
+            Assert.Collection(
+                decisions,
+                resumed =>
+                {
+                    Assert.Equal("emit", resumed.Decision);
+                    Assert.Single(resumed.Requirements);
+                },
+                missing =>
+                {
+                    Assert.Equal("needs_human_review", missing.Decision);
+                    Assert.Contains("ai_disabled_candidate_unit", missing.ReviewFlags);
+                });
+        }
+        finally
+        {
+            Directory.Delete(tempDirectory, recursive: true);
+        }
+    }
+
+    [Fact]
     public void OrderAndValidateBatchRepairsSourceUnitIdWhenResultOrderIsCorrect()
     {
         var batch = new[]

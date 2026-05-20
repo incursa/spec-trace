@@ -91,6 +91,7 @@ internal static class RfcCommandDispatcher
             ReasoningEffort = GetOption(args, "--reasoning-effort") ?? "xhigh",
             WorkingDirectory = GetOption(args, "--workdir") ?? Directory.GetCurrentDirectory(),
             RawOutputDirectory = GetOption(args, "--raw-out-dir"),
+            Resume = HasSwitch(args, "--resume"),
         });
 
         Console.WriteLine($"Wrote {count} candidate decision(s) to {Path.GetFullPath(outPath)}");
@@ -239,7 +240,7 @@ internal static class RfcCommandDispatcher
         Console.WriteLine("  spec-rfc ingest --rfc <number> --out <source.json> [--source-id <id>] [--title <title>]");
         Console.WriteLine("  spec-rfc ingest --source <path-or-url> --out <source.json> [--source-id <id>] [--title <title>]");
         Console.WriteLine("  spec-rfc segment --source <source.json> --out <source-ledger.jsonl>");
-        Console.WriteLine("  spec-rfc extract --ledger <source-ledger.jsonl> --out <candidates.jsonl> [--extraction-scope all|functional|normative] [--deterministic-extraction off|figures] [--ai-mode codex|off] [--batch-size 1] [--max-batch-retries 2] [--batch-timeout-seconds 300] [--model gpt-5.4-mini] [--reasoning-effort xhigh] [--raw-out-dir <dir>]");
+        Console.WriteLine("  spec-rfc extract --ledger <source-ledger.jsonl> --out <candidates.jsonl> [--extraction-scope all|functional|normative] [--deterministic-extraction off|figures] [--ai-mode codex|off] [--batch-size 1] [--max-batch-retries 2] [--batch-timeout-seconds 300] [--model gpt-5.4-mini] [--reasoning-effort xhigh] [--raw-out-dir <dir>] [--resume]");
         Console.WriteLine("  spec-rfc review-pack --ledger <source-ledger.jsonl> --candidates <candidates.jsonl> --out <review.md>");
         Console.WriteLine("  spec-rfc assemble --ledger <source-ledger.jsonl> (--candidates <candidates.jsonl> | --review <review-decisions.jsonl>) --spec-id <SPEC-ID> --out <SPEC-ID.json> [--domain <domain>] [--capability <capability>] [--id-style section|namespace]");
         Console.WriteLine("  spec-rfc validate [--root <repo>] [--input-path <path>] [--profile core|traceable|auditable]");

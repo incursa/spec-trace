@@ -31,4 +31,6 @@ public sealed class CodexExtractionOptions
     public string AiMode { get; init; } = "codex";
 
     public string? RawOutputDirectory { get; init; }
+
+    public bool Resume { get; init; }
 }

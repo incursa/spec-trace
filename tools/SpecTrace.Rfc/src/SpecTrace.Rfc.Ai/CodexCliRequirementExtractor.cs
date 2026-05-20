@@ -30,13 +30,37 @@ public sealed class CodexCliRequirementExtractor
 
         var ledger = await Jsonl.ReadAsync<SourceUnit>(options.LedgerPath, cancellationToken);
         EnsureUniqueSourceUnitIds(ledger);
+        var ledgerSourceUnitIds = ledger
+            .Select(sourceUnit => sourceUnit.SourceUnitId)
+            .ToHashSet(StringComparer.Ordinal);
         var promptTemplate = await File.ReadAllTextAsync(options.PromptPath, cancellationToken);
         var decisionsBySourceUnitId = new Dictionary<string, CandidateDecision>(StringComparer.Ordinal);
         var aiUnits = new List<SourceUnit>();
-        var batchNumber = 0;
+        var batchNumber = FindLastRawBatchNumber(options.RawOutputDirectory);
+
+        if (options.Resume && File.Exists(options.OutputPath))
+        {
+            foreach (var decision in await Jsonl.ReadAsync<CandidateDecision>(options.OutputPath, cancellationToken))
+            {
+                if (!ledgerSourceUnitIds.Contains(decision.SourceUnitId))
+                {
+                    continue;
+                }
+
+                CandidateRules.ValidateDecision(decision);
+                decisionsBySourceUnitId[decision.SourceUnitId] = decision;
+            }
+
+            Console.WriteLine($"Loaded {decisionsBySourceUnitId.Count} existing candidate decision(s) from {Path.GetFullPath(options.OutputPath)}");
+        }
 
         foreach (var sourceUnit in ledger)
         {
+            if (decisionsBySourceUnitId.ContainsKey(sourceUnit.SourceUnitId))
+            {
+                continue;
+            }
+
             if (ShouldExtractDeterministically(options, sourceUnit))
             {
                 var deterministicDecision = DeterministicCandidateExtractor.TryExtract(sourceUnit);
@@ -74,6 +98,10 @@ public sealed class CodexCliRequirementExtractor
                 {
                     decisionsBySourceUnitId[result.SourceUnitId] = result;
                 }
+
+                await PersistCompletedDecisionsAsync(options.OutputPath, ledger, decisionsBySourceUnitId, cancellationToken);
+                Console.WriteLine(
+                    $"Completed Codex batch {batchNumber}; wrote {decisionsBySourceUnitId.Count}/{ledger.Count} candidate decision(s) to {Path.GetFullPath(options.OutputPath)}");
             }
         }
 
@@ -85,6 +113,20 @@ public sealed class CodexCliRequirementExtractor
 
         await Jsonl.WriteAsync(options.OutputPath, allResults, cancellationToken);
         return allResults.Count;
+    }
+
+    private static async Task PersistCompletedDecisionsAsync(
+        string outputPath,
+        IReadOnlyList<SourceUnit> ledger,
+        IReadOnlyDictionary<string, CandidateDecision> decisionsBySourceUnitId,
+        CancellationToken cancellationToken)
+    {
+        var completed = ledger
+            .Select(sourceUnit => decisionsBySourceUnitId.TryGetValue(sourceUnit.SourceUnitId, out var decision) ? decision : null)
+            .OfType<CandidateDecision>()
+            .ToList();
+
+        await Jsonl.WriteAsync(outputPath, completed, cancellationToken);
     }
 
     private static void ValidateExtractionScope(string extractionScope)
@@ -250,6 +292,30 @@ public sealed class CodexCliRequirementExtractor
         var suffix = attempt == 1 ? string.Empty : $".attempt-{attempt:00}";
         await File.WriteAllTextAsync(Path.Combine(options.RawOutputDirectory, $"batch-{batchNumber:0000}{suffix}.prompt.md"), prompt, cancellationToken);
         await File.WriteAllTextAsync(Path.Combine(options.RawOutputDirectory, $"batch-{batchNumber:0000}{suffix}.failure.txt"), exception.ToString(), cancellationToken);
+    }
+
+    private static int FindLastRawBatchNumber(string? rawOutputDirectory)
+    {
+        if (string.IsNullOrWhiteSpace(rawOutputDirectory) || !Directory.Exists(rawOutputDirectory))
+        {
+            return 0;
+        }
+
+        var max = 0;
+        foreach (var path in Directory.EnumerateFiles(rawOutputDirectory, "batch-*.*"))
+        {
+            var fileName = Path.GetFileName(path);
+            if (fileName.Length < 10 ||
+                !fileName.StartsWith("batch-", StringComparison.Ordinal) ||
+                !int.TryParse(fileName.AsSpan(6, 4), out var batchNumber))
+            {
+                continue;
+            }
+
+            max = Math.Max(max, batchNumber);
+        }
+
+        return max;
     }
 
     private static CandidateBatchResponse DeserializeBatch(string rawResponse, int batchNumber)
