@@ -4,8 +4,11 @@ namespace SpecTrace.Rfc.Core;
 
 public static class RfcSegmenter
 {
-    private static readonly Regex SectionHeading = new(
-        @"^\s*(?<section>(?:\d+|[A-Z])(?:\.\d+)*)\.?\s+(?<title>[A-Z0-9][^\r\n]+?)\s*$",
+    private static readonly Regex NumberedSectionHeading = new(
+        @"^\s*(?<section>\d+(?:\.\d+)*)\.?\s+(?<title>[A-Z0-9][^\r\n]+?)\s*$",
+        RegexOptions.Compiled);
+    private static readonly Regex AppendixSectionHeading = new(
+        @"^\s*Appendix\s+(?<section>[A-Z])\.?\s+(?<title>[A-Z0-9][^\r\n]+?)\s*$",
         RegexOptions.Compiled);
 
     private static readonly Regex PageMarker = new(@"\[Page\s+\d+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -140,7 +143,12 @@ public static class RfcSegmenter
             return null;
         }
 
-        var match = SectionHeading.Match(line);
+        var match = AppendixSectionHeading.Match(line);
+        if (!match.Success)
+        {
+            match = NumberedSectionHeading.Match(line);
+        }
+
         if (!match.Success)
         {
             return null;

@@ -101,6 +101,49 @@ A client MUST send packets.
     }
 
     [Fact]
+    public void SegmentDoesNotTreatProseStartingWithAAsAppendixHeading()
+    {
+        var document = new RfcSourceDocument
+        {
+            SourceId = "RFC8999",
+            RfcNumber = "8999",
+            Title = "QUIC Invariants",
+            CanonicalUrl = "https://www.rfc-editor.org/rfc/rfc8999.html",
+            RetrievedAt = "2026-05-20T00:00:00.0000000Z",
+            TextHash = "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+            Content = """
+5.2.  Short Header
+
+A QUIC packet with a short header has the high bit of the first byte
+set to 0.
+
+Appendix A.  Incorrect Assumptions
+
+A QUIC Version Negotiation packet is only sent by a server.
+""",
+        };
+
+        var units = RfcSegmenter.Segment(document);
+
+        Assert.Collection(
+            units,
+            first =>
+            {
+                Assert.Equal("RFC8999-S5P2-B1-P1-S1", first.SourceUnitId);
+                Assert.Equal("5.2", first.Section);
+                Assert.Equal("A QUIC packet with a short header has the high bit of the first byte set to 0.", first.Text);
+                Assert.Equal("https://www.rfc-editor.org/rfc/rfc8999.html#section-5.2", first.SourceUrl);
+            },
+            second =>
+            {
+                Assert.Equal("RFC8999-SA-B1-P1-S1", second.SourceUnitId);
+                Assert.Equal("A", second.Section);
+                Assert.Equal("A QUIC Version Negotiation packet is only sent by a server.", second.Text);
+                Assert.Equal("https://www.rfc-editor.org/rfc/rfc8999.html#appendix-A", second.SourceUrl);
+            });
+    }
+
+    [Fact]
     public void SegmentKeepsIdsUniqueWhenASectionHeadingRepeats()
     {
         var document = new RfcSourceDocument
