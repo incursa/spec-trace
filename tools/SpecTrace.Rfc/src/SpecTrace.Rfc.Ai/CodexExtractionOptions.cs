@@ -14,11 +14,15 @@ public sealed class CodexExtractionOptions
 
     public string Model { get; init; } = "gpt-5.4-mini";
 
-    public string ReasoningEffort { get; init; } = "xhigh";
+    public string ReasoningEffort { get; init; } = "high";
+
+    public string? RetryReasoningEffort { get; init; } = "xhigh";
 
     public string WorkingDirectory { get; init; } = Directory.GetCurrentDirectory();
 
-    public int BatchSize { get; init; } = 1;
+    public int BatchSize { get; init; } = 25;
+
+    public int MinBatchSize { get; init; } = 1;
 
     public int MaxBatchRetries { get; init; } = 2;
 
@@ -31,6 +35,8 @@ public sealed class CodexExtractionOptions
     public string AiMode { get; init; } = "codex";
 
     public string? RawOutputDirectory { get; init; }
+
+    public string? BatchOutputDirectory { get; init; }
 
     public bool Resume { get; init; }
 }

@@ -129,6 +129,7 @@ Long Header Packet {
             var ledgerPath = Path.Combine(tempDirectory, "ledger.jsonl");
             var promptPath = Path.Combine(tempDirectory, "prompt.md");
             var candidatesPath = Path.Combine(tempDirectory, "candidates.jsonl");
+            var batchDirectory = Path.Combine(tempDirectory, "batches");
             await File.WriteAllTextAsync(promptPath, "Extract requirements.");
             await Jsonl.WriteAsync(
                 ledgerPath,
@@ -136,6 +137,7 @@ Long Header Packet {
                 {
                     SourceUnit("RFC8999-S1-B1-P1-S1", text: "QUIC is a connection-oriented protocol between two endpoints."),
                     SourceUnit("RFC8999-S1-B1-P1-S2", text: "Those endpoints exchange UDP datagrams."),
+                    SourceUnit("RFC8999-S1-B1-P1-S3", text: "These UDP datagrams contain QUIC packets."),
                 });
 
             await Jsonl.WriteAsync(
@@ -169,6 +171,48 @@ Long Header Packet {
                         ReviewFlags = ["descriptive_behavior_normalized"],
                     },
                 });
+            Directory.CreateDirectory(batchDirectory);
+            await File.WriteAllTextAsync(
+                Path.Combine(batchDirectory, "batch-0001.candidates.json"),
+                System.Text.Json.JsonSerializer.Serialize(
+                    new CandidateBatchArtifact
+                    {
+                        BatchNumber = 1,
+                        CreatedAt = DateTimeOffset.UtcNow.ToString("O"),
+                        Model = "gpt-5.4-mini",
+                        ReasoningEffort = "high",
+                        SourceUnitIds = ["RFC8999-S1-B1-P1-S2"],
+                        Results =
+                        [
+                            new CandidateDecision
+                            {
+                                SourceUnitId = "RFC8999-S1-B1-P1-S2",
+                                Decision = "emit",
+                                Requirements =
+                                [
+                                    new CandidateRequirement
+                                    {
+                                        ProposedIdHint = "REQ-QUIC-RFC8999-S1-0002",
+                                        Title = "Exchange UDP Datagrams",
+                                        Statement = "QUIC endpoints MUST exchange UDP datagrams.",
+                                        Coverage = new RequirementCoverage
+                                        {
+                                            Positive = "required",
+                                            Negative = "required",
+                                            Edge = "optional",
+                                            Fuzz = "deferred",
+                                        },
+                                        UpstreamRefs =
+                                        [
+                                            "RFC 8999 §1 RFC8999-S1-B1-P1-S2",
+                                        ],
+                                    },
+                                ],
+                                ReviewFlags = ["descriptive_behavior_normalized"],
+                            },
+                        ],
+                    },
+                    RfcJson.Options));
 
             var count = await new CodexCliRequirementExtractor().ExtractAsync(new CodexExtractionOptions
             {
@@ -178,13 +222,19 @@ Long Header Packet {
                 SchemaPath = Path.Combine(tempDirectory, "schema.json"),
                 AiMode = "off",
                 Resume = true,
+                BatchOutputDirectory = batchDirectory,
             });
 
             var decisions = await Jsonl.ReadAsync<CandidateDecision>(candidatesPath);
 
-            Assert.Equal(2, count);
+            Assert.Equal(3, count);
             Assert.Collection(
                 decisions,
+                resumed =>
+                {
+                    Assert.Equal("emit", resumed.Decision);
+                    Assert.Single(resumed.Requirements);
+                },
                 resumed =>
                 {
                     Assert.Equal("emit", resumed.Decision);
@@ -200,6 +250,32 @@ Long Header Packet {
         {
             Directory.Delete(tempDirectory, recursive: true);
         }
+    }
+
+    [Fact]
+    public void SplitBatchForRetrySplitsBatchIntoTwoOrderedHalves()
+    {
+        var batch = new[]
+        {
+            SourceUnit("RFC8999-S1-B1-P1-S1"),
+            SourceUnit("RFC8999-S1-B1-P1-S2"),
+            SourceUnit("RFC8999-S1-B1-P1-S3"),
+            SourceUnit("RFC8999-S1-B1-P1-S4"),
+            SourceUnit("RFC8999-S1-B1-P1-S5"),
+        };
+
+        var split = CodexCliRequirementExtractor.SplitBatchForRetry(batch);
+
+        Assert.Collection(
+            split,
+            first =>
+            {
+                Assert.Equal(["RFC8999-S1-B1-P1-S1", "RFC8999-S1-B1-P1-S2"], first.Select(unit => unit.SourceUnitId));
+            },
+            second =>
+            {
+                Assert.Equal(["RFC8999-S1-B1-P1-S3", "RFC8999-S1-B1-P1-S4", "RFC8999-S1-B1-P1-S5"], second.Select(unit => unit.SourceUnitId));
+            });
     }
 
     [Fact]

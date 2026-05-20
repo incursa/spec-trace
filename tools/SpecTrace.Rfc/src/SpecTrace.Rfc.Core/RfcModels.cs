@@ -74,6 +74,27 @@ public sealed class CandidateBatchResponse
     public required List<CandidateDecision> Results { get; init; }
 }
 
+public sealed class CandidateBatchArtifact
+{
+    [JsonPropertyName("batch_number")]
+    public required int BatchNumber { get; init; }
+
+    [JsonPropertyName("created_at")]
+    public required string CreatedAt { get; init; }
+
+    [JsonPropertyName("model")]
+    public required string Model { get; init; }
+
+    [JsonPropertyName("reasoning_effort")]
+    public required string ReasoningEffort { get; init; }
+
+    [JsonPropertyName("source_unit_ids")]
+    public required List<string> SourceUnitIds { get; init; }
+
+    [JsonPropertyName("results")]
+    public required List<CandidateDecision> Results { get; init; }
+}
+
 public sealed class CandidateDecision
 {
     [JsonPropertyName("source_unit_id")]

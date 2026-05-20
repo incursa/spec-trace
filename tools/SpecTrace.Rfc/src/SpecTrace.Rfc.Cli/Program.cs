@@ -72,7 +72,7 @@ internal static class RfcCommandDispatcher
         var outPath = Required(args, "--out");
         var promptPath = GetOption(args, "--prompt") ?? Path.Combine(toolRoot, "prompts", "extract-requirements.md");
         var schemaPath = GetOption(args, "--schema") ?? Path.Combine(toolRoot, "schemas", "candidate-requirements.schema.json");
-        var batchSize = int.Parse(GetOption(args, "--batch-size") ?? "1");
+        var batchSize = int.Parse(GetOption(args, "--batch-size") ?? "25");
 
         var count = await new CodexCliRequirementExtractor().ExtractAsync(new CodexExtractionOptions
         {
@@ -81,16 +81,19 @@ internal static class RfcCommandDispatcher
             PromptPath = promptPath,
             SchemaPath = schemaPath,
             BatchSize = batchSize,
-            MaxBatchRetries = int.Parse(GetOption(args, "--max-batch-retries") ?? "2"),
+            MinBatchSize = int.Parse(GetOption(args, "--adaptive-min-batch-size") ?? "1"),
+            MaxBatchRetries = int.Parse(GetOption(args, "--max-batch-retries") ?? "1"),
             BatchTimeoutSeconds = int.Parse(GetOption(args, "--batch-timeout-seconds") ?? "300"),
             ExtractionScope = GetOption(args, "--extraction-scope") ?? "all",
             DeterministicExtractionMode = GetOption(args, "--deterministic-extraction") ?? "off",
             AiMode = GetOption(args, "--ai-mode") ?? "codex",
             CodexCommand = GetOption(args, "--codex") ?? "codex",
             Model = GetOption(args, "--model") ?? "gpt-5.4-mini",
-            ReasoningEffort = GetOption(args, "--reasoning-effort") ?? "xhigh",
+            ReasoningEffort = GetOption(args, "--reasoning-effort") ?? "high",
+            RetryReasoningEffort = GetOption(args, "--retry-reasoning-effort") ?? "xhigh",
             WorkingDirectory = GetOption(args, "--workdir") ?? Directory.GetCurrentDirectory(),
             RawOutputDirectory = GetOption(args, "--raw-out-dir"),
+            BatchOutputDirectory = GetOption(args, "--batch-out-dir"),
             Resume = HasSwitch(args, "--resume"),
         });
 
@@ -240,7 +243,7 @@ internal static class RfcCommandDispatcher
         Console.WriteLine("  spec-rfc ingest --rfc <number> --out <source.json> [--source-id <id>] [--title <title>]");
         Console.WriteLine("  spec-rfc ingest --source <path-or-url> --out <source.json> [--source-id <id>] [--title <title>]");
         Console.WriteLine("  spec-rfc segment --source <source.json> --out <source-ledger.jsonl>");
-        Console.WriteLine("  spec-rfc extract --ledger <source-ledger.jsonl> --out <candidates.jsonl> [--extraction-scope all|functional|normative] [--deterministic-extraction off|figures] [--ai-mode codex|off] [--batch-size 1] [--max-batch-retries 2] [--batch-timeout-seconds 300] [--model gpt-5.4-mini] [--reasoning-effort xhigh] [--raw-out-dir <dir>] [--resume]");
+        Console.WriteLine("  spec-rfc extract --ledger <source-ledger.jsonl> --out <candidates.jsonl> [--extraction-scope all|functional|normative] [--deterministic-extraction off|figures] [--ai-mode codex|off] [--batch-size 25] [--adaptive-min-batch-size 1] [--max-batch-retries 1] [--batch-timeout-seconds 300] [--model gpt-5.4-mini] [--reasoning-effort high] [--retry-reasoning-effort xhigh] [--raw-out-dir <dir>] [--batch-out-dir <dir>] [--resume]");
         Console.WriteLine("  spec-rfc review-pack --ledger <source-ledger.jsonl> --candidates <candidates.jsonl> --out <review.md>");
         Console.WriteLine("  spec-rfc assemble --ledger <source-ledger.jsonl> (--candidates <candidates.jsonl> | --review <review-decisions.jsonl>) --spec-id <SPEC-ID> --out <SPEC-ID.json> [--domain <domain>] [--capability <capability>] [--id-style section|namespace]");
         Console.WriteLine("  spec-rfc validate [--root <repo>] [--input-path <path>] [--profile core|traceable|auditable]");

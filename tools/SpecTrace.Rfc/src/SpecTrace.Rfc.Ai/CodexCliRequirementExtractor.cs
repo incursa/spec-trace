@@ -7,11 +7,27 @@ namespace SpecTrace.Rfc.Ai;
 
 public sealed class CodexCliRequirementExtractor
 {
+    private sealed class BatchCounter(int value)
+    {
+        public int Value { get; private set; } = value;
+
+        public int Next()
+        {
+            Value++;
+            return Value;
+        }
+    }
+
     public async Task<int> ExtractAsync(CodexExtractionOptions options, CancellationToken cancellationToken = default)
     {
         if (options.BatchSize <= 0)
         {
             throw new InvalidOperationException("--batch-size must be greater than zero.");
+        }
+
+        if (options.MinBatchSize <= 0)
+        {
+            throw new InvalidOperationException("--adaptive-min-batch-size must be greater than zero.");
         }
 
         if (options.MaxBatchRetries < 0)
@@ -36,22 +52,14 @@ public sealed class CodexCliRequirementExtractor
         var promptTemplate = await File.ReadAllTextAsync(options.PromptPath, cancellationToken);
         var decisionsBySourceUnitId = new Dictionary<string, CandidateDecision>(StringComparer.Ordinal);
         var aiUnits = new List<SourceUnit>();
-        var batchNumber = FindLastRawBatchNumber(options.RawOutputDirectory);
+        var batchOutputDirectory = GetBatchOutputDirectory(options);
+        var batchCounter = new BatchCounter(FindLastBatchNumber(options.RawOutputDirectory, batchOutputDirectory));
 
-        if (options.Resume && File.Exists(options.OutputPath))
+        if (options.Resume)
         {
-            foreach (var decision in await Jsonl.ReadAsync<CandidateDecision>(options.OutputPath, cancellationToken))
-            {
-                if (!ledgerSourceUnitIds.Contains(decision.SourceUnitId))
-                {
-                    continue;
-                }
-
-                CandidateRules.ValidateDecision(decision);
-                decisionsBySourceUnitId[decision.SourceUnitId] = decision;
-            }
-
+            await LoadResumeDecisionsAsync(options.OutputPath, batchOutputDirectory, ledgerSourceUnitIds, decisionsBySourceUnitId, cancellationToken);
             Console.WriteLine($"Loaded {decisionsBySourceUnitId.Count} existing candidate decision(s) from {Path.GetFullPath(options.OutputPath)}");
+            await PersistCompletedDecisionsAsync(options.OutputPath, ledger, decisionsBySourceUnitId, cancellationToken);
         }
 
         foreach (var sourceUnit in ledger)
@@ -92,16 +100,15 @@ public sealed class CodexCliRequirementExtractor
         {
             foreach (var batch in aiUnits.Chunk(options.BatchSize))
             {
-                batchNumber++;
-                var orderedResults = await ExtractBatchWithRetriesAsync(options, promptTemplate, batchNumber, batch, cancellationToken);
-                foreach (var result in orderedResults)
-                {
-                    decisionsBySourceUnitId[result.SourceUnitId] = result;
-                }
-
-                await PersistCompletedDecisionsAsync(options.OutputPath, ledger, decisionsBySourceUnitId, cancellationToken);
-                Console.WriteLine(
-                    $"Completed Codex batch {batchNumber}; wrote {decisionsBySourceUnitId.Count}/{ledger.Count} candidate decision(s) to {Path.GetFullPath(options.OutputPath)}");
+                await ExtractAdaptiveBatchAsync(
+                    options,
+                    promptTemplate,
+                    batchOutputDirectory,
+                    batchCounter,
+                    batch,
+                    ledger,
+                    decisionsBySourceUnitId,
+                    cancellationToken);
             }
         }
 
@@ -113,6 +120,84 @@ public sealed class CodexCliRequirementExtractor
 
         await Jsonl.WriteAsync(options.OutputPath, allResults, cancellationToken);
         return allResults.Count;
+    }
+
+    private static async Task LoadResumeDecisionsAsync(
+        string outputPath,
+        string batchOutputDirectory,
+        IReadOnlySet<string> ledgerSourceUnitIds,
+        Dictionary<string, CandidateDecision> decisionsBySourceUnitId,
+        CancellationToken cancellationToken)
+    {
+        if (File.Exists(outputPath))
+        {
+            foreach (var decision in await Jsonl.ReadAsync<CandidateDecision>(outputPath, cancellationToken))
+            {
+                AddResumeDecision(decisionsBySourceUnitId, decision, ledgerSourceUnitIds, outputPath);
+            }
+        }
+
+        if (!Directory.Exists(batchOutputDirectory))
+        {
+            return;
+        }
+
+        foreach (var path in Directory.EnumerateFiles(batchOutputDirectory, "batch-*.candidates.json").OrderBy(path => path, StringComparer.Ordinal))
+        {
+            var json = await File.ReadAllTextAsync(path, cancellationToken);
+            var artifact = JsonSerializer.Deserialize<CandidateBatchArtifact>(json, RfcJson.Options)
+                ?? throw new InvalidOperationException($"Batch artifact '{path}' deserialized to null.");
+
+            ValidateBatchArtifact(artifact, path);
+            foreach (var decision in artifact.Results)
+            {
+                AddResumeDecision(decisionsBySourceUnitId, decision, ledgerSourceUnitIds, path);
+            }
+        }
+    }
+
+    private static void ValidateBatchArtifact(CandidateBatchArtifact artifact, string path)
+    {
+        if (artifact.SourceUnitIds.Count != artifact.Results.Count)
+        {
+            throw new InvalidOperationException($"Batch artifact '{path}' has {artifact.SourceUnitIds.Count} source_unit_ids but {artifact.Results.Count} result(s).");
+        }
+
+        for (var index = 0; index < artifact.Results.Count; index++)
+        {
+            var decision = artifact.Results[index];
+            CandidateRules.ValidateDecision(decision);
+            if (!string.Equals(artifact.SourceUnitIds[index], decision.SourceUnitId, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException($"Batch artifact '{path}' result {index + 1} does not match its source_unit_ids entry.");
+            }
+        }
+    }
+
+    private static void AddResumeDecision(
+        Dictionary<string, CandidateDecision> decisionsBySourceUnitId,
+        CandidateDecision decision,
+        IReadOnlySet<string> ledgerSourceUnitIds,
+        string sourcePath)
+    {
+        if (!ledgerSourceUnitIds.Contains(decision.SourceUnitId))
+        {
+            return;
+        }
+
+        CandidateRules.ValidateDecision(decision);
+        if (!decisionsBySourceUnitId.TryGetValue(decision.SourceUnitId, out var existing))
+        {
+            decisionsBySourceUnitId[decision.SourceUnitId] = decision;
+            return;
+        }
+
+        var existingJson = JsonSerializer.Serialize(existing, RfcJson.JsonlOptions);
+        var newJson = JsonSerializer.Serialize(decision, RfcJson.JsonlOptions);
+        if (!string.Equals(existingJson, newJson, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException($"Resume input '{sourcePath}' conflicts with an existing decision for source unit '{decision.SourceUnitId}'.");
+        }
     }
 
     private static async Task PersistCompletedDecisionsAsync(
@@ -127,6 +212,129 @@ public sealed class CodexCliRequirementExtractor
             .ToList();
 
         await Jsonl.WriteAsync(outputPath, completed, cancellationToken);
+    }
+
+    private static async Task ExtractAdaptiveBatchAsync(
+        CodexExtractionOptions options,
+        string promptTemplate,
+        string batchOutputDirectory,
+        BatchCounter batchCounter,
+        IReadOnlyList<SourceUnit> batch,
+        IReadOnlyList<SourceUnit> ledger,
+        Dictionary<string, CandidateDecision> decisionsBySourceUnitId,
+        CancellationToken cancellationToken)
+    {
+        var pending = batch
+            .Where(sourceUnit => !decisionsBySourceUnitId.ContainsKey(sourceUnit.SourceUnitId))
+            .ToList();
+
+        if (pending.Count == 0)
+        {
+            return;
+        }
+
+        var batchNumber = batchCounter.Next();
+        try
+        {
+            var orderedResults = await ExtractBatchOnceAsync(
+                options,
+                promptTemplate,
+                batchNumber,
+                pending,
+                options.ReasoningEffort,
+                previousFailure: null,
+                cancellationToken);
+
+            await CompleteBatchAsync(
+                options,
+                batchOutputDirectory,
+                batchNumber,
+                options.ReasoningEffort,
+                pending,
+                orderedResults,
+                ledger,
+                decisionsBySourceUnitId,
+                cancellationToken);
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException && pending.Count > Math.Max(1, options.MinBatchSize))
+        {
+            Console.WriteLine($"Codex batch {batchNumber} failed; splitting {pending.Count} source unit(s). Failure: {exception.Message}");
+            foreach (var split in SplitBatchForRetry(pending))
+            {
+                await ExtractAdaptiveBatchAsync(
+                    options,
+                    promptTemplate,
+                    batchOutputDirectory,
+                    batchCounter,
+                    split,
+                    ledger,
+                    decisionsBySourceUnitId,
+                    cancellationToken);
+            }
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException &&
+                                          options.MaxBatchRetries > 0 &&
+                                          !string.IsNullOrWhiteSpace(options.RetryReasoningEffort) &&
+                                          !string.Equals(options.RetryReasoningEffort, options.ReasoningEffort, StringComparison.OrdinalIgnoreCase))
+        {
+            var retryBatchNumber = batchCounter.Next();
+            var retryResults = await ExtractBatchOnceAsync(
+                options,
+                promptTemplate,
+                retryBatchNumber,
+                pending,
+                options.RetryReasoningEffort!,
+                exception.Message,
+                cancellationToken);
+
+            await CompleteBatchAsync(
+                options,
+                batchOutputDirectory,
+                retryBatchNumber,
+                options.RetryReasoningEffort!,
+                pending,
+                retryResults,
+                ledger,
+                decisionsBySourceUnitId,
+                cancellationToken);
+        }
+    }
+
+    internal static IReadOnlyList<IReadOnlyList<SourceUnit>> SplitBatchForRetry(IReadOnlyList<SourceUnit> batch)
+    {
+        if (batch.Count <= 1)
+        {
+            return [batch];
+        }
+
+        var midpoint = Math.Max(1, batch.Count / 2);
+        return
+        [
+            batch.Take(midpoint).ToList(),
+            batch.Skip(midpoint).ToList(),
+        ];
+    }
+
+    private static async Task CompleteBatchAsync(
+        CodexExtractionOptions options,
+        string batchOutputDirectory,
+        int batchNumber,
+        string reasoningEffort,
+        IReadOnlyList<SourceUnit> batch,
+        IReadOnlyList<CandidateDecision> orderedResults,
+        IReadOnlyList<SourceUnit> ledger,
+        Dictionary<string, CandidateDecision> decisionsBySourceUnitId,
+        CancellationToken cancellationToken)
+    {
+        foreach (var result in orderedResults)
+        {
+            decisionsBySourceUnitId[result.SourceUnitId] = result;
+        }
+
+        await WriteBatchArtifactAsync(options, batchOutputDirectory, batchNumber, reasoningEffort, batch, orderedResults, cancellationToken);
+        await PersistCompletedDecisionsAsync(options.OutputPath, ledger, decisionsBySourceUnitId, cancellationToken);
+        Console.WriteLine(
+            $"Completed Codex batch {batchNumber}; wrote {decisionsBySourceUnitId.Count}/{ledger.Count} candidate decision(s) to {Path.GetFullPath(options.OutputPath)}");
     }
 
     private static void ValidateExtractionScope(string extractionScope)
@@ -198,38 +406,29 @@ public sealed class CodexCliRequirementExtractor
         };
     }
 
-    private static async Task<List<CandidateDecision>> ExtractBatchWithRetriesAsync(
+    private static async Task<List<CandidateDecision>> ExtractBatchOnceAsync(
         CodexExtractionOptions options,
         string promptTemplate,
         int batchNumber,
         IReadOnlyList<SourceUnit> batch,
+        string reasoningEffort,
+        string? previousFailure,
         CancellationToken cancellationToken)
     {
-        var maxAttempts = options.MaxBatchRetries + 1;
-        Exception? lastFailure = null;
-
-        for (var attempt = 1; attempt <= maxAttempts; attempt++)
+        var prompt = BuildPrompt(promptTemplate, batchNumber, batch, previousFailure);
+        try
         {
-            var prompt = BuildPrompt(promptTemplate, batchNumber, batch, lastFailure?.Message);
-            string rawResponse;
-            try
-            {
-                rawResponse = await InvokeCodexAsync(options, prompt, cancellationToken);
-                await WriteRawArtifactsAsync(options, batchNumber, attempt, prompt, rawResponse, cancellationToken);
+            var rawResponse = await InvokeCodexAsync(options, prompt, reasoningEffort, cancellationToken);
+            await WriteRawArtifactsAsync(options, batchNumber, reasoningEffort, prompt, rawResponse, cancellationToken);
 
-                var batchResponse = DeserializeBatch(rawResponse, batchNumber);
-                return OrderAndValidateBatch(batch, batchResponse.Results, batchNumber);
-            }
-            catch (Exception exception) when (attempt < maxAttempts && exception is not OperationCanceledException)
-            {
-                lastFailure = exception;
-                await WriteRawFailureAsync(options, batchNumber, attempt, prompt, exception, cancellationToken);
-            }
+            var batchResponse = DeserializeBatch(rawResponse, batchNumber);
+            return OrderAndValidateBatch(batch, batchResponse.Results, batchNumber);
         }
-
-        throw new InvalidOperationException(
-            $"Codex batch {batchNumber} failed after {maxAttempts} attempt(s): {lastFailure?.Message}",
-            lastFailure);
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            await WriteRawFailureAsync(options, batchNumber, reasoningEffort, prompt, exception, cancellationToken);
+            throw;
+        }
     }
 
     private static string BuildPrompt(string promptTemplate, int batchNumber, IReadOnlyList<SourceUnit> batch, string? previousFailure = null)
@@ -259,7 +458,7 @@ public sealed class CodexCliRequirementExtractor
     private static async Task WriteRawArtifactsAsync(
         CodexExtractionOptions options,
         int batchNumber,
-        int attempt,
+        string reasoningEffort,
         string prompt,
         string rawResponse,
         CancellationToken cancellationToken)
@@ -270,7 +469,7 @@ public sealed class CodexCliRequirementExtractor
         }
 
         Directory.CreateDirectory(options.RawOutputDirectory);
-        var suffix = attempt == 1 ? string.Empty : $".attempt-{attempt:00}";
+        var suffix = $".{reasoningEffort}";
         await File.WriteAllTextAsync(Path.Combine(options.RawOutputDirectory, $"batch-{batchNumber:0000}{suffix}.prompt.md"), prompt, cancellationToken);
         await File.WriteAllTextAsync(Path.Combine(options.RawOutputDirectory, $"batch-{batchNumber:0000}{suffix}.response.json"), rawResponse, cancellationToken);
     }
@@ -278,7 +477,7 @@ public sealed class CodexCliRequirementExtractor
     private static async Task WriteRawFailureAsync(
         CodexExtractionOptions options,
         int batchNumber,
-        int attempt,
+        string reasoningEffort,
         string prompt,
         Exception exception,
         CancellationToken cancellationToken)
@@ -289,20 +488,67 @@ public sealed class CodexCliRequirementExtractor
         }
 
         Directory.CreateDirectory(options.RawOutputDirectory);
-        var suffix = attempt == 1 ? string.Empty : $".attempt-{attempt:00}";
+        var suffix = $".{reasoningEffort}";
         await File.WriteAllTextAsync(Path.Combine(options.RawOutputDirectory, $"batch-{batchNumber:0000}{suffix}.prompt.md"), prompt, cancellationToken);
         await File.WriteAllTextAsync(Path.Combine(options.RawOutputDirectory, $"batch-{batchNumber:0000}{suffix}.failure.txt"), exception.ToString(), cancellationToken);
     }
 
-    private static int FindLastRawBatchNumber(string? rawOutputDirectory)
+    private static async Task WriteBatchArtifactAsync(
+        CodexExtractionOptions options,
+        string batchOutputDirectory,
+        int batchNumber,
+        string reasoningEffort,
+        IReadOnlyList<SourceUnit> batch,
+        IReadOnlyList<CandidateDecision> orderedResults,
+        CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(rawOutputDirectory) || !Directory.Exists(rawOutputDirectory))
+        Directory.CreateDirectory(batchOutputDirectory);
+        var artifact = new CandidateBatchArtifact
         {
-            return 0;
+            BatchNumber = batchNumber,
+            CreatedAt = DateTimeOffset.UtcNow.ToString("O"),
+            Model = options.Model,
+            ReasoningEffort = reasoningEffort,
+            SourceUnitIds = batch.Select(sourceUnit => sourceUnit.SourceUnitId).ToList(),
+            Results = orderedResults.ToList(),
+        };
+
+        var path = Path.Combine(batchOutputDirectory, $"batch-{batchNumber:0000}.candidates.json");
+        await File.WriteAllTextAsync(path, JsonSerializer.Serialize(artifact, RfcJson.Options), cancellationToken);
+    }
+
+    private static string GetBatchOutputDirectory(CodexExtractionOptions options)
+    {
+        if (!string.IsNullOrWhiteSpace(options.BatchOutputDirectory))
+        {
+            return Path.GetFullPath(options.BatchOutputDirectory);
         }
 
+        var outputDirectory = Path.GetDirectoryName(Path.GetFullPath(options.OutputPath))
+            ?? Directory.GetCurrentDirectory();
+        return Path.Combine(outputDirectory, "batches");
+    }
+
+    private static int FindLastBatchNumber(string? rawOutputDirectory, string batchOutputDirectory)
+    {
         var max = 0;
-        foreach (var path in Directory.EnumerateFiles(rawOutputDirectory, "batch-*.*"))
+        if (!string.IsNullOrWhiteSpace(rawOutputDirectory) && Directory.Exists(rawOutputDirectory))
+        {
+            max = Math.Max(max, FindLastBatchNumberInDirectory(rawOutputDirectory, "batch-*.*"));
+        }
+
+        if (Directory.Exists(batchOutputDirectory))
+        {
+            max = Math.Max(max, FindLastBatchNumberInDirectory(batchOutputDirectory, "batch-*.candidates.json"));
+        }
+
+        return max;
+    }
+
+    private static int FindLastBatchNumberInDirectory(string directory, string searchPattern)
+    {
+        var max = 0;
+        foreach (var path in Directory.EnumerateFiles(directory, searchPattern))
         {
             var fileName = Path.GetFileName(path);
             if (fileName.Length < 10 ||
@@ -458,7 +704,11 @@ public sealed class CodexCliRequirementExtractor
         return trimmed[start..(end + 1)];
     }
 
-    private static async Task<string> InvokeCodexAsync(CodexExtractionOptions options, string prompt, CancellationToken cancellationToken)
+    private static async Task<string> InvokeCodexAsync(
+        CodexExtractionOptions options,
+        string prompt,
+        string reasoningEffort,
+        CancellationToken cancellationToken)
     {
         var outputPath = Path.Combine(Path.GetTempPath(), $"spec-trace-rfc-codex-{Guid.NewGuid():N}.json");
         try
@@ -487,7 +737,7 @@ public sealed class CodexCliRequirementExtractor
             startInfo.ArgumentList.Add("-m");
             startInfo.ArgumentList.Add(options.Model);
             startInfo.ArgumentList.Add("-c");
-            startInfo.ArgumentList.Add($"model_reasoning_effort={JsonSerializer.Serialize(options.ReasoningEffort)}");
+            startInfo.ArgumentList.Add($"model_reasoning_effort={JsonSerializer.Serialize(reasoningEffort)}");
             startInfo.ArgumentList.Add("-s");
             startInfo.ArgumentList.Add("read-only");
             startInfo.ArgumentList.Add("--output-schema");
