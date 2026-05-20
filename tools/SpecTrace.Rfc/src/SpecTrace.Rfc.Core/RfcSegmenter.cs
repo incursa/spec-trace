@@ -9,6 +9,7 @@ public static class RfcSegmenter
         RegexOptions.Compiled);
 
     private static readonly Regex PageMarker = new(@"\[Page\s+\d+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex TableOfContentsMarker = new(@"^\s*Table of Contents\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex ListMarker = new(@"^\s*(?:[-*+]|\d+\.)\s+", RegexOptions.Compiled);
     private static readonly Regex TableMarker = new(@"^\s*(?:\+[-+]+\+|\|.+\||[-=]{3,})\s*$", RegexOptions.Compiled);
     private static readonly Regex FigureMarker = new(@"(?:[{}]|\b0x[0-9a-fA-F]+\b|=\s*[A-Za-z0-9]|\.\.)", RegexOptions.Compiled);
@@ -32,6 +33,8 @@ public static class RfcSegmenter
         var sectionTitle = "Front Matter";
         var blockIndex = 0;
         var paragraphIndex = 0;
+        var countersBySection = new Dictionary<string, (int BlockIndex, int ParagraphIndex)>(StringComparer.Ordinal);
+        var inTableOfContents = false;
 
         foreach (var line in lines)
         {
@@ -40,15 +43,36 @@ public static class RfcSegmenter
                 continue;
             }
 
+            if (TableOfContentsMarker.IsMatch(line))
+            {
+                FlushBlock(source, units, blockLines, section, sectionTitle, ref blockIndex, ref paragraphIndex);
+                blockLines.Clear();
+                StoreSectionCounters(countersBySection, section, blockIndex, paragraphIndex);
+                inTableOfContents = true;
+                continue;
+            }
+
+            if (inTableOfContents)
+            {
+                if (string.IsNullOrWhiteSpace(line) || char.IsWhiteSpace(line[0]))
+                {
+                    continue;
+                }
+
+                inTableOfContents = false;
+            }
+
             var heading = TryParseSectionHeading(line);
             if (heading is not null)
             {
                 FlushBlock(source, units, blockLines, section, sectionTitle, ref blockIndex, ref paragraphIndex);
                 blockLines.Clear();
+                StoreSectionCounters(countersBySection, section, blockIndex, paragraphIndex);
                 section = heading.Value.Section;
                 sectionTitle = heading.Value.Title;
-                blockIndex = 0;
-                paragraphIndex = 0;
+                var counters = GetSectionCounters(countersBySection, section);
+                blockIndex = counters.BlockIndex;
+                paragraphIndex = counters.ParagraphIndex;
                 continue;
             }
 
@@ -70,6 +94,30 @@ public static class RfcSegmenter
     {
         var key = Regex.Replace(section.ToUpperInvariant(), "[^A-Z0-9]+", "P").Trim('P');
         return string.IsNullOrWhiteSpace(key) ? "S0" : $"S{key}";
+    }
+
+    private static void StoreSectionCounters(
+        Dictionary<string, (int BlockIndex, int ParagraphIndex)> countersBySection,
+        string section,
+        int blockIndex,
+        int paragraphIndex)
+    {
+        var sectionKey = SectionKey(section);
+        if (!countersBySection.TryGetValue(sectionKey, out var existing) ||
+            blockIndex > existing.BlockIndex ||
+            paragraphIndex > existing.ParagraphIndex)
+        {
+            countersBySection[sectionKey] = (blockIndex, paragraphIndex);
+        }
+    }
+
+    private static (int BlockIndex, int ParagraphIndex) GetSectionCounters(
+        IReadOnlyDictionary<string, (int BlockIndex, int ParagraphIndex)> countersBySection,
+        string section)
+    {
+        return countersBySection.TryGetValue(SectionKey(section), out var counters)
+            ? counters
+            : (0, 0);
     }
 
     private static IEnumerable<string> NormalizeLines(string content)

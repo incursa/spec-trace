@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\SpecTrace.Rfc.Ai\SpecTrace.Rfc.Ai.csproj" />
     <ProjectReference Include="..\..\src\SpecTrace.Rfc.Core\SpecTrace.Rfc.Core.csproj" />
   </ItemGroup>
 

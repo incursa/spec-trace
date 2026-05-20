@@ -69,6 +69,69 @@ An endpoint MUST NOT send reserved frames.
     }
 
     [Fact]
+    public void SegmentSkipsIndentedTableOfContentsEntries()
+    {
+        var document = new RfcSourceDocument
+        {
+            SourceId = "RFC8999",
+            RfcNumber = "8999",
+            Title = "QUIC Invariants",
+            CanonicalUrl = "https://www.rfc-editor.org/rfc/rfc8999.html",
+            RetrievedAt = "2026-05-20T00:00:00.0000000Z",
+            TextHash = "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+            Content = """
+Table of Contents
+
+   1.  Introduction
+     1.1.  Nested Entry
+   Appendix A.  Incorrect Assumptions
+
+1.  Introduction
+
+A client MUST send packets.
+""",
+        };
+
+        var units = RfcSegmenter.Segment(document);
+
+        var unit = Assert.Single(units);
+        Assert.Equal("RFC8999-S1-B1-P1-S1", unit.SourceUnitId);
+        Assert.Equal("A client MUST send packets.", unit.Text);
+        Assert.DoesNotContain(units, item => item.Text.Contains("Nested Entry", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void SegmentKeepsIdsUniqueWhenASectionHeadingRepeats()
+    {
+        var document = new RfcSourceDocument
+        {
+            SourceId = "RFC9002",
+            RfcNumber = "9002",
+            Title = "QUIC Recovery",
+            CanonicalUrl = "https://www.rfc-editor.org/rfc/rfc9002.html",
+            RetrievedAt = "2026-05-20T00:00:00.0000000Z",
+            TextHash = "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+            Content = """
+5.  Timers
+
+An endpoint MUST arm a timer.
+
+5.  Timers
+
+An endpoint MUST cancel a timer.
+""",
+        };
+
+        var units = RfcSegmenter.Segment(document);
+
+        Assert.Collection(
+            units,
+            first => Assert.Equal("RFC9002-S5-B1-P1-S1", first.SourceUnitId),
+            second => Assert.Equal("RFC9002-S5-B2-P2-S1", second.SourceUnitId));
+        Assert.Equal(units.Count, units.Select(unit => unit.SourceUnitId).Distinct(StringComparer.Ordinal).Count());
+    }
+
+    [Fact]
     public void SegmentKeepsFiguresAsSingleSourceUnits()
     {
         var document = new RfcSourceDocument
