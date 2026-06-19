@@ -72,6 +72,21 @@ public static class CandidateRules
             throw new InvalidOperationException($"Review decision for '{decision.SourceUnitId}' has unsupported action '{decision.Action}'.");
         }
 
+        if (decision.SourceUnitIds.Count == 0)
+        {
+            throw new InvalidOperationException($"Review decision for '{decision.SourceUnitId}' is missing source_unit_ids.");
+        }
+
+        if (decision.SourceUnitIds.Any(string.IsNullOrWhiteSpace))
+        {
+            throw new InvalidOperationException($"Review decision for '{decision.SourceUnitId}' contains an empty source_unit_ids entry.");
+        }
+
+        if (!string.Equals(decision.SourceUnitIds[0], decision.SourceUnitId, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException($"Review decision for '{decision.SourceUnitId}' must start source_unit_ids with the canonical source unit id.");
+        }
+
         if (decision.Action is "accept" or "accept_with_edit" or "split" or "merge")
         {
             if (decision.Requirements.Count == 0)

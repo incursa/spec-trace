@@ -99,10 +99,18 @@ Derived outputs can answer questions such as:
 
 - which requirements currently have verification coverage
 - which requirements have observed evidence by kind
+- which Source Context Notes point at requirement IDs
 - which requirements are missing downstream links
 - which artifacts are orphaned under stricter profiles
 
 Those outputs are useful, but they are not canonical requirement text.
+
+Source Context Notes in code comments, declaration attributes, manifests, or
+similar source-local metadata are optional authoring aids and evidence-
+discovery inputs. A repository that uses them should document its accepted
+markers, categories, and scoping rules. Region-scoped notes need explicit end
+markers or equivalent exact range metadata so tools and reviewers can agree on
+what source is covered.
 
 ## Conformance Profiles
 

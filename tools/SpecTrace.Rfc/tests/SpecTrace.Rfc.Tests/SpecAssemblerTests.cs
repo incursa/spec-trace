@@ -122,6 +122,97 @@ public sealed class SpecAssemblerTests
     }
 
     [Fact]
+    public void AssembleAssignsStableSectionIdsBySourceOrderRegardlessOfArrivalOrder()
+    {
+        var firstSourceUnit = new SourceUnit
+        {
+            SourceUnitId = "RFC8999-S5P1-B1-P1-S1",
+            SourceId = "RFC8999",
+            Section = "5.1",
+            SectionTitle = "Long Header",
+            BlockIndex = 1,
+            ParagraphIndex = 1,
+            SentenceIndex = 1,
+            BlockKind = "paragraph",
+            Text = "The first field MUST be present.",
+            SourceUrl = "https://www.rfc-editor.org/rfc/rfc8999.html#section-5.1",
+            TextHash = "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+        };
+
+        var secondSourceUnit = new SourceUnit
+        {
+            SourceUnitId = "RFC8999-S5P1-B2-P2-S1",
+            SourceId = "RFC8999",
+            Section = "5.1",
+            SectionTitle = "Long Header",
+            BlockIndex = 2,
+            ParagraphIndex = 2,
+            SentenceIndex = 1,
+            BlockKind = "paragraph",
+            Text = "The second field MUST be present.",
+            SourceUrl = "https://www.rfc-editor.org/rfc/rfc8999.html#section-5.1",
+            TextHash = "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        };
+
+        var ledger = new[] { firstSourceUnit, secondSourceUnit }
+            .ToDictionary(unit => unit.SourceUnitId, StringComparer.Ordinal);
+
+        var artifact = SpecAssembler.AssembleFromCandidates(
+            [
+                new CandidateDecision
+                {
+                    SourceUnitId = secondSourceUnit.SourceUnitId,
+                    Decision = "emit",
+                    Requirements =
+                    [
+                        new CandidateRequirement
+                        {
+                            ProposedIdHint = "REQ-QUIC-RFC8999-S5P1-0002",
+                            Title = "Second field",
+                            Statement = "The second field MUST be present.",
+                        },
+                    ],
+                },
+                new CandidateDecision
+                {
+                    SourceUnitId = firstSourceUnit.SourceUnitId,
+                    Decision = "emit",
+                    Requirements =
+                    [
+                        new CandidateRequirement
+                        {
+                            Title = "First field",
+                            Statement = "The first field MUST be present.",
+                        },
+                    ],
+                },
+            ],
+            ledger,
+            new SpecAssemblyOptions
+            {
+                SpecId = "SPEC-QUIC-RFC8999",
+                Domain = "quic",
+                Capability = "quic-rfc8999",
+                Title = "QUIC RFC 8999 Requirements",
+                Owner = "protocol-team",
+                Purpose = "Capture QUIC RFC 8999 requirements.",
+            });
+
+        Assert.Collection(
+            artifact.Requirements,
+            first =>
+            {
+                Assert.Equal("First field", first.Title);
+                Assert.Equal("REQ-QUIC-RFC8999-S5P1-0001", first.Id);
+            },
+            second =>
+            {
+                Assert.Equal("Second field", second.Title);
+                Assert.Equal("REQ-QUIC-RFC8999-S5P1-0002", second.Id);
+            });
+    }
+
+    [Fact]
     public void AssembleIgnoresSectionHintOutsideSpecificationNamespace()
     {
         var ledger = new[]

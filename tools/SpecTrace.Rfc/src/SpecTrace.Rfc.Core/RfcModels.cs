@@ -110,6 +110,33 @@ public sealed class CandidateDecision
     public List<string> ReviewFlags { get; init; } = [];
 }
 
+public sealed class ReviewBatchResponse
+{
+    [JsonPropertyName("results")]
+    public required List<ReviewDecision> Results { get; init; }
+}
+
+public sealed class ReviewBatchArtifact
+{
+    [JsonPropertyName("batch_number")]
+    public required int BatchNumber { get; init; }
+
+    [JsonPropertyName("created_at")]
+    public required string CreatedAt { get; init; }
+
+    [JsonPropertyName("model")]
+    public required string Model { get; init; }
+
+    [JsonPropertyName("reasoning_effort")]
+    public required string ReasoningEffort { get; init; }
+
+    [JsonPropertyName("source_unit_ids")]
+    public required List<string> SourceUnitIds { get; init; }
+
+    [JsonPropertyName("results")]
+    public required List<ReviewDecision> Results { get; init; }
+}
+
 public sealed class CandidateRequirement
 {
     [JsonPropertyName("proposed_id_hint")]
@@ -152,7 +179,7 @@ public sealed class ReviewDecision
     public required string SourceUnitId { get; init; }
 
     [JsonPropertyName("source_unit_ids")]
-    public List<string> SourceUnitIds { get; init; } = [];
+    public required List<string> SourceUnitIds { get; init; } = [];
 
     [JsonPropertyName("action")]
     public required string Action { get; init; }

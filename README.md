@@ -1,92 +1,148 @@
-# Repository-Native Requirements and Traceability Standard
+# SpecTrace
 
-`incursa/spec-trace` is a public reference standard for precise, repository-native software specifications.
+SpecTrace is a small, JSON-first standard for keeping software requirements inside the repository they govern.
 
-The repository is JSON-first:
+It is for teams that want requirements to be precise, reviewable, and traceable without moving the source of truth into a heavyweight requirements system. A SpecTrace repository can start with a few stable requirement IDs and grow into design links, work tracking, verification evidence, generated catalogs, and attestation reports when the project needs them.
 
-- canonical authored artifacts are `*.json`
-- document shape is validated by [`model/model.schema.json`](./model/model.schema.json)
-- repository tooling adds cross-file integrity, profile, evidence, catalog, and attestation checks on top of JSON Schema validation
-- generated reports and support docs are derived or non-authoritative
+The canonical standard lives in [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/). This README is the practical front door, not the authority.
 
-The canonical standard lives under [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/).
+## Why Use It
 
-## Core Model
+- Put requirements next to code, schemas, docs, and examples.
+- Give every requirement a stable `REQ-...` identifier that reviews, tests, source notes, and tools can reference.
+- Keep the normative requirement clause short and testable.
+- Separate requirements from design, delivery work, and verification evidence.
+- Validate JSON shape, IDs, links, profiles, evidence snapshots, catalogs, and attestation output locally.
+- Adopt it in stages: start at `core`, then move to `traceable` or `auditable` when stricter proof is worth the cost.
 
-- The canonical static model uses four artifact families: `specification`, `architecture`, `work_item`, and `verification`.
-- Requirements are the smallest normative unit and live inside a specification artifact.
-- Requirements may optionally declare `coverage` expectations for positive, negative, edge, and fuzz evidence dimensions.
-- Requirement clauses use the approved uppercase keyword set: `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, and `MAY`.
-- Structured trace uses stable IDs. `Satisfied By`, `Implemented By`, and `Verified By` are downstream trace. `Derived From` and `Supersedes` are lineage. `Upstream Refs` are provenance. `Related` is a loose association.
-- Generated evidence snapshots, coverage rollups, attestation views, and catalogs are derived outputs.
-- Repository-level conformance profiles are `core`, `traceable`, and `auditable`.
+## The Basic Shape
 
-## Canonical Files
+A requirement is a record inside a specification artifact. The `statement` is the normative clause.
 
-- [`model/model.schema.json`](./model/model.schema.json) - authoritative JSON Schema for canonical artifacts and shared supporting shapes
-- [`catalog/retired-requirements.json`](./catalog/retired-requirements.json) - retired requirement ledger used during lineage validation
-- [`spec-template.json`](./spec-template.json)
-- [`architecture-template.json`](./architecture-template.json)
-- [`work-item-template.json`](./work-item-template.json)
-- [`verification-template.json`](./verification-template.json)
+```json
+{
+  "id": "REQ-EXAMPLE-0001",
+  "title": "Reject duplicate payment batches",
+  "statement": "The payment importer MUST reject a batch when its upstream batch identifier was already accepted.",
+  "coverage": {
+    "positive": "required",
+    "negative": "required",
+    "edge": "optional",
+    "fuzz": "not_applicable"
+  },
+  "trace": {
+    "satisfied_by": ["ARC-EXAMPLE-0001"],
+    "implemented_by": ["WI-EXAMPLE-0001"],
+    "verified_by": ["VER-EXAMPLE-0001"]
+  }
+}
+```
 
-Concrete artifacts live under [`specs/`](./specs/) and [`examples/`](./examples/). Support docs may remain in Markdown, but contributors should edit the canonical JSON artifacts.
+Keep the clause compact. Put rationale, examples, caveats, source references, and local policy in the supporting fields around it.
 
-## Commands
+## Start A Spec
+
+1. Copy [`spec-template.json`](./spec-template.json).
+2. Give the specification a stable `SPEC-...` artifact ID.
+3. Add one or more `REQ-...` requirement records.
+4. Use exactly one approved uppercase keyword in each requirement statement: `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, or `MAY`.
+5. Add optional `coverage` expectations when you want to declare what evidence dimensions matter.
+6. Add optional `trace` links when architecture, work items, verification artifacts, lineage, or upstream sources are known.
+7. Validate the repository:
 
 ```powershell
 ./scripts/Test-SpecTraceRepository.ps1 -Profile core
-./scripts/Build-SpecTraceCatalog.ps1
-./scripts/Resolve-SpecTraceTopicView.ps1
-./scripts/Validate-SpecTraceEvidence.ps1
-./scripts/Render-SpecTraceAttestation.ps1
-./scripts/Sync-PublishModule.ps1
 ```
 
-Useful variants:
+For a concrete starter, compare the template with [`examples/payments/SPEC-PAY-ACH.json`](./examples/payments/SPEC-PAY-ACH.json), [`examples/arithmetic/SPEC-MATH-DIV.json`](./examples/arithmetic/SPEC-MATH-DIV.json), or the self-specification index at [`specs/requirements/spec-trace/_index.md`](./specs/requirements/spec-trace/_index.md).
 
-- `./scripts/Test-SpecTraceRepository.ps1 -Profile traceable`
-- `./scripts/Test-SpecTraceRepository.ps1 -Profile auditable`
-- `./scripts/Test-SpecTraceRepository.ps1 -JsonReportPath ./specs/generated/validation-report.json`
-- `./scripts/Build-SpecTraceCatalog.ps1 -JsonOutputPath ./specs/generated/spec-trace-catalog.json`
-- `./scripts/Resolve-SpecTraceTopicView.ps1 -TopicViewPath ./specs/requirements/spec-trace/SPEC-TOP.json`
-- `./scripts/Validate-SpecTraceEvidence.ps1 -EvidencePath ./examples/arithmetic/generated/division-evidence.evidence.json`
-- `./scripts/Render-SpecTraceAttestation.ps1 -Profile core -OutDir ./artifacts/spec-trace/attestation`
+## What You Can Add Later
 
-## Repository Contents
+SpecTrace has four canonical authored artifact families:
+
+| Artifact | Use It For | Template |
+| --- | --- | --- |
+| `specification` | Requirements for a capability, behavior area, interface, or technical concern. | [`spec-template.json`](./spec-template.json) |
+| `architecture` | Design explanation, rationale, and satisfaction links. | [`architecture-template.json`](./architecture-template.json) |
+| `work_item` | Implementation scope connected to requirements and verification planning. | [`work-item-template.json`](./work-item-template.json) |
+| `verification` | Proof summaries for how a requirement set was checked. | [`verification-template.json`](./verification-template.json) |
+
+Generated evidence snapshots, coverage rollups, catalogs, and attestation reports are useful derived outputs. They do not replace the canonical JSON artifacts.
+
+## Conformance Profiles
+
+SpecTrace keeps adoption lightweight by defining repository-level profiles:
+
+| Profile | What It Proves |
+| --- | --- |
+| `core` | JSON shape, identifier correctness, approved keyword usage, duplicate detection, and broken-reference detection. |
+| `traceable` | `core` plus at least one downstream trace link for every requirement. |
+| `auditable` | `traceable` plus verification coverage, reciprocal trace agreement where applicable, and no orphan architecture, work-item, or verification artifacts. |
+
+Most repositories should begin with `core`. Move up only when the extra trace burden answers a real review, release, compliance, or maintenance need.
+
+## Common Commands
+
+```powershell
+# Validate canonical artifacts with the low-burden baseline.
+./scripts/Test-SpecTraceRepository.ps1 -Profile core
+
+# Require every requirement to have at least one downstream trace link.
+./scripts/Test-SpecTraceRepository.ps1 -Profile traceable
+
+# Require verification coverage and stricter graph consistency.
+./scripts/Test-SpecTraceRepository.ps1 -Profile auditable
+
+# Emit a machine-readable repository catalog.
+./scripts/Build-SpecTraceCatalog.ps1
+
+# Resolve a portable topic view into machine-readable JSON.
+./scripts/Resolve-SpecTraceTopicView.ps1 -TopicViewPath ./specs/requirements/spec-trace/SPEC-TOP.json
+
+# Validate generated evidence snapshots.
+./scripts/Validate-SpecTraceEvidence.ps1
+
+# Render HTML and JSON attestation output.
+./scripts/Render-SpecTraceAttestation.ps1 -Profile core -Emit both
+```
+
+The repository CI runs the core validation path, catalog build, evidence validation, attestation rendering, publish-mirror sync check, and tool tests.
+
+## Key Rules
+
+- Canonical authored artifacts are JSON documents.
+- The authoritative JSON Schema is [`model/model.schema.json`](./model/model.schema.json).
+- The authoritative standard is the SPEC suite under [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/).
+- Requirements live inside specification artifacts; they are not loose prose fragments.
+- Requirement IDs and artifact IDs are the stable reference surface. Prefer IDs over file paths in trace links.
+- `coverage` records expected evidence dimensions, not observed test results or code coverage.
+- `trace` links record explicit relationships; backtick-delimited inline IDs are lightweight prose references.
+- Generated reports, evidence snapshots, catalogs, and browsing views are derived material.
+- Changes to field names, identifier rules, template shape, schema contracts, validator behavior, or example patterns need to update the affected specs, schemas, tooling, examples, and publish surfaces together.
+
+## Repository Map
 
 - [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/) - canonical self-specification suite
-- [`model/`](./model/) - authoritative JSON Schema and supporting notes
-- [`publish/`](./publish/) - curated publish mirror for the reusable schema and templates
-- [`catalog/retired-requirements.json`](./catalog/retired-requirements.json) - retired requirement ledger
-- [`schemas/`](./schemas/) - compatibility or slice schemas derived from the authoritative model
-- [`examples/`](./examples/) - worked examples across all major artifact families
+- [`model/`](./model/) - authoritative JSON Schema and model notes
+- [`examples/`](./examples/) - worked examples for payments, arithmetic, calculator, UI design systems, and BEM CSS
+- [`schemas/`](./schemas/) - compatibility and slice schemas derived from the authoritative model
+- [`catalog/retired-requirements.json`](./catalog/retired-requirements.json) - retired requirement ledger for lineage validation
+- [`publish/`](./publish/) - curated reusable schema and template mirror
 - [`src/SpecTrace.Tool/`](./src/SpecTrace.Tool/) - validation, catalog, evidence, and attestation tooling
-- [`tests/SpecTrace.Tool.Tests/`](./tests/SpecTrace.Tool.Tests/) - automated tests
+- [`apps/spec-trace-mcp/`](./apps/spec-trace-mcp/) - deterministic Markdown-first MCP docs server
 
-## Validation
+## Deeper Reading
 
-The repository validation path is deterministic and local:
+- [`authoring.md`](./authoring.md) - task-oriented authoring workflow
+- [`overview.md`](./overview.md) - practical model summary
+- [`layout.md`](./layout.md) - repository layout guidance
+- [`artifact-model-explainer.md`](./artifact-model-explainer.md) - plain-language artifact model
+- [`profiles-and-attestation-explainer.md`](./profiles-and-attestation-explainer.md) - profile and attestation details
+- [`publish/README.md`](./publish/README.md) - reusable publish mirror
+- [`apps/spec-trace-mcp/README.md`](./apps/spec-trace-mcp/README.md) - MCP docs server
 
-- JSON Schema validates artifact structure, required fields, allowed enums, and identifier patterns.
-- Repository validation checks duplicate IDs, namespace alignment, reciprocal links, broken cross-file references, and profile-specific coverage rules.
-- Evidence snapshots are validated against JSON Schema and then checked against the repository requirement catalog.
-- Attestation reports merge overlapping evidence snapshots additively and emit deterministic `index.html`, `summary.html`, `details.html`, per-spec pages, and `attestation.json`.
-- `build-catalog` emits the repository catalog as JSON.
+## Contributing
 
-## Publishing
+Use [`CONTRIBUTING.md`](./CONTRIBUTING.md) for contribution expectations. In short: keep changes focused, keep the canonical SPEC suite and schema-aligned surfaces consistent, call out breaking changes to the standard, and validate the repository before review.
 
-[`publish/`](./publish/) is synchronized from the root schema and templates by [`scripts/Sync-PublishModule.ps1`](./scripts/Sync-PublishModule.ps1). It intentionally excludes the self-specification suite, examples, and repository tooling so downstream consumers can package or mirror just the reusable schema and template surface.
-
-## MCP Docs Server
-
-The repository now includes a deterministic, markdown-first MCP docs server under [`apps/spec-trace-mcp/`](./apps/spec-trace-mcp/).
-
-- Authored docs live in [`apps/spec-trace-mcp/content/`](./apps/spec-trace-mcp/content/)
-- Server identity is centralized in [`apps/spec-trace-mcp/mcp.config.json`](./apps/spec-trace-mcp/mcp.config.json)
-- The public MCP path prefix defaults to `/spec-trace` and is configurable in [`apps/spec-trace-mcp/wrangler.toml`](./apps/spec-trace-mcp/wrangler.toml)
-- Build the compiled MCP artifacts with `npm run build:mcp`
-- Run the combined repository test suite with `npm test`
-- The server README covers local development, authoring rules, the build pipeline, tests, and Cloudflare deployment
-
-The server exposes the repository-specific docs surface as browsable HTML and MCP resources without any LLM calls, runtime crawling, or database lookups.
+Security reports should follow [`SECURITY.md`](./SECURITY.md).

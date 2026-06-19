@@ -162,6 +162,45 @@ Verification artifacts link through `verifies`. If the listed requirements do no
 - Snapshot `requirement_id` values must point at canonical `REQ-...` identifiers that exist in the repository.
 - Multiple evidence files may overlap on the same requirement. Derived reporting merges them additively by evidence kind rather than treating one file's omission as a negative assertion.
 
+### Source Context Notes
+
+Source Context Notes are optional authoring aids. Use them when a future maintainer would reasonably ask why the code is shaped this way, where a value came from, what invariant must be preserved, or what external artifact explains the decision.
+
+Use a short `CONTEXT` block with an optional `SEE` line. In source files, wrap the markers in the host language comment syntax.
+
+Single-line note:
+
+```text
+CONTEXT: Default ACK delay exponent is the QUIC transport default until the peer overrides it.
+SEE: spec:REQ-QUIC-RFC9000-TP-ACK-DELAY-EXPONENT-DEFAULT
+```
+
+Block note:
+
+```text
+CONTEXT: QUIC v1 packet protection labels
+These literals are wire-protocol labels required by QUIC v1 packet protection.
+They are intentionally separate from QUIC v2 labels because the versions use different label text.
+SEE: spec:REQ-QUIC-RFC9001-S6P1-0009
+END CONTEXT: QUIC v1 packet protection labels
+```
+
+Reference categories are guidance, not a closed list:
+
+- `spec:` for SpecTrace requirement IDs or spec-backed artifacts
+- `design:` for architecture or design docs
+- `perf:` for benchmark, profiling, allocation, or performance artifacts
+- `security:` for security notes, invariants, or threat-model references
+- `interop:` for compatibility notes with other implementations
+- `lifecycle:` for disposal, cancellation, ownership, or concurrency decisions
+- `diag:` for diagnostics, logging, qlog, telemetry, or observability decisions
+- `issue:` for issue, work item, or PR references
+- `temporary:` for transitional behavior, ideally with an issue or expiry reference
+
+Keep notes short, local, and human-readable. Do not copy long requirement text or design documents into source. If a note spans more than the immediately following declaration or statement, use an explicit end marker or equivalent exact range metadata so tooling can parse the region.
+
+Collected notes may feed generated evidence or a source context index. They do not replace canonical requirements, trace links, verification artifacts, or test results.
+
 ## When The Standard Changes
 
 If a change affects canonical field names, identifier rules, template shape, schema contracts, validator behavior, or example patterns, update these surfaces together:

@@ -13,8 +13,8 @@
     "generated"
   ],
   "purpose": "Define the generated evidence snapshot model used for point-in-time proof and\nattestation reporting without turning that evidence into canonical requirement\ntext.",
-  "scope": "This specification covers evidence snapshot shape, well-known evidence kinds,\nevidence statuses, partial collection semantics, overlap and merge behavior,\nand the rule that discovery conventions remain tool-specific rather than\ncanonical.",
-  "context": "Repositories often need machine-produced evidence from multiple tools. Unit\ntests, benchmarks, static analyzers, code-mapping tools, and manual evidence\nimports may all contribute to the same requirement set. The standard therefore\nneeds a shared output contract for evidence without dictating how every\nlanguage, framework, or build system discovers it.",
+  "scope": "This specification covers evidence snapshot shape, well-known evidence kinds,\nevidence statuses, partial collection semantics, overlap and merge behavior,\nSource Context Notes as evidence-discovery inputs, and the rule that exact\ndiscovery conventions remain tool-specific rather than canonical.",
+  "context": "Repositories often need machine-produced evidence from multiple tools. Unit\ntests, benchmarks, static analyzers, code-mapping tools, manual evidence\nimports, and human-authored Source Context Notes may all contribute to the same\nrequirement set. The standard therefore needs a shared output contract for\nevidence without dictating how every language, framework, or build system\ndiscovers it.",
   "requirements": [
     {
       "id": "REQ-EVD-0001",
@@ -153,6 +153,79 @@
       "notes": [
         "Tooling may use language-specific comments, attributes, manifests, naming\nconventions, static analysis, metadata files, or other local mechanisms.",
         "The core standard defines the output contract, not the extraction algorithm."
+      ]
+    },
+    {
+      "id": "REQ-EVD-0011",
+      "title": "Treat Source Context Notes as optional authoring aids",
+      "statement": "A Source Context Note that uses `CONTEXT` and `SEE` markers MAY be used as a\nnon-canonical authoring aid to explain the durable context for nearby source.",
+      "trace": {
+        "related": [
+          "SPEC-TPL",
+          "SPEC-RPT"
+        ]
+      },
+      "notes": [
+        "Source Context Notes are written for humans first.",
+        "They are useful when maintainers need to know why code is shaped a certain\nway, where a value came from, what invariant must be preserved, or what\nexternal artifact explains the decision."
+      ]
+    },
+    {
+      "id": "REQ-EVD-0012",
+      "title": "Keep Source Context Notes non-canonical and non-proof",
+      "statement": "A Source Context Note MUST be treated as non-canonical; it is not verification\nsuccess.",
+      "trace": {
+        "related": [
+          "SPEC-STD",
+          "SPEC-RPT"
+        ]
+      },
+      "notes": [
+        "If a note references a `REQ-...` identifier, that reference may support\nevidence discovery, but generated evidence remains separate from the canonical\nrequirement record.",
+        "Source Context Notes do not replace requirement text, architecture rationale,\nverification artifacts, or test results."
+      ]
+    },
+    {
+      "id": "REQ-EVD-0013",
+      "title": "Document Source Context Note conventions",
+      "statement": "When a repository supports Source Context Notes, it MUST document the accepted\nmarkers, reference categories, scoping rules, and local extensions.",
+      "trace": {
+        "related": [
+          "SPEC-STD"
+        ]
+      },
+      "notes": [
+        "Repositories may accept `CONTEXT`, `SEE`, and `END CONTEXT` as a\nlanguage-agnostic convention while still allowing language-specific comment\nsyntax around the markers.",
+        "Documenting the convention prevents source-context style from becoming an\nimplicit or tool-private dialect."
+      ]
+    },
+    {
+      "id": "REQ-EVD-0014",
+      "title": "Bound region-scoped Source Context Notes explicitly",
+      "statement": "A region-scoped Source Context Note MUST provide an explicit end marker or\nequivalent machine-readable range metadata when its scope extends beyond the\nimmediately following declaration or statement.",
+      "trace": {
+        "related": [
+          "SPEC-RPT"
+        ]
+      },
+      "notes": [
+        "Implicit scopes such as \"until the next blank line\" are difficult to review\nand difficult for tools to collect consistently.",
+        "Single-line notes and declaration-local notes do not need an end marker."
+      ]
+    },
+    {
+      "id": "REQ-EVD-0015",
+      "title": "Emit Source Context Notes through generated outputs",
+      "statement": "Tooling that collects Source Context Notes for SpecTrace reporting MUST emit\ngenerated evidence observations instead of writing collected source locations\nback into canonical requirement records.",
+      "trace": {
+        "related": [
+          "SPEC-SCH",
+          "SPEC-TPL"
+        ]
+      },
+      "notes": [
+        "The usual evidence kinds for collected notes are `code_ref` and\n`source_coverage`.",
+        "Tools may also render a derived source context index for lookup and review.\nObservation refs or namespaced metadata may carry file paths, line ranges,\nsymbol names, local reference tokens, and short human-readable reasons."
       ]
     }
   ]

@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "review-batch.schema.json",
+  "title": "SpecTrace RFC Review Decision Batch",
+  "type": "object",
+  "required": [
+    "results"
+  ],
+  "properties": {
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/reviewDecision"
+      },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "candidateRequirement": {
+      "type": "object",
+      "required": [
+        "proposed_id_hint",
+        "title",
+        "statement",
+        "coverage",
+        "upstream_refs",
+        "notes"
+      ],
+      "properties": {
+        "proposed_id_hint": {
+          "type": "string",
+          "pattern": "^REQ-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "coverage": {
+          "type": "object",
+          "required": [
+            "positive",
+            "negative",
+            "edge",
+            "fuzz"
+          ],
+          "properties": {
+            "positive": {
+              "type": "string",
+              "enum": [
+                "required",
+                "optional",
+                "not_applicable",
+                "deferred"
+              ]
+            },
+            "negative": {
+              "type": "string",
+              "enum": [
+                "required",
+                "optional",
+                "not_applicable",
+                "deferred"
+              ]
+            },
+            "edge": {
+              "type": "string",
+              "enum": [
+                "required",
+                "optional",
+                "not_applicable",
+                "deferred"
+              ]
+            },
+            "fuzz": {
+              "type": "string",
+              "enum": [
+                "required",
+                "optional",
+                "not_applicable",
+                "deferred"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "upstream_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "reviewDecision": {
+      "type": "object",
+      "required": [
+        "source_unit_id",
+        "source_unit_ids",
+        "action",
+        "requirements",
+        "notes"
+      ],
+      "properties": {
+        "source_unit_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_unit_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "accept",
+            "accept_with_edit",
+            "split",
+            "merge",
+            "skip",
+            "gap",
+            "quarantine"
+          ]
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/candidateRequirement"
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

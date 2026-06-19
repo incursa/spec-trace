@@ -66,6 +66,7 @@ public static class SpecAssembler
     {
         private readonly IReadOnlyDictionary<string, SourceUnit> _ledger;
         private readonly SpecAssemblyOptions _options;
+        private readonly List<PendingRequirement> _pendingRequirements = [];
         private readonly List<SpecTraceRequirement> _requirements = [];
         private readonly Dictionary<string, int> _sectionCounters = new(StringComparer.Ordinal);
         private readonly HashSet<string> _usedIds = new(StringComparer.Ordinal);
@@ -82,23 +83,33 @@ public static class SpecAssembler
         public void AddRequirement(CandidateRequirement candidate, IReadOnlyList<string> sourceUnitIds)
         {
             CandidateRules.ValidateRequirement(candidate, sourceUnitIds.FirstOrDefault() ?? "unknown");
-
-            var id = ChooseRequirementId(candidate, sourceUnitIds);
-            var upstreamRefs = BuildUpstreamRefs(candidate, sourceUnitIds);
-
-            _requirements.Add(new SpecTraceRequirement
-            {
-                Id = id,
-                Title = candidate.Title.Trim(),
-                Statement = candidate.Statement.Trim(),
-                Coverage = candidate.Coverage,
-                Trace = upstreamRefs.Count == 0 ? null : new SpecTraceRequirementTrace { UpstreamRefs = upstreamRefs },
-                Notes = NormalizeList(candidate.Notes),
-            });
+            _pendingRequirements.Add(new PendingRequirement(candidate, [.. sourceUnitIds]));
         }
 
         public SpecTraceSpecificationArtifact Build()
         {
+            var orderedPendingRequirements = _pendingRequirements
+                .OrderBy(item => item, Comparer<PendingRequirement>.Create(ComparePendingRequirements))
+                .ToList();
+
+            foreach (var pendingRequirement in orderedPendingRequirements)
+            {
+                var candidate = pendingRequirement.Candidate;
+                var sourceUnitIds = pendingRequirement.SourceUnitIds;
+                var id = ChooseRequirementId(candidate, sourceUnitIds);
+                var upstreamRefs = BuildUpstreamRefs(candidate, sourceUnitIds);
+
+                _requirements.Add(new SpecTraceRequirement
+                {
+                    Id = id,
+                    Title = candidate.Title.Trim(),
+                    Statement = candidate.Statement.Trim(),
+                    Coverage = candidate.Coverage,
+                    Trace = upstreamRefs.Count == 0 ? null : new SpecTraceRequirementTrace { UpstreamRefs = upstreamRefs },
+                    Notes = NormalizeList(candidate.Notes),
+                });
+            }
+
             return new SpecTraceSpecificationArtifact
             {
                 ArtifactId = _options.SpecId,
@@ -115,19 +126,10 @@ public static class SpecAssembler
 
         private string ChooseRequirementId(CandidateRequirement candidate, IReadOnlyList<string> sourceUnitIds)
         {
-            if (!_options.IgnoreIdHints &&
-                !string.IsNullOrWhiteSpace(candidate.ProposedIdHint) &&
-                CandidateRules.IsRequirementId(candidate.ProposedIdHint) &&
-                RequirementHintAllowed(candidate.ProposedIdHint, sourceUnitIds) &&
-                _usedIds.Add(candidate.ProposedIdHint))
-            {
-                return candidate.ProposedIdHint;
-            }
-
             var prefix = _options.RequirementPrefix ?? $"REQ-{_specificationNamespace}";
             if (string.Equals(_options.IdStyle, "section", StringComparison.OrdinalIgnoreCase))
             {
-                var sourceUnit = ResolveFirstSourceUnit(sourceUnitIds);
+                var sourceUnit = ResolvePrimarySourceUnit(sourceUnitIds);
                 var sectionKey = sourceUnit is null ? "S0" : RfcSegmenter.SectionKey(sourceUnit.Section);
                 while (true)
                 {
@@ -141,6 +143,15 @@ public static class SpecAssembler
                 }
             }
 
+            if (!_options.IgnoreIdHints &&
+                !string.IsNullOrWhiteSpace(candidate.ProposedIdHint) &&
+                CandidateRules.IsRequirementId(candidate.ProposedIdHint) &&
+                NamespaceHintAllowed(candidate.ProposedIdHint) &&
+                _usedIds.Add(candidate.ProposedIdHint))
+            {
+                return candidate.ProposedIdHint;
+            }
+
             while (true)
             {
                 _nextRequirementSequence++;
@@ -152,29 +163,184 @@ public static class SpecAssembler
             }
         }
 
-        private SourceUnit? ResolveFirstSourceUnit(IReadOnlyList<string> sourceUnitIds)
+        private int ComparePendingRequirements(PendingRequirement left, PendingRequirement right)
         {
+            var leftSourceUnit = ResolvePrimarySourceUnit(left.SourceUnitIds);
+            var rightSourceUnit = ResolvePrimarySourceUnit(right.SourceUnitIds);
+
+            var sourceComparison = ComparePrimarySourceUnits(leftSourceUnit, rightSourceUnit);
+            if (sourceComparison != 0)
+            {
+                return sourceComparison;
+            }
+
+            var leftFingerprint = BuildRequirementFingerprint(left.Candidate, left.SourceUnitIds);
+            var rightFingerprint = BuildRequirementFingerprint(right.Candidate, right.SourceUnitIds);
+
+            var fingerprintComparison = StringComparer.Ordinal.Compare(leftFingerprint, rightFingerprint);
+            if (fingerprintComparison != 0)
+            {
+                return fingerprintComparison;
+            }
+
+            return StringComparer.Ordinal.Compare(
+                string.Join('\u001F', NormalizeSourceUnitIds(left.SourceUnitIds)),
+                string.Join('\u001F', NormalizeSourceUnitIds(right.SourceUnitIds)));
+        }
+
+        private SourceUnit? ResolvePrimarySourceUnit(IReadOnlyList<string> sourceUnitIds)
+        {
+            SourceUnit? best = null;
             foreach (var sourceUnitId in sourceUnitIds)
             {
                 if (_ledger.TryGetValue(sourceUnitId, out var sourceUnit))
                 {
-                    return sourceUnit;
+                    if (best is null || CompareSourceUnits(sourceUnit, best) < 0)
+                    {
+                        best = sourceUnit;
+                    }
                 }
             }
 
-            return null;
+            return best;
         }
 
-        private bool RequirementHintAllowed(string requirementId, IReadOnlyList<string> sourceUnitIds)
+        private static int ComparePrimarySourceUnits(SourceUnit? left, SourceUnit? right)
         {
-            if (string.Equals(_options.IdStyle, "section", StringComparison.OrdinalIgnoreCase))
+            if (left is null && right is null)
             {
-                var prefix = _options.RequirementPrefix ?? $"REQ-{_specificationNamespace}";
-                var sourceUnit = ResolveFirstSourceUnit(sourceUnitIds);
-                var sectionKey = sourceUnit is null ? "S0" : RfcSegmenter.SectionKey(sourceUnit.Section);
-                return requirementId.StartsWith($"{prefix}-{sectionKey}-", StringComparison.Ordinal);
+                return 0;
             }
 
+            if (left is null)
+            {
+                return 1;
+            }
+
+            if (right is null)
+            {
+                return -1;
+            }
+
+            return CompareSourceUnits(left, right);
+        }
+
+        private static int CompareSourceUnits(SourceUnit left, SourceUnit right)
+        {
+            var sectionComparison = CompareSections(left.Section, right.Section);
+            if (sectionComparison != 0)
+            {
+                return sectionComparison;
+            }
+
+            var blockComparison = left.BlockIndex.CompareTo(right.BlockIndex);
+            if (blockComparison != 0)
+            {
+                return blockComparison;
+            }
+
+            var paragraphComparison = left.ParagraphIndex.CompareTo(right.ParagraphIndex);
+            if (paragraphComparison != 0)
+            {
+                return paragraphComparison;
+            }
+
+            var sentenceComparison = left.SentenceIndex.CompareTo(right.SentenceIndex);
+            if (sentenceComparison != 0)
+            {
+                return sentenceComparison;
+            }
+
+            return StringComparer.Ordinal.Compare(left.SourceUnitId, right.SourceUnitId);
+        }
+
+        private static int CompareSections(string left, string right)
+        {
+            var leftSegments = SplitSectionSegments(left);
+            var rightSegments = SplitSectionSegments(right);
+            var segmentCount = Math.Min(leftSegments.Count, rightSegments.Count);
+
+            for (var index = 0; index < segmentCount; index++)
+            {
+                var leftSegment = leftSegments[index];
+                var rightSegment = rightSegments[index];
+                if (leftSegment.IsNumeric && rightSegment.IsNumeric)
+                {
+                    var numericComparison = leftSegment.NumericValue.CompareTo(rightSegment.NumericValue);
+                    if (numericComparison != 0)
+                    {
+                        return numericComparison;
+                    }
+                }
+                else if (leftSegment.IsNumeric)
+                {
+                    return -1;
+                }
+                else if (rightSegment.IsNumeric)
+                {
+                    return 1;
+                }
+                else
+                {
+                    var textComparison = StringComparer.OrdinalIgnoreCase.Compare(leftSegment.Text, rightSegment.Text);
+                    if (textComparison != 0)
+                    {
+                        return textComparison;
+                    }
+                }
+            }
+
+            return leftSegments.Count.CompareTo(rightSegments.Count);
+        }
+
+        private static List<SectionSegment> SplitSectionSegments(string section)
+        {
+            return section.Split('.', StringSplitOptions.RemoveEmptyEntries)
+                .Select(segment => int.TryParse(segment, out var numericValue)
+                    ? new SectionSegment(true, numericValue, string.Empty)
+                    : new SectionSegment(false, 0, segment))
+                .ToList();
+        }
+
+        private static string BuildRequirementFingerprint(CandidateRequirement candidate, IReadOnlyList<string> sourceUnitIds)
+        {
+            var normalizedUpstreamRefs = candidate.UpstreamRefs
+                .Select(NormalizeSortText)
+                .OrderBy(value => value, StringComparer.Ordinal);
+
+            var normalizedNotes = candidate.Notes
+                .Select(NormalizeSortText)
+                .OrderBy(value => value, StringComparer.Ordinal);
+
+            return string.Join('\u001E', [
+                NormalizeSortText(candidate.Title),
+                NormalizeSortText(candidate.Statement),
+                candidate.Coverage is null
+                    ? string.Empty
+                    : string.Join('|', candidate.Coverage.Positive, candidate.Coverage.Negative, candidate.Coverage.Edge, candidate.Coverage.Fuzz),
+                string.Join('\u001F', normalizedUpstreamRefs),
+                string.Join('\u001F', normalizedNotes),
+                string.Join('\u001F', NormalizeSourceUnitIds(sourceUnitIds)),
+            ]);
+        }
+
+        private static string NormalizeSortText(string value)
+        {
+            return string.Join(' ', value.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries))
+                .ToUpperInvariant();
+        }
+
+        private static IEnumerable<string> NormalizeSourceUnitIds(IReadOnlyList<string> sourceUnitIds)
+        {
+            return sourceUnitIds
+                .Where(value => !string.IsNullOrWhiteSpace(value))
+                .Select(value => value.Trim())
+                .Distinct(StringComparer.Ordinal)
+                .OrderBy(value => value, StringComparer.Ordinal);
+        }
+
+        private bool NamespaceHintAllowed(string requirementId)
+        {
             if (!string.IsNullOrWhiteSpace(_options.RequirementPrefix))
             {
                 return requirementId.StartsWith(_options.RequirementPrefix + "-", StringComparison.Ordinal);
@@ -264,5 +430,9 @@ public static class SpecAssembler
                 }
             }
         }
+
+        private sealed record PendingRequirement(CandidateRequirement Candidate, IReadOnlyList<string> SourceUnitIds);
+
+        private readonly record struct SectionSegment(bool IsNumeric, int NumericValue, string Text);
     }
 }

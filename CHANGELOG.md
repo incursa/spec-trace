@@ -12,6 +12,7 @@
 - Added [`profiles-and-attestation-explainer.md`](./profiles-and-attestation-explainer.md) and a generated arithmetic current-status rollup to distinguish authored trace from derived evidence reporting.
 - Added [`SPEC-RPT.md`](./specs/requirements/spec-trace/SPEC-RPT.md) to define derived reporting dimensions, attestation semantics, and staged-adoption guidance.
 - Added requirement-side `coverage` expectations to the canonical requirement model, with closed `positive`/`negative`/`edge`/`fuzz` keys and `required`/`optional`/`not_applicable`/`deferred` statuses.
+- Added Source Context Note requirements for documented source-local breadcrumbs that feed generated `code_ref` or `source_coverage` evidence without becoming canonical requirement text or verification proof.
 - Added `schemas/requirement-clause.schema.json` for extracted compact requirement clauses.
 - Added `authoring.md`, `AGENTS.md`, `LLMS.txt`, and repo-local `skills/` to make human and AI authoring workflows easier without creating a second source of truth.
 

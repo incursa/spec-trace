@@ -9,6 +9,9 @@ public static class DeterministicCandidateExtractor
         @"^(?<name>[A-Za-z][A-Za-z0-9 _/-]*?)\s*\((?<length>[^)]+)\)(?:\s*=\s*(?<value>[^,]+))?(?:\s*\.\.\.)?$",
         RegexOptions.Compiled);
     private static readonly Regex NormativeKeyword = new(@"\b(?:MUST NOT|SHALL NOT|SHOULD NOT|MUST|SHALL|SHOULD|MAY)\b", RegexOptions.Compiled);
+    private static readonly Regex BehavioralCue = new(
+        @"\b(?:packet|header|frame|field|length|size|byte|bit|connection id|datagram|stream|state|transition|algorithm|encoding|layout|negotiation|error|limit|timer|reserved|ignore|packet number|flow control|congestion|path|token|handshake|transport parameter|retry|acknowledg(?:e|ement|ed|ment)?|retransmission)\b",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex CaptionOnly = new(@"^(?:Figure|Table)\s+\d+\s*(?::.*)?$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     public static CandidateDecision? TryExtract(SourceUnit sourceUnit)
@@ -91,6 +94,27 @@ public static class DeterministicCandidateExtractor
         }
 
         return hasNormativeKeyword || IsReviewableSourceUnit(sourceUnit);
+    }
+
+    public static bool ShouldSendToCandidateUnits(SourceUnit sourceUnit)
+    {
+        if (IsDocumentBoilerplate(sourceUnit))
+        {
+            return false;
+        }
+
+        if (string.Equals(sourceUnit.BlockKind, "figure", StringComparison.Ordinal) ||
+            string.Equals(sourceUnit.BlockKind, "table", StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        if (NormativeKeyword.IsMatch(sourceUnit.Text))
+        {
+            return true;
+        }
+
+        return IsReviewableSourceUnit(sourceUnit) && HasBehavioralCue(sourceUnit);
     }
 
     public static bool HasNormativeKeywordOrStructuredBlock(SourceUnit sourceUnit)
@@ -336,6 +360,11 @@ public static class DeterministicCandidateExtractor
         }
 
         return sourceUnit.BlockKind is "paragraph" or "list_item" or "figure" or "table";
+    }
+
+    private static bool HasBehavioralCue(SourceUnit sourceUnit)
+    {
+        return BehavioralCue.IsMatch(sourceUnit.Text);
     }
 
     private static bool IsBoilerplateSectionTitle(string sectionTitle)

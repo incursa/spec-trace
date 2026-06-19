@@ -6,6 +6,8 @@
 
 Requirements may also carry optional `coverage` expectations for positive, negative, edge, and fuzz evidence dimensions. Those expectations are authored metadata, not generated evidence.
 
+Source Context Notes may be used as repository-documented evidence-discovery inputs for generated `code_ref` or `source_coverage` evidence. They are not canonical requirement text, verification proof, or canonical trace edges.
+
 When working in this repository:
 
 - follow this authority order: canonical SPEC suite, then the authoritative JSON Schema and root JSON templates, then examples and generated outputs, then root summaries and AI convenience files

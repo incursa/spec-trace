@@ -21,15 +21,15 @@ Rules:
 1. Produce one result for every input source unit.
 2. Produce zero or more candidate requirements per source unit.
 3. Do not invent behavior not supported by the source unit.
-4. Prefer the smallest independently testable requirement units. Many small requirements are better than one compound requirement.
-5. Split actor, condition, field presence, field order, field size, field value, frame type, state transition, error code, limit, exception, and algorithm step into separate requirements when each can be tested separately.
-6. Keep wording as close to the RFC source unit as practical while making the statement fit SpecTrace and contain exactly one uppercase normative keyword.
-7. A candidate statement must contain exactly one uppercase normative keyword.
-8. Treat descriptive protocol behavior as requirement material, even when the RFC does not use uppercase RFC 2119 keywords.
-9. If the source unit describes protocol behavior, definitions, state, packet/frame structure, field layout, field size/count constraints, field semantics, an algorithm, input/output behavior, extension negotiation, error handling, registry behavior, or security behavior, produce candidate requirements.
+4. Prefer the smallest requirement unit that would need a distinct test or a distinct reviewable check. Split only when the source unit contains multiple independently testable obligations.
+5. Keep actor, condition, field presence, field order, field size, field value, frame type, state transition, error code, limit, exception, and algorithm step separate only when each piece is independently testable.
+6. Keep descriptive text only when it encodes a concrete implementation-relevant invariant such as packet or buffer layout, field presence, field order, field encoding, state transition, algorithm step, negotiation behavior, error handling, or other observable protocol behavior.
+7. Treat explanatory, historical, motivational, or background prose as non-normative unless it clearly states a testable invariant.
+8. Keep wording as close to the RFC source unit as practical while making the statement fit SpecTrace and contain exactly one uppercase normative keyword.
+9. A candidate statement must contain exactly one uppercase normative keyword.
 10. When normalizing descriptive behavior into a requirement statement, use exactly one uppercase keyword. Prefer MUST for defined behavior, MAY for explicitly optional behavior, and SHOULD for explicit recommendations.
-11. Add `descriptive_behavior_normalized` to `review_flags` when a source unit produced requirements without containing an uppercase RFC keyword.
-12. Return `decision = skip_non_normative` only for document metadata, pure citations, acknowledgments, references, history, section navigation, examples that do not define behavior, or background prose that does not describe a protocol/component behavior.
+11. Add `descriptive_behavior_normalized` to `review_flags` only when a source unit clearly expresses a testable invariant without containing an uppercase RFC keyword.
+12. Return `decision = skip_non_normative` for document metadata, pure citations, acknowledgments, references, history, section navigation, examples that do not define behavior, or prose that is only explanatory or background.
 13. If the source unit is ambiguous or depends on context not present, return `decision = needs_human_review`.
 14. If a table, figure, grammar rule, or pseudocode line defines behavior, produce candidates and add a review flag explaining why.
 15. Do not output Markdown, commentary, code fences, or extra properties.

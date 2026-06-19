@@ -1,11 +1,12 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using SpecTrace.Rfc.Core;
 
 namespace SpecTrace.Rfc.Ai;
 
-public sealed class CodexCliRequirementExtractor
+public sealed class CodexCliRequirementNormalizer
 {
     private sealed class BatchCounter(int value)
     {
@@ -18,7 +19,19 @@ public sealed class CodexCliRequirementExtractor
         }
     }
 
-    public async Task<int> ExtractAsync(CodexExtractionOptions options, CancellationToken cancellationToken = default)
+    private sealed class NormalizeInputRecord
+    {
+        [JsonPropertyName("source_unit_id")]
+        public required string SourceUnitId { get; init; }
+
+        [JsonPropertyName("source_unit")]
+        public required SourceUnit SourceUnit { get; init; }
+
+        [JsonPropertyName("review_decision")]
+        public required ReviewDecision ReviewDecision { get; init; }
+    }
+
+    public async Task<int> NormalizeAsync(CodexNormalizeOptions options, CancellationToken cancellationToken = default)
     {
         if (options.BatchSize <= 0)
         {
@@ -40,98 +53,146 @@ public sealed class CodexCliRequirementExtractor
             throw new InvalidOperationException("--batch-timeout-seconds must be greater than zero.");
         }
 
-        ValidateExtractionScope(options.ExtractionScope);
         ValidateAiMode(options.AiMode);
-        ValidateDeterministicExtractionMode(options.DeterministicExtractionMode);
 
         var ledger = await Jsonl.ReadAsync<SourceUnit>(options.LedgerPath, cancellationToken);
+        var reviewDecisions = await Jsonl.ReadAsync<ReviewDecision>(options.ReviewPath, cancellationToken);
         EnsureUniqueSourceUnitIds(ledger);
-        var ledgerSourceUnitIds = ledger
-            .Select(sourceUnit => sourceUnit.SourceUnitId)
-            .ToHashSet(StringComparer.Ordinal);
+        EnsureUniqueReviewSourceUnitIds(reviewDecisions);
+        foreach (var decision in reviewDecisions)
+        {
+            CandidateRules.ValidateReviewDecision(decision);
+        }
+
+        var reviewLookup = reviewDecisions.ToDictionary(decision => decision.SourceUnitId, StringComparer.Ordinal);
         var promptTemplate = await File.ReadAllTextAsync(options.PromptPath, cancellationToken);
-        var decisionsBySourceUnitId = new Dictionary<string, CandidateDecision>(StringComparer.Ordinal);
-        var aiUnits = new List<SourceUnit>();
+        var decisionsBySourceUnitId = new Dictionary<string, ReviewDecision>(StringComparer.Ordinal);
         var batchOutputDirectory = GetBatchOutputDirectory(options);
         var batchCounter = new BatchCounter(FindLastBatchNumber(options.RawOutputDirectory, batchOutputDirectory));
 
         if (options.Resume)
         {
-            await LoadResumeDecisionsAsync(options.OutputPath, batchOutputDirectory, ledgerSourceUnitIds, decisionsBySourceUnitId, cancellationToken);
-            Console.WriteLine($"Loaded {decisionsBySourceUnitId.Count} existing candidate decision(s) from {Path.GetFullPath(options.OutputPath)}");
+            await LoadResumeDecisionsAsync(options.OutputPath, batchOutputDirectory, ledger, decisionsBySourceUnitId, cancellationToken);
+            Console.WriteLine($"Loaded {decisionsBySourceUnitId.Count} existing normalized review decision(s) from {Path.GetFullPath(options.OutputPath)}");
             await PersistCompletedDecisionsAsync(options.OutputPath, ledger, decisionsBySourceUnitId, cancellationToken);
         }
 
-        foreach (var sourceUnit in ledger)
+        var batches = BuildSectionBatches(ledger, options.BatchSize);
+        foreach (var batch in batches)
         {
-            if (decisionsBySourceUnitId.ContainsKey(sourceUnit.SourceUnitId))
+            var pending = batch
+                .Where(sourceUnit => !decisionsBySourceUnitId.ContainsKey(sourceUnit.SourceUnitId))
+                .ToList();
+
+            if (pending.Count == 0)
             {
                 continue;
             }
 
-            if (ShouldExtractDeterministically(options, sourceUnit))
+            if (string.Equals(options.AiMode, "off", StringComparison.OrdinalIgnoreCase))
             {
-                var deterministicDecision = DeterministicCandidateExtractor.TryExtract(sourceUnit);
-                if (deterministicDecision is not null)
-                {
-                    CandidateRules.ValidateDecision(deterministicDecision);
-                    decisionsBySourceUnitId[sourceUnit.SourceUnitId] = deterministicDecision;
-                    continue;
-                }
-            }
+                var normalizedDecisions = pending
+                    .Select(unit => BuildDeterministicDecision(unit, reviewLookup.TryGetValue(unit.SourceUnitId, out var reviewDecision) ? reviewDecision : null))
+                    .ToList();
 
-            if (ShouldSendToAi(options, sourceUnit))
-            {
-                aiUnits.Add(sourceUnit);
-                continue;
-            }
-
-            decisionsBySourceUnitId[sourceUnit.SourceUnitId] = DeterministicCandidateExtractor.Skip(sourceUnit);
-        }
-
-        if (string.Equals(options.AiMode, "off", StringComparison.OrdinalIgnoreCase))
-        {
-            foreach (var sourceUnit in aiUnits)
-            {
-                decisionsBySourceUnitId[sourceUnit.SourceUnitId] = NeedsAiReview(sourceUnit);
-            }
-        }
-        else
-        {
-            foreach (var batch in aiUnits.Chunk(options.BatchSize))
-            {
-                await ExtractAdaptiveBatchAsync(
+                await CompleteBatchAsync(
                     options,
-                    promptTemplate,
                     batchOutputDirectory,
-                    batchCounter,
-                    batch,
+                    batchCounter.Next(),
+                    options.ReasoningEffort,
+                    pending,
+                    normalizedDecisions,
                     ledger,
                     decisionsBySourceUnitId,
                     cancellationToken);
+                continue;
             }
+
+            await NormalizeAdaptiveBatchAsync(
+                options,
+                promptTemplate,
+                batchOutputDirectory,
+                batchCounter,
+                pending,
+                ledger,
+                reviewLookup,
+                decisionsBySourceUnitId,
+                cancellationToken);
         }
 
         var allResults = ledger
             .Select(sourceUnit => decisionsBySourceUnitId.TryGetValue(sourceUnit.SourceUnitId, out var decision)
                 ? decision
-                : DeterministicCandidateExtractor.Skip(sourceUnit))
+                : BuildDeterministicDecision(sourceUnit, reviewLookup.TryGetValue(sourceUnit.SourceUnitId, out var reviewDecision) ? reviewDecision : null))
             .ToList();
 
         await Jsonl.WriteAsync(options.OutputPath, allResults, cancellationToken);
         return allResults.Count;
     }
 
+    private static IReadOnlyList<IReadOnlyList<SourceUnit>> BuildSectionBatches(IReadOnlyList<SourceUnit> ledger, int batchSize)
+    {
+        var batches = new List<IReadOnlyList<SourceUnit>>();
+        var current = new List<SourceUnit>();
+        var currentSection = string.Empty;
+
+        foreach (var unit in ledger)
+        {
+            if (current.Count == 0)
+            {
+                currentSection = unit.Section;
+                current.Add(unit);
+                continue;
+            }
+
+            if (!string.Equals(unit.Section, currentSection, StringComparison.Ordinal) || current.Count >= batchSize)
+            {
+                batches.Add(current);
+                current = new List<SourceUnit>();
+                currentSection = unit.Section;
+            }
+
+            current.Add(unit);
+        }
+
+        if (current.Count > 0)
+        {
+            batches.Add(current);
+        }
+
+        return batches;
+    }
+
+    private static ReviewDecision BuildDeterministicDecision(SourceUnit sourceUnit, ReviewDecision? reviewDecision)
+    {
+        if (reviewDecision is null)
+        {
+            return new ReviewDecision
+            {
+                SourceUnitId = sourceUnit.SourceUnitId,
+                SourceUnitIds = [sourceUnit.SourceUnitId],
+                Action = "gap",
+                Notes = ["no_review_decision"],
+            };
+        }
+
+        return NormalizeDecisionForExpectedUnit(reviewDecision, sourceUnit);
+    }
+
     private static async Task LoadResumeDecisionsAsync(
         string outputPath,
         string batchOutputDirectory,
-        IReadOnlySet<string> ledgerSourceUnitIds,
-        Dictionary<string, CandidateDecision> decisionsBySourceUnitId,
+        IReadOnlyList<SourceUnit> ledger,
+        Dictionary<string, ReviewDecision> decisionsBySourceUnitId,
         CancellationToken cancellationToken)
     {
+        var ledgerSourceUnitIds = ledger
+            .Select(sourceUnit => sourceUnit.SourceUnitId)
+            .ToHashSet(StringComparer.Ordinal);
+
         if (File.Exists(outputPath))
         {
-            foreach (var decision in await Jsonl.ReadAsync<CandidateDecision>(outputPath, cancellationToken))
+            foreach (var decision in await Jsonl.ReadAsync<ReviewDecision>(outputPath, cancellationToken))
             {
                 AddResumeDecision(decisionsBySourceUnitId, decision, ledgerSourceUnitIds, outputPath);
             }
@@ -142,10 +203,10 @@ public sealed class CodexCliRequirementExtractor
             return;
         }
 
-        foreach (var path in Directory.EnumerateFiles(batchOutputDirectory, "batch-*.candidates.json").OrderBy(path => path, StringComparer.Ordinal))
+        foreach (var path in Directory.EnumerateFiles(batchOutputDirectory, "batch-*.normalized.json").OrderBy(path => path, StringComparer.Ordinal))
         {
             var json = await File.ReadAllTextAsync(path, cancellationToken);
-            var artifact = JsonSerializer.Deserialize<CandidateBatchArtifact>(json, RfcJson.Options)
+            var artifact = JsonSerializer.Deserialize<ReviewBatchArtifact>(json, RfcJson.Options)
                 ?? throw new InvalidOperationException($"Batch artifact '{path}' deserialized to null.");
 
             ValidateBatchArtifact(artifact, path);
@@ -156,7 +217,7 @@ public sealed class CodexCliRequirementExtractor
         }
     }
 
-    private static void ValidateBatchArtifact(CandidateBatchArtifact artifact, string path)
+    private static void ValidateBatchArtifact(ReviewBatchArtifact artifact, string path)
     {
         if (artifact.SourceUnitIds.Count != artifact.Results.Count)
         {
@@ -166,7 +227,7 @@ public sealed class CodexCliRequirementExtractor
         for (var index = 0; index < artifact.Results.Count; index++)
         {
             var decision = artifact.Results[index];
-            CandidateRules.ValidateDecision(decision);
+            CandidateRules.ValidateReviewDecision(decision);
             if (!string.Equals(artifact.SourceUnitIds[index], decision.SourceUnitId, StringComparison.Ordinal))
             {
                 throw new InvalidOperationException($"Batch artifact '{path}' result {index + 1} does not match its source_unit_ids entry.");
@@ -175,8 +236,8 @@ public sealed class CodexCliRequirementExtractor
     }
 
     private static void AddResumeDecision(
-        Dictionary<string, CandidateDecision> decisionsBySourceUnitId,
-        CandidateDecision decision,
+        Dictionary<string, ReviewDecision> decisionsBySourceUnitId,
+        ReviewDecision decision,
         IReadOnlySet<string> ledgerSourceUnitIds,
         string sourcePath)
     {
@@ -185,7 +246,7 @@ public sealed class CodexCliRequirementExtractor
             return;
         }
 
-        CandidateRules.ValidateDecision(decision);
+        CandidateRules.ValidateReviewDecision(decision);
         if (!decisionsBySourceUnitId.TryGetValue(decision.SourceUnitId, out var existing))
         {
             decisionsBySourceUnitId[decision.SourceUnitId] = decision;
@@ -203,25 +264,26 @@ public sealed class CodexCliRequirementExtractor
     private static async Task PersistCompletedDecisionsAsync(
         string outputPath,
         IReadOnlyList<SourceUnit> ledger,
-        IReadOnlyDictionary<string, CandidateDecision> decisionsBySourceUnitId,
+        IReadOnlyDictionary<string, ReviewDecision> decisionsBySourceUnitId,
         CancellationToken cancellationToken)
     {
         var completed = ledger
             .Select(sourceUnit => decisionsBySourceUnitId.TryGetValue(sourceUnit.SourceUnitId, out var decision) ? decision : null)
-            .OfType<CandidateDecision>()
+            .OfType<ReviewDecision>()
             .ToList();
 
         await Jsonl.WriteAsync(outputPath, completed, cancellationToken);
     }
 
-    private static async Task ExtractAdaptiveBatchAsync(
-        CodexExtractionOptions options,
+    private static async Task NormalizeAdaptiveBatchAsync(
+        CodexNormalizeOptions options,
         string promptTemplate,
         string batchOutputDirectory,
         BatchCounter batchCounter,
         IReadOnlyList<SourceUnit> batch,
         IReadOnlyList<SourceUnit> ledger,
-        Dictionary<string, CandidateDecision> decisionsBySourceUnitId,
+        IReadOnlyDictionary<string, ReviewDecision> reviewLookup,
+        Dictionary<string, ReviewDecision> decisionsBySourceUnitId,
         CancellationToken cancellationToken)
     {
         var pending = batch
@@ -236,11 +298,12 @@ public sealed class CodexCliRequirementExtractor
         var batchNumber = batchCounter.Next();
         try
         {
-            var orderedResults = await ExtractBatchOnceAsync(
+            var orderedResults = await NormalizeBatchOnceAsync(
                 options,
                 promptTemplate,
                 batchNumber,
                 pending,
+                reviewLookup,
                 options.ReasoningEffort,
                 previousFailure: null,
                 cancellationToken);
@@ -258,16 +321,17 @@ public sealed class CodexCliRequirementExtractor
         }
         catch (Exception exception) when (exception is not OperationCanceledException && pending.Count > Math.Max(1, options.MinBatchSize))
         {
-            Console.WriteLine($"Codex batch {batchNumber} failed; splitting {pending.Count} source unit(s). Failure: {exception.Message}");
+            Console.WriteLine($"Normalization batch {batchNumber} failed; splitting {pending.Count} source unit(s). Failure: {exception.Message}");
             foreach (var split in SplitBatchForRetry(pending))
             {
-                await ExtractAdaptiveBatchAsync(
+                await NormalizeAdaptiveBatchAsync(
                     options,
                     promptTemplate,
                     batchOutputDirectory,
                     batchCounter,
                     split,
                     ledger,
+                    reviewLookup,
                     decisionsBySourceUnitId,
                     cancellationToken);
             }
@@ -278,11 +342,12 @@ public sealed class CodexCliRequirementExtractor
                                           !string.Equals(options.RetryReasoningEffort, options.ReasoningEffort, StringComparison.OrdinalIgnoreCase))
         {
             var retryBatchNumber = batchCounter.Next();
-            var retryResults = await ExtractBatchOnceAsync(
+            var retryResults = await NormalizeBatchOnceAsync(
                 options,
                 promptTemplate,
                 retryBatchNumber,
                 pending,
+                reviewLookup,
                 options.RetryReasoningEffort!,
                 exception.Message,
                 cancellationToken);
@@ -316,14 +381,14 @@ public sealed class CodexCliRequirementExtractor
     }
 
     private static async Task CompleteBatchAsync(
-        CodexExtractionOptions options,
+        CodexNormalizeOptions options,
         string batchOutputDirectory,
         int batchNumber,
         string reasoningEffort,
         IReadOnlyList<SourceUnit> batch,
-        IReadOnlyList<CandidateDecision> orderedResults,
+        IReadOnlyList<ReviewDecision> orderedResults,
         IReadOnlyList<SourceUnit> ledger,
-        Dictionary<string, CandidateDecision> decisionsBySourceUnitId,
+        Dictionary<string, ReviewDecision> decisionsBySourceUnitId,
         CancellationToken cancellationToken)
     {
         foreach (var result in orderedResults)
@@ -334,88 +399,20 @@ public sealed class CodexCliRequirementExtractor
         await WriteBatchArtifactAsync(options, batchOutputDirectory, batchNumber, reasoningEffort, batch, orderedResults, cancellationToken);
         await PersistCompletedDecisionsAsync(options.OutputPath, ledger, decisionsBySourceUnitId, cancellationToken);
         Console.WriteLine(
-            $"Completed Codex batch {batchNumber}; wrote {decisionsBySourceUnitId.Count}/{ledger.Count} candidate decision(s) to {Path.GetFullPath(options.OutputPath)}");
+            $"Completed normalization batch {batchNumber}; wrote {decisionsBySourceUnitId.Count}/{ledger.Count} review decision(s) to {Path.GetFullPath(options.OutputPath)}");
     }
 
-    private static void ValidateExtractionScope(string extractionScope)
-    {
-        if (!string.Equals(extractionScope, "all", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(extractionScope, "functional", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(extractionScope, "candidate-units", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(extractionScope, "normative", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException("--extraction-scope must be one of: all, functional, candidate-units, normative.");
-        }
-    }
-
-    private static void ValidateAiMode(string aiMode)
-    {
-        if (!string.Equals(aiMode, "codex", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(aiMode, "off", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException("--ai-mode must be one of: codex, off.");
-        }
-    }
-
-    private static void ValidateDeterministicExtractionMode(string deterministicExtractionMode)
-    {
-        if (!string.Equals(deterministicExtractionMode, "off", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(deterministicExtractionMode, "figures", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException("--deterministic-extraction must be one of: off, figures.");
-        }
-    }
-
-    private static void EnsureUniqueSourceUnitIds(IReadOnlyList<SourceUnit> ledger)
-    {
-        var duplicate = ledger
-            .GroupBy(sourceUnit => sourceUnit.SourceUnitId, StringComparer.Ordinal)
-            .FirstOrDefault(group => group.Count() > 1);
-        if (duplicate is not null)
-        {
-            throw new InvalidOperationException($"Ledger contains duplicate source_unit_id '{duplicate.Key}'. Re-run segment with the current tooling.");
-        }
-    }
-
-    private static bool ShouldSendToAi(CodexExtractionOptions options, SourceUnit sourceUnit)
-    {
-        return options.ExtractionScope switch
-        {
-            var scope when string.Equals(scope, "all", StringComparison.OrdinalIgnoreCase) => true,
-            var scope when string.Equals(scope, "functional", StringComparison.OrdinalIgnoreCase) => DeterministicCandidateExtractor.ShouldSendToAi(sourceUnit),
-            var scope when string.Equals(scope, "candidate-units", StringComparison.OrdinalIgnoreCase) => DeterministicCandidateExtractor.ShouldSendToCandidateUnits(sourceUnit),
-            var scope when string.Equals(scope, "normative", StringComparison.OrdinalIgnoreCase) => DeterministicCandidateExtractor.HasNormativeKeywordOrStructuredBlock(sourceUnit),
-            _ => false,
-        };
-    }
-
-    private static bool ShouldExtractDeterministically(CodexExtractionOptions options, SourceUnit sourceUnit)
-    {
-        return string.Equals(options.DeterministicExtractionMode, "figures", StringComparison.OrdinalIgnoreCase) &&
-               string.Equals(sourceUnit.BlockKind, "figure", StringComparison.Ordinal);
-    }
-
-    private static CandidateDecision NeedsAiReview(SourceUnit sourceUnit)
-    {
-        return new CandidateDecision
-        {
-            SourceUnitId = sourceUnit.SourceUnitId,
-            Decision = "needs_human_review",
-            Requirements = [],
-            ReviewFlags = ["ai_disabled_candidate_unit"],
-        };
-    }
-
-    private static async Task<List<CandidateDecision>> ExtractBatchOnceAsync(
-        CodexExtractionOptions options,
+    private static async Task<List<ReviewDecision>> NormalizeBatchOnceAsync(
+        CodexNormalizeOptions options,
         string promptTemplate,
         int batchNumber,
         IReadOnlyList<SourceUnit> batch,
+        IReadOnlyDictionary<string, ReviewDecision> reviewLookup,
         string reasoningEffort,
         string? previousFailure,
         CancellationToken cancellationToken)
     {
-        var prompt = BuildPrompt(promptTemplate, batchNumber, batch, previousFailure);
+        var prompt = BuildPrompt(promptTemplate, batchNumber, batch, reviewLookup, previousFailure);
         try
         {
             var rawResponse = await InvokeCodexAsync(options, prompt, reasoningEffort, cancellationToken);
@@ -431,7 +428,12 @@ public sealed class CodexCliRequirementExtractor
         }
     }
 
-    private static string BuildPrompt(string promptTemplate, int batchNumber, IReadOnlyList<SourceUnit> batch, string? previousFailure = null)
+    private static string BuildPrompt(
+        string promptTemplate,
+        int batchNumber,
+        IReadOnlyList<SourceUnit> batch,
+        IReadOnlyDictionary<string, ReviewDecision> reviewLookup,
+        string? previousFailure = null)
     {
         var builder = new StringBuilder();
         builder.AppendLine(promptTemplate.TrimEnd());
@@ -448,15 +450,28 @@ public sealed class CodexCliRequirementExtractor
         }
 
         builder.AppendLine();
-        builder.AppendLine("Input source units:");
+        builder.AppendLine("Normalize input records:");
         builder.AppendLine("```json");
-        builder.AppendLine(JsonSerializer.Serialize(batch, RfcJson.Options));
+        builder.AppendLine(JsonSerializer.Serialize(
+            batch.Select(sourceUnit => new NormalizeInputRecord
+            {
+                SourceUnitId = sourceUnit.SourceUnitId,
+                SourceUnit = sourceUnit,
+                ReviewDecision = reviewLookup.TryGetValue(sourceUnit.SourceUnitId, out var reviewDecision) ? reviewDecision : new ReviewDecision
+                {
+                    SourceUnitId = sourceUnit.SourceUnitId,
+                    SourceUnitIds = [sourceUnit.SourceUnitId],
+                    Action = "gap",
+                    Notes = ["no_review_decision"],
+                },
+            }).ToList(),
+            RfcJson.Options));
         builder.AppendLine("```");
         return builder.ToString();
     }
 
     private static async Task WriteRawArtifactsAsync(
-        CodexExtractionOptions options,
+        CodexNormalizeOptions options,
         int batchNumber,
         string reasoningEffort,
         string prompt,
@@ -475,7 +490,7 @@ public sealed class CodexCliRequirementExtractor
     }
 
     private static async Task WriteRawFailureAsync(
-        CodexExtractionOptions options,
+        CodexNormalizeOptions options,
         int batchNumber,
         string reasoningEffort,
         string prompt,
@@ -494,16 +509,16 @@ public sealed class CodexCliRequirementExtractor
     }
 
     private static async Task WriteBatchArtifactAsync(
-        CodexExtractionOptions options,
+        CodexNormalizeOptions options,
         string batchOutputDirectory,
         int batchNumber,
         string reasoningEffort,
         IReadOnlyList<SourceUnit> batch,
-        IReadOnlyList<CandidateDecision> orderedResults,
+        IReadOnlyList<ReviewDecision> orderedResults,
         CancellationToken cancellationToken)
     {
         Directory.CreateDirectory(batchOutputDirectory);
-        var artifact = new CandidateBatchArtifact
+        var artifact = new ReviewBatchArtifact
         {
             BatchNumber = batchNumber,
             CreatedAt = DateTimeOffset.UtcNow.ToString("O"),
@@ -513,11 +528,11 @@ public sealed class CodexCliRequirementExtractor
             Results = orderedResults.ToList(),
         };
 
-        var path = Path.Combine(batchOutputDirectory, $"batch-{batchNumber:0000}.candidates.json");
+        var path = Path.Combine(batchOutputDirectory, $"batch-{batchNumber:0000}.normalized.json");
         await File.WriteAllTextAsync(path, JsonSerializer.Serialize(artifact, RfcJson.Options), cancellationToken);
     }
 
-    private static string GetBatchOutputDirectory(CodexExtractionOptions options)
+    private static string GetBatchOutputDirectory(CodexNormalizeOptions options)
     {
         if (!string.IsNullOrWhiteSpace(options.BatchOutputDirectory))
         {
@@ -526,7 +541,7 @@ public sealed class CodexCliRequirementExtractor
 
         var outputDirectory = Path.GetDirectoryName(Path.GetFullPath(options.OutputPath))
             ?? Directory.GetCurrentDirectory();
-        return Path.Combine(outputDirectory, "batches");
+        return Path.Combine(outputDirectory, "normalized-batches");
     }
 
     private static int FindLastBatchNumber(string? rawOutputDirectory, string batchOutputDirectory)
@@ -539,7 +554,7 @@ public sealed class CodexCliRequirementExtractor
 
         if (Directory.Exists(batchOutputDirectory))
         {
-            max = Math.Max(max, FindLastBatchNumberInDirectory(batchOutputDirectory, "batch-*.candidates.json"));
+            max = Math.Max(max, FindLastBatchNumberInDirectory(batchOutputDirectory, "batch-*.normalized.json"));
         }
 
         return max;
@@ -564,34 +579,34 @@ public sealed class CodexCliRequirementExtractor
         return max;
     }
 
-    private static CandidateBatchResponse DeserializeBatch(string rawResponse, int batchNumber)
+    private static ReviewBatchResponse DeserializeBatch(string rawResponse, int batchNumber)
     {
         var json = ExtractJsonObject(rawResponse);
         try
         {
-            return JsonSerializer.Deserialize<CandidateBatchResponse>(json, RfcJson.Options)
+            return JsonSerializer.Deserialize<ReviewBatchResponse>(json, RfcJson.Options)
                 ?? throw new JsonException("Response deserialized to null.");
         }
         catch (JsonException exception)
         {
-            throw new InvalidOperationException($"Codex batch {batchNumber} returned invalid candidate JSON: {exception.Message}", exception);
+            throw new InvalidOperationException($"Normalization batch {batchNumber} returned invalid review JSON: {exception.Message}", exception);
         }
     }
 
-    internal static List<CandidateDecision> OrderAndValidateBatch(IReadOnlyList<SourceUnit> batch, IReadOnlyList<CandidateDecision> results, int batchNumber)
+    internal static List<ReviewDecision> OrderAndValidateBatch(IReadOnlyList<SourceUnit> batch, IReadOnlyList<ReviewDecision> results, int batchNumber)
     {
-        var ordered = new List<CandidateDecision>(batch.Count);
+        var ordered = new List<ReviewDecision>(batch.Count);
 
         for (var index = 0; index < batch.Count; index++)
         {
             if (index >= results.Count)
             {
-                throw new InvalidOperationException($"Codex batch {batchNumber} did not return a result for source unit '{batch[index].SourceUnitId}'.");
+                throw new InvalidOperationException($"Normalization batch {batchNumber} did not return a result for source unit '{batch[index].SourceUnitId}'.");
             }
 
             var unit = batch[index];
             var decision = NormalizeDecisionForExpectedUnit(results[index], unit);
-            CandidateRules.ValidateDecision(decision);
+            CandidateRules.ValidateReviewDecision(decision);
             ValidateCodexUpstreamRefs(decision, batchNumber);
             ordered.Add(decision);
         }
@@ -607,15 +622,19 @@ public sealed class CodexCliRequirementExtractor
                 .ToList();
             if (extra.Count > 0)
             {
-                throw new InvalidOperationException($"Codex batch {batchNumber} returned unexpected source unit ids: {string.Join(", ", extra)}.");
+                throw new InvalidOperationException($"Normalization batch {batchNumber} returned unexpected source unit ids: {string.Join(", ", extra)}.");
             }
         }
 
         return ordered;
     }
 
-    private static void ValidateCodexUpstreamRefs(CandidateDecision decision, int batchNumber)
+    private static void ValidateCodexUpstreamRefs(ReviewDecision decision, int batchNumber)
     {
+        var sourceIds = new HashSet<string>(decision.SourceUnitIds.Count == 0
+            ? [decision.SourceUnitId]
+            : [decision.SourceUnitId, .. decision.SourceUnitIds], StringComparer.Ordinal);
+
         foreach (var requirement in decision.Requirements)
         {
             if (requirement.UpstreamRefs.Count == 0)
@@ -623,27 +642,32 @@ public sealed class CodexCliRequirementExtractor
                 continue;
             }
 
-            if (!requirement.UpstreamRefs.Any(reference => reference.Contains(decision.SourceUnitId, StringComparison.Ordinal)))
+            if (!requirement.UpstreamRefs.Any(reference => sourceIds.Any(sourceId => reference.Contains(sourceId, StringComparison.Ordinal))))
             {
                 throw new InvalidOperationException(
-                    $"Codex batch {batchNumber} returned a requirement for '{decision.SourceUnitId}' whose upstream_refs do not contain that source unit id.");
+                    $"Normalization batch {batchNumber} returned a requirement for '{decision.SourceUnitId}' whose upstream_refs do not contain a reviewed source unit id.");
             }
         }
     }
 
-    private static CandidateDecision NormalizeDecisionForExpectedUnit(CandidateDecision decision, SourceUnit expectedUnit)
+    private static ReviewDecision NormalizeDecisionForExpectedUnit(ReviewDecision decision, SourceUnit expectedUnit)
     {
+        var normalizedSourceUnitIds = NormalizeSourceUnitIds(decision.SourceUnitIds, decision.SourceUnitId, expectedUnit.SourceUnitId);
         var repairNeeded = !string.Equals(decision.SourceUnitId, expectedUnit.SourceUnitId, StringComparison.Ordinal);
-        return new CandidateDecision
+        return new ReviewDecision
         {
             SourceUnitId = expectedUnit.SourceUnitId,
-            Decision = decision.Decision,
+            SourceUnitIds = normalizedSourceUnitIds,
+            Action = decision.Action,
             Requirements = decision.Requirements
                 .Select(requirement => NormalizeRequirementForExpectedUnit(requirement, decision.SourceUnitId, expectedUnit.SourceUnitId))
                 .ToList(),
-            ReviewFlags = repairNeeded
-                ? decision.ReviewFlags.Append($"source_unit_id_repaired_from:{decision.SourceUnitId}").ToList()
-                : decision.ReviewFlags.ToList(),
+            Notes = repairNeeded
+                ? decision.Notes
+                    .Select(note => note.Replace(decision.SourceUnitId, expectedUnit.SourceUnitId, StringComparison.Ordinal))
+                    .Append($"source_unit_id_repaired_from:{decision.SourceUnitId}")
+                    .ToList()
+                : decision.Notes.ToList(),
         };
     }
 
@@ -665,6 +689,43 @@ public sealed class CodexCliRequirementExtractor
             UpstreamRefs = upstreamRefs,
             Notes = requirement.Notes,
         };
+    }
+
+    private static List<string> NormalizeSourceUnitIds(IEnumerable<string> sourceUnitIds, string actualSourceUnitId, string expectedSourceUnitId)
+    {
+        var normalized = new List<string>();
+        foreach (var sourceUnitId in sourceUnitIds)
+        {
+            var repaired = string.Equals(sourceUnitId, actualSourceUnitId, StringComparison.Ordinal)
+                ? expectedSourceUnitId
+                : sourceUnitId;
+
+            if (!string.IsNullOrWhiteSpace(repaired) && !normalized.Contains(repaired, StringComparer.Ordinal))
+            {
+                normalized.Add(repaired);
+            }
+        }
+
+        if (normalized.Count == 0)
+        {
+            normalized.Add(expectedSourceUnitId);
+            return normalized;
+        }
+
+        var expectedIndex = normalized.FindIndex(sourceUnitId => string.Equals(sourceUnitId, expectedSourceUnitId, StringComparison.Ordinal));
+        if (expectedIndex > 0)
+        {
+            normalized.RemoveAt(expectedIndex);
+            normalized.Insert(0, expectedSourceUnitId);
+            return normalized;
+        }
+
+        if (expectedIndex < 0)
+        {
+            normalized.Insert(0, expectedSourceUnitId);
+        }
+
+        return normalized;
     }
 
     private static string ExtractJsonObject(string rawResponse)
@@ -695,7 +756,7 @@ public sealed class CodexCliRequirementExtractor
     }
 
     private static async Task<string> InvokeCodexAsync(
-        CodexExtractionOptions options,
+        CodexNormalizeOptions options,
         string prompt,
         string reasoningEffort,
         CancellationToken cancellationToken)
@@ -794,6 +855,37 @@ public sealed class CodexCliRequirementExtractor
         }
         catch (InvalidOperationException)
         {
+        }
+    }
+
+    private static void ValidateAiMode(string aiMode)
+    {
+        if (!string.Equals(aiMode, "codex", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(aiMode, "off", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException("--ai-mode must be one of: codex, off.");
+        }
+    }
+
+    private static void EnsureUniqueSourceUnitIds(IReadOnlyList<SourceUnit> ledger)
+    {
+        var duplicate = ledger
+            .GroupBy(sourceUnit => sourceUnit.SourceUnitId, StringComparer.Ordinal)
+            .FirstOrDefault(group => group.Count() > 1);
+        if (duplicate is not null)
+        {
+            throw new InvalidOperationException($"Ledger contains duplicate source_unit_id '{duplicate.Key}'. Re-run segment with the current tooling.");
+        }
+    }
+
+    private static void EnsureUniqueReviewSourceUnitIds(IReadOnlyList<ReviewDecision> reviewDecisions)
+    {
+        var duplicate = reviewDecisions
+            .GroupBy(decision => decision.SourceUnitId, StringComparer.Ordinal)
+            .FirstOrDefault(group => group.Count() > 1);
+        if (duplicate is not null)
+        {
+            throw new InvalidOperationException($"Review set contains duplicate source_unit_id '{duplicate.Key}'. Re-run coverage-audit with the current tooling.");
         }
     }
 }

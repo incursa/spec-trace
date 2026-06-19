@@ -12,6 +12,11 @@ List the files changed by this pull request.
 - [ ] Canonical field names were not changed, or any changes were documented
 - [ ] Cross-links between artifacts were updated where needed
 
+## Contributor Agreement
+
+- [ ] I have read `CONTRIBUTOR-AGREEMENT.md`
+- [ ] If required, I will sign by commenting exactly: `I have read the Incursa Contributor Agreement and I hereby assign my contribution rights as described.`
+
 ## Breaking Change
 
 - [ ] This is a breaking change to the standard

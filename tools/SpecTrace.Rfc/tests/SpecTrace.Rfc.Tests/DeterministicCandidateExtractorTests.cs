@@ -136,6 +136,32 @@ Transport Parameter {
         Assert.True(DeterministicCandidateExtractor.ShouldSendToAi(sourceUnit));
     }
 
+    [Theory]
+    [InlineData("paragraph", "The first bit of a QUIC long header packet MUST be set to 1.", true)]
+    [InlineData("paragraph", "The byte after the Version field MUST encode the Destination Connection ID length as an 8-bit unsigned integer.", true)]
+    [InlineData("figure", "Packet { Field (8) }", true)]
+    [InlineData("paragraph", "This sentence explains the surrounding context.", false)]
+    [InlineData("paragraph", "QUIC provides applications with an abstract communication model.", false)]
+    public void CandidateUnitsScopeTargetsImplementationRelevantBehavior(string blockKind, string text, bool expected)
+    {
+        var sourceUnit = new SourceUnit
+        {
+            SourceUnitId = "RFC8999-S5P1-B5-P5-S1",
+            SourceId = "RFC8999",
+            Section = "5.1",
+            SectionTitle = "Long Header",
+            BlockIndex = 5,
+            ParagraphIndex = 5,
+            SentenceIndex = 1,
+            BlockKind = blockKind,
+            Text = text,
+            SourceUrl = "https://www.rfc-editor.org/rfc/rfc8999.html#section-5.1",
+            TextHash = "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+        };
+
+        Assert.Equal(expected, DeterministicCandidateExtractor.ShouldSendToCandidateUnits(sourceUnit));
+    }
+
     [Fact]
     public void FunctionalScopeSkipsLegalFrontMatter()
     {

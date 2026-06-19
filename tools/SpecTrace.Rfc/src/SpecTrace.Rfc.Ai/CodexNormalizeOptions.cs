@@ -1,8 +1,10 @@
 namespace SpecTrace.Rfc.Ai;
 
-public sealed class CodexExtractionOptions
+public sealed class CodexNormalizeOptions
 {
     public required string LedgerPath { get; init; }
+
+    public required string ReviewPath { get; init; }
 
     public required string OutputPath { get; init; }
 
@@ -27,10 +29,6 @@ public sealed class CodexExtractionOptions
     public int MaxBatchRetries { get; init; } = 2;
 
     public int BatchTimeoutSeconds { get; init; } = 300;
-
-    public string ExtractionScope { get; init; } = "candidate-units";
-
-    public string DeterministicExtractionMode { get; init; } = "off";
 
     public string AiMode { get; init; } = "codex";
 

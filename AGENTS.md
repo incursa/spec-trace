@@ -38,6 +38,7 @@ If you find a mismatch, follow the higher-authority source and fix the lower-aut
 - Author canonical artifacts in JSON.
 - Validate canonical document shape with [`model/model.schema.json`](./model/model.schema.json).
 - Treat generated outputs as derived material.
+- Treat Source Context Notes as documented evidence-discovery inputs, not as canonical requirement text or verification proof.
 - Use stable IDs for cross-file references. Prefer artifact IDs and requirement IDs over file paths.
 - If you rename or delete a referenced ID, fix the referrers in the same change.
 - Keep AI-facing docs short, ergonomic, and explicitly subordinate to the SPEC suite.

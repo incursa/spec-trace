@@ -26,6 +26,8 @@ internal static class RfcCommandDispatcher
                 "segment" => await RunSegmentAsync(rest),
                 "extract" => await RunExtractAsync(rest),
                 "review-pack" => await RunReviewPackAsync(rest),
+                "coverage-audit" => await RunCoverageAuditAsync(rest),
+                "normalize" => await RunNormalizeAsync(rest),
                 "assemble" => await RunAssembleAsync(rest),
                 "validate" => await RunValidateAsync(rest),
                 _ => UnknownCommand(command),
@@ -84,7 +86,7 @@ internal static class RfcCommandDispatcher
             MinBatchSize = int.Parse(GetOption(args, "--adaptive-min-batch-size") ?? "1"),
             MaxBatchRetries = int.Parse(GetOption(args, "--max-batch-retries") ?? "1"),
             BatchTimeoutSeconds = int.Parse(GetOption(args, "--batch-timeout-seconds") ?? "300"),
-            ExtractionScope = GetOption(args, "--extraction-scope") ?? "all",
+            ExtractionScope = GetOption(args, "--extraction-scope") ?? "candidate-units",
             DeterministicExtractionMode = GetOption(args, "--deterministic-extraction") ?? "off",
             AiMode = GetOption(args, "--ai-mode") ?? "codex",
             CodexCommand = GetOption(args, "--codex") ?? "codex",
@@ -113,6 +115,85 @@ internal static class RfcCommandDispatcher
 
         await ReviewPackRenderer.RenderAsync(outPath, ledger, candidates);
         Console.WriteLine($"Wrote {Path.GetFullPath(outPath)}");
+        return 0;
+    }
+
+    private static async Task<int> RunCoverageAuditAsync(string[] args)
+    {
+        var toolRoot = FindToolRoot();
+        var ledgerPath = Required(args, "--ledger");
+        var candidatesPath = Required(args, "--candidates");
+        var outPath = Required(args, "--out");
+        var reportPath = GetOption(args, "--report-out");
+        var promptPath = GetOption(args, "--prompt") ?? Path.Combine(toolRoot, "prompts", "coverage-audit.md");
+        var schemaPath = GetOption(args, "--schema") ?? Path.Combine(toolRoot, "schemas", "review-batch.schema.json");
+        var batchSize = int.Parse(GetOption(args, "--batch-size") ?? "25");
+
+        var count = await new CodexCliCoverageAuditor().AuditAsync(new CodexAuditOptions
+        {
+            LedgerPath = ledgerPath,
+            CandidatePath = candidatesPath,
+            OutputPath = outPath,
+            ReportPath = reportPath,
+            PromptPath = promptPath,
+            SchemaPath = schemaPath,
+            BatchSize = batchSize,
+            MinBatchSize = int.Parse(GetOption(args, "--adaptive-min-batch-size") ?? "1"),
+            MaxBatchRetries = int.Parse(GetOption(args, "--max-batch-retries") ?? "1"),
+            BatchTimeoutSeconds = int.Parse(GetOption(args, "--batch-timeout-seconds") ?? "300"),
+            AiMode = GetOption(args, "--ai-mode") ?? "codex",
+            CodexCommand = GetOption(args, "--codex") ?? "codex",
+            Model = GetOption(args, "--model") ?? "gpt-5.4-mini",
+            ReasoningEffort = GetOption(args, "--reasoning-effort") ?? "high",
+            RetryReasoningEffort = GetOption(args, "--retry-reasoning-effort") ?? "xhigh",
+            WorkingDirectory = GetOption(args, "--workdir") ?? Directory.GetCurrentDirectory(),
+            RawOutputDirectory = GetOption(args, "--raw-out-dir"),
+            BatchOutputDirectory = GetOption(args, "--batch-out-dir"),
+            Resume = HasSwitch(args, "--resume"),
+        });
+
+        Console.WriteLine($"Wrote {count} review decision(s) to {Path.GetFullPath(outPath)}");
+        if (!string.IsNullOrWhiteSpace(reportPath))
+        {
+            Console.WriteLine($"Wrote {Path.GetFullPath(reportPath)}");
+        }
+
+        return 0;
+    }
+
+    private static async Task<int> RunNormalizeAsync(string[] args)
+    {
+        var toolRoot = FindToolRoot();
+        var ledgerPath = Required(args, "--ledger");
+        var reviewPath = Required(args, "--review");
+        var outPath = Required(args, "--out");
+        var promptPath = GetOption(args, "--prompt") ?? Path.Combine(toolRoot, "prompts", "normalize-requirement.md");
+        var schemaPath = GetOption(args, "--schema") ?? Path.Combine(toolRoot, "schemas", "review-batch.schema.json");
+        var batchSize = int.Parse(GetOption(args, "--batch-size") ?? "25");
+
+        var count = await new CodexCliRequirementNormalizer().NormalizeAsync(new CodexNormalizeOptions
+        {
+            LedgerPath = ledgerPath,
+            ReviewPath = reviewPath,
+            OutputPath = outPath,
+            PromptPath = promptPath,
+            SchemaPath = schemaPath,
+            BatchSize = batchSize,
+            MinBatchSize = int.Parse(GetOption(args, "--adaptive-min-batch-size") ?? "1"),
+            MaxBatchRetries = int.Parse(GetOption(args, "--max-batch-retries") ?? "1"),
+            BatchTimeoutSeconds = int.Parse(GetOption(args, "--batch-timeout-seconds") ?? "300"),
+            AiMode = GetOption(args, "--ai-mode") ?? "codex",
+            CodexCommand = GetOption(args, "--codex") ?? "codex",
+            Model = GetOption(args, "--model") ?? "gpt-5.4-mini",
+            ReasoningEffort = GetOption(args, "--reasoning-effort") ?? "high",
+            RetryReasoningEffort = GetOption(args, "--retry-reasoning-effort") ?? "xhigh",
+            WorkingDirectory = GetOption(args, "--workdir") ?? Directory.GetCurrentDirectory(),
+            RawOutputDirectory = GetOption(args, "--raw-out-dir"),
+            BatchOutputDirectory = GetOption(args, "--batch-out-dir"),
+            Resume = HasSwitch(args, "--resume"),
+        });
+
+        Console.WriteLine($"Wrote {count} normalized review decision(s) to {Path.GetFullPath(outPath)}");
         return 0;
     }
 
@@ -243,8 +324,10 @@ internal static class RfcCommandDispatcher
         Console.WriteLine("  spec-rfc ingest --rfc <number> --out <source.json> [--source-id <id>] [--title <title>]");
         Console.WriteLine("  spec-rfc ingest --source <path-or-url> --out <source.json> [--source-id <id>] [--title <title>]");
         Console.WriteLine("  spec-rfc segment --source <source.json> --out <source-ledger.jsonl>");
-        Console.WriteLine("  spec-rfc extract --ledger <source-ledger.jsonl> --out <candidates.jsonl> [--extraction-scope all|functional|normative] [--deterministic-extraction off|figures] [--ai-mode codex|off] [--batch-size 25] [--adaptive-min-batch-size 1] [--max-batch-retries 1] [--batch-timeout-seconds 300] [--model gpt-5.4-mini] [--reasoning-effort high] [--retry-reasoning-effort xhigh] [--raw-out-dir <dir>] [--batch-out-dir <dir>] [--resume]");
+        Console.WriteLine("  spec-rfc extract --ledger <source-ledger.jsonl> --out <candidates.jsonl> [--extraction-scope candidate-units|functional|normative|all] [--deterministic-extraction off|figures] [--ai-mode codex|off] [--batch-size 25] [--adaptive-min-batch-size 1] [--max-batch-retries 1] [--batch-timeout-seconds 300] [--model gpt-5.4-mini] [--reasoning-effort high] [--retry-reasoning-effort xhigh] [--raw-out-dir <dir>] [--batch-out-dir <dir>] [--resume]");
         Console.WriteLine("  spec-rfc review-pack --ledger <source-ledger.jsonl> --candidates <candidates.jsonl> --out <review.md>");
+        Console.WriteLine("  spec-rfc coverage-audit --ledger <source-ledger.jsonl> --candidates <candidates.jsonl> --out <review-decisions.jsonl> [--report-out <coverage-audit.md>] [--ai-mode codex|off] [--batch-size 25] [--adaptive-min-batch-size 1] [--max-batch-retries 1] [--batch-timeout-seconds 300] [--model gpt-5.4-mini] [--reasoning-effort high] [--retry-reasoning-effort xhigh] [--raw-out-dir <dir>] [--batch-out-dir <dir>] [--resume]");
+        Console.WriteLine("  spec-rfc normalize --ledger <source-ledger.jsonl> --review <review-decisions.jsonl> --out <normalized-review-decisions.jsonl> [--ai-mode codex|off] [--batch-size 25] [--adaptive-min-batch-size 1] [--max-batch-retries 1] [--batch-timeout-seconds 300] [--model gpt-5.4-mini] [--reasoning-effort high] [--retry-reasoning-effort xhigh] [--raw-out-dir <dir>] [--batch-out-dir <dir>] [--resume]");
         Console.WriteLine("  spec-rfc assemble --ledger <source-ledger.jsonl> (--candidates <candidates.jsonl> | --review <review-decisions.jsonl>) --spec-id <SPEC-ID> --out <SPEC-ID.json> [--domain <domain>] [--capability <capability>] [--id-style section|namespace]");
         Console.WriteLine("  spec-rfc validate [--root <repo>] [--input-path <path>] [--profile core|traceable|auditable]");
     }

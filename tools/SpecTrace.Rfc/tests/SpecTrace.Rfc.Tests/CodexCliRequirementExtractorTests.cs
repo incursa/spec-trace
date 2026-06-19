@@ -6,7 +6,7 @@ namespace SpecTrace.Rfc.Tests;
 public sealed class CodexCliRequirementExtractorTests
 {
     [Fact]
-    public async Task ExtractAsyncDefaultsToAiReviewForEverySourceUnit()
+    public async Task ExtractAsyncDefaultsToCandidateUnitsForReview()
     {
         var tempDirectory = Path.Combine(Path.GetTempPath(), "spec-trace-rfc-tests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(tempDirectory);
@@ -22,7 +22,7 @@ public sealed class CodexCliRequirementExtractorTests
                 {
                     SourceUnit("RFC8999-S5P1-B5-P5-S1", blockKind: "figure", text: "Packet { Field (8) }"),
                     SourceUnit("RFC8999-S5P1-B6-P6-S1", text: "The first bit of a long header packet MUST be set to 1."),
-                    SourceUnit("RFC8999-S5P1-B7-P7-S1", text: "Note."),
+                    SourceUnit("RFC8999-S5P1-B7-P7-S1", text: "This sentence explains the surrounding context."),
                 });
 
             var count = await new CodexCliRequirementExtractor().ExtractAsync(new CodexExtractionOptions
@@ -37,11 +37,23 @@ public sealed class CodexCliRequirementExtractorTests
             var decisions = await Jsonl.ReadAsync<CandidateDecision>(candidatesPath);
 
             Assert.Equal(3, count);
-            Assert.All(decisions, decision =>
-            {
-                Assert.Equal("needs_human_review", decision.Decision);
-                Assert.Contains("ai_disabled_candidate_unit", decision.ReviewFlags);
-            });
+            Assert.Collection(
+                decisions,
+                figure =>
+                {
+                    Assert.Equal("needs_human_review", figure.Decision);
+                    Assert.Contains("ai_disabled_candidate_unit", figure.ReviewFlags);
+                },
+                normative =>
+                {
+                    Assert.Equal("needs_human_review", normative.Decision);
+                    Assert.Contains("ai_disabled_candidate_unit", normative.ReviewFlags);
+                },
+                explanatory =>
+                {
+                    Assert.Equal("skip_non_normative", explanatory.Decision);
+                    Assert.Contains("deterministic_scope_skip", explanatory.ReviewFlags);
+                });
         }
         finally
         {
@@ -242,8 +254,8 @@ Long Header Packet {
                 },
                 missing =>
                 {
-                    Assert.Equal("needs_human_review", missing.Decision);
-                    Assert.Contains("ai_disabled_candidate_unit", missing.ReviewFlags);
+                    Assert.Equal("skip_non_normative", missing.Decision);
+                    Assert.Contains("deterministic_scope_skip", missing.ReviewFlags);
                 });
         }
         finally

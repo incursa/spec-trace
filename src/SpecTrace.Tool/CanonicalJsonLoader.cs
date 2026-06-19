@@ -66,7 +66,7 @@ internal static class CanonicalJsonLoader
 
         if (File.Exists(inputPath))
         {
-            return ShouldIncludeArtifactFile(rootPath, inputPath) ? [inputPath] : [];
+            return [inputPath];
         }
 
         if (!Directory.Exists(inputPath))

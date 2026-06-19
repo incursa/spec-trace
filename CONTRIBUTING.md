@@ -8,12 +8,21 @@ This repository is the public reference standard for `incursa/spec-trace`. Chang
 2. Keep the proposal focused on one change or one coherent group of related changes.
 3. Explain what is changing, why it is changing, and whether it affects canonical field names, identifier rules, templates, examples, or schemas.
 
+## Contributor Agreement
+
+Review [`CONTRIBUTOR-AGREEMENT.md`](CONTRIBUTOR-AGREEMENT.md) before opening a pull request. Non-allowlisted contributors must satisfy the Contributor Agreement check by commenting exactly:
+
+```text
+I have read the Incursa Contributor Agreement and I hereby assign my contribution rights as described.
+```
+
 ## Pull Request Expectations
 
 - Keep pull requests small and readable.
 - Update the affected SPEC artifacts, examples, metadata catalog, and schemas together when the change touches canonical content.
 - Link to the related issue or discussion when there is one.
 - Call out any breaking change to the standard explicitly.
+- Keep the Contributor Agreement status green before review.
 
 ## Coherence Rules
 
