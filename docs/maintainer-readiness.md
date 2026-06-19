@@ -1,3 +1,7 @@
+---
+title: "Maintainer Readiness"
+---
+
 # Maintainer Readiness
 
 This document is the maintainer handoff for the `spec-trace` repository. It explains the local proof surface, release expectations, downstream adoption path, and known readiness gaps without replacing the canonical standard.

@@ -1,3 +1,7 @@
+---
+title: "Documentation"
+---
+
 # Documentation
 
 This directory contains secondary operational documentation for the `spec-trace` repository.
