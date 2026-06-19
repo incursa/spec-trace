@@ -6,6 +6,19 @@ It is for teams that want requirements to be precise, reviewable, and traceable 
 
 The canonical standard lives in [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/). This README is the practical front door, not the authority.
 
+## Documentation And Mirroring
+
+The source documentation for this repository lives under [`docs/`](./docs/).
+The docs site manifest in [`docs.site.json`](./docs.site.json) and the mirror
+workflow in [`.github/workflows/sync-docs.yml`](./.github/workflows/sync-docs.yml)
+copy that tree into the central `incursa-docs` repository and open a pull
+request there.
+
+Do not edit the mirrored `incursa-docs` copy directly. Make source changes in
+this repository and let the sync workflow publish the mirror update.
+
+The operational handoff page is [`docs/maintainer-readiness.md`](./docs/maintainer-readiness.md). It records the current validation floor, release expectations, and known gaps.
+
 ## Why Use It
 
 - Put requirements next to code, schemas, docs, and examples.
@@ -108,6 +121,23 @@ Most repositories should begin with `core`. Move up only when the extra trace bu
 
 The repository CI runs the core validation path, catalog build, evidence validation, attestation rendering, publish-mirror sync check, and tool tests.
 
+## Release And Versioning
+
+The reusable release surface is the curated JSON schema/template mirror under
+[`publish/`](./publish/), not the full repository.
+
+Release expectations:
+
+- release tags use `v<major>.<minor>.<patch>` or a semver prerelease suffix
+- run [`./scripts/Sync-PublishModule.ps1`](./scripts/Sync-PublishModule.ps1) before packaging or publishing
+- run the local validation floor before tagging
+- verify `git status --short --untracked-files=all -- publish` is empty after sync
+- publish artifacts must contain only the curated `publish/` contents
+
+The publish workflow creates a `spec-trace-publish-<version>.zip` archive from
+`publish/`. Do not include local `.work*` directories, generated attestations,
+source RFC extracts, or private work artifacts in release material.
+
 ## Key Rules
 
 - Canonical authored artifacts are JSON documents.
@@ -140,6 +170,12 @@ The repository CI runs the core validation path, catalog build, evidence validat
 - [`profiles-and-attestation-explainer.md`](./profiles-and-attestation-explainer.md) - profile and attestation details
 - [`publish/README.md`](./publish/README.md) - reusable publish mirror
 - [`apps/spec-trace-mcp/README.md`](./apps/spec-trace-mcp/README.md) - MCP docs server
+
+## Readiness And Gaps
+
+[`docs/maintainer-readiness.md`](./docs/maintainer-readiness.md) records the
+current validation floor, downstream adoption path, and open gaps. Use it when
+you need a concise handoff summary rather than the full standard.
 
 ## Contributing
 
