@@ -1,19 +1,27 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { callJsonRpc, callWorker } from "./_helpers.mjs";
+import { callJsonRpc, callWorker, loadWorker } from "./_helpers.mjs";
 
-test("GET /mcp renders the markdown-first docs index", async () => {
+test("GET /mcp renders the SpecTrace MCP index", async () => {
   const response = await callWorker("/mcp");
   assert.equal(response.status, 200);
 
   const html = await response.text();
-  assert.match(html, /Static markdown, MCP delivery/i);
-  assert.match(html, /search_docs/i);
-  assert.match(html, /apps\/spec-trace-mcp\/content\//i);
-  assert.match(html, /spec-trace:\/\/file\/\{path\}/i);
+  assert.match(html, /SpecTrace standard, MCP delivery/i);
+  assert.match(html, /search_spec_trace/i);
+  assert.match(html, /get_requirement/i);
+  assert.match(html, /get_guidance/i);
+  assert.match(html, /spec-trace:\/\/files\/\{path\}/i);
   assert.match(html, /SpecTrace Documentation/i);
   assert.match(html, /GET \/spec-trace\/mcp/i);
   assert.match(html, /href="\/spec-trace\/mcp\/resource\//i);
+  assert.match(html, /SPEC-STD: Core Standard Model/i);
+});
+
+test("worker module exposes both named and default fetch handlers", async () => {
+  const worker = await loadWorker();
+  assert.equal(typeof worker.fetch, "function");
+  assert.equal(typeof worker.default.fetch, "function");
 });
 
 test("prefixed /spec-trace/mcp routes to the same MCP server and keeps links prefix-aware", async () => {
@@ -72,48 +80,59 @@ test("initialize returns stable MCP server metadata", async () => {
   assert.equal(response.result.serverInfo.version, "0.1.0");
 });
 
-test("resources/list exposes markdown resources and a file template", async () => {
+test("resources/list exposes canonical resources and resource templates", async () => {
   const resources = await callJsonRpc("resources/list", {});
   const templates = await callJsonRpc("resources/templates/list", {});
 
   const uris = resources.result.resources.map((resource) => resource.uri);
   assert.ok(uris.includes("spec-trace://overview"));
-  assert.ok(uris.includes("spec-trace://install"));
-  assert.ok(uris.includes("spec-trace://guides/search"));
-  assert.equal(templates.result.resourceTemplates.length, 1);
-  assert.equal(templates.result.resourceTemplates[0].uriTemplate, "spec-trace://file/{path}");
+  assert.ok(uris.includes("spec-trace://specs/SPEC-STD"));
+  assert.ok(uris.includes("spec-trace://requirements/REQ-STD-0001"));
+  assert.ok(uris.includes("spec-trace://schema/model"));
+
+  const templateUris = templates.result.resourceTemplates.map((template) => template.uriTemplate);
+  assert.ok(templateUris.includes("spec-trace://specs/{artifact_id}"));
+  assert.ok(templateUris.includes("spec-trace://requirements/{requirement_id}"));
+  assert.ok(templateUris.includes("spec-trace://files/{path}"));
 });
 
-test("resources/read returns canonical markdown and file-template content", async () => {
-  const canonical = await callJsonRpc("resources/read", {
-    uri: "spec-trace://overview",
+test("resources/read returns canonical specs, requirements, and file-template content", async () => {
+  const spec = await callJsonRpc("resources/read", {
+    uri: "spec-trace://specs/SPEC-STD",
   });
 
-  assert.equal(canonical.result.contents.length, 1);
-  assert.match(canonical.result.contents[0].text, /deterministic MCP server/i);
+  assert.equal(spec.result.contents.length, 1);
+  assert.match(spec.result.contents[0].text, /Core Standard Model and Publication Rules/i);
+
+  const requirement = await callJsonRpc("resources/read", {
+    uri: "spec-trace://requirements/REQ-STD-0001",
+  });
+
+  assert.equal(requirement.result.contents.length, 1);
+  assert.match(requirement.result.contents[0].text, /A specification MUST group/i);
 
   const fileTemplate = await callJsonRpc("resources/read", {
-    uri: "spec-trace://file/overview.md",
+    uri: "spec-trace://files/README.md",
   });
 
   assert.equal(fileTemplate.result.contents.length, 1);
-  assert.match(fileTemplate.result.contents[0].text, /deterministic MCP server/i);
+  assert.match(fileTemplate.result.contents[0].text, /SpecTrace is a small, JSON-first standard/i);
 });
 
-test("tools/list exposes only search_docs", async () => {
+test("tools/list exposes SpecTrace search and lookup tools", async () => {
   const tools = await callJsonRpc("tools/list", {});
   assert.deepEqual(
     tools.result.tools.map((tool) => tool.name),
-    ["search_docs"],
+    ["search_spec_trace", "get_requirement", "get_artifact", "get_guidance"],
   );
 });
 
-test("resource page renders browsable HTML for markdown source paths", async () => {
-  const response = await callWorker(`/mcp/resource/${encodeURIComponent("spec-trace://file/overview.md")}`);
+test("resource page renders browsable HTML for canonical resources", async () => {
+  const response = await callWorker(`/mcp/resource/${encodeURIComponent("spec-trace://specs/SPEC-STD")}`);
   assert.equal(response.status, 200);
 
   const html = await response.text();
-  assert.match(html, /Overview/i);
+  assert.match(html, /Core Standard Model and Publication Rules/i);
   assert.match(html, /Source/i);
   assert.match(html, /href="\/spec-trace\/mcp"/i);
 });

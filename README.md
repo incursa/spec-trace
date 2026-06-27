@@ -159,7 +159,7 @@ source RFC extracts, or private work artifacts in release material.
 - [`catalog/retired-requirements.json`](./catalog/retired-requirements.json) - retired requirement ledger for lineage validation
 - [`publish/`](./publish/) - curated reusable schema and template mirror
 - [`src/SpecTrace.Tool/`](./src/SpecTrace.Tool/) - validation, catalog, evidence, and attestation tooling
-- [`apps/spec-trace-mcp/`](./apps/spec-trace-mcp/) - deterministic Markdown-first MCP docs server
+- [`apps/spec-trace-mcp/`](./apps/spec-trace-mcp/) - deterministic Cloudflare Worker MCP server generated from the canonical SpecTrace repository files
 
 ## Deeper Reading
 

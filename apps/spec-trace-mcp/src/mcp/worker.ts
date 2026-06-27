@@ -20,6 +20,11 @@ type ResourceRecord = {
   priority: number;
   includeInSearch?: boolean;
   tags?: string[];
+  artifactId?: string;
+  requirementId?: string;
+  artifactType?: string;
+  domain?: string;
+  capability?: string;
   searchText: string;
 };
 
@@ -37,6 +42,11 @@ type SearchIndexEntry = Pick<
   | "priority"
   | "includeInSearch"
   | "tags"
+  | "artifactId"
+  | "requirementId"
+  | "artifactType"
+  | "domain"
+  | "capability"
   | "searchText"
 > & { excerpt: string };
 
@@ -52,16 +62,33 @@ const namespace = resourcesManifest.namespace ?? mcpConfig.namespace ?? "spec-tr
 const resources = resourcesManifest.resources as ResourceRecord[];
 const resourceMap = new Map(resources.map((resource) => [resource.uri, resource]));
 const sourcePathMap = new Map<string, ResourceRecord>();
+const artifactMap = new Map(
+  resources
+    .filter((resource) => resource.artifactId && resource.kind !== "requirement")
+    .map((resource) => [resource.artifactId!.toLowerCase(), resource]),
+);
+const requirementMap = new Map(
+  resources.filter((resource) => resource.requirementId).map((resource) => [resource.requirementId!.toLowerCase(), resource]),
+);
+const guidanceMap = new Map<string, ResourceRecord>();
 const searchEntries = searchIndex as SearchIndexEntry[];
 
 for (const resource of resources) {
   for (const sourcePath of resource.sourcePaths) {
     const normalized = sourcePath.replace(/\\/g, "/").replace(/^\.\//, "").replace(/^\//, "");
     sourcePathMap.set(normalized, resource);
-    sourcePathMap.set(`content/${normalized}`, resource);
-    sourcePathMap.set(`apps/spec-trace-mcp/content/${normalized}`, resource);
-    sourcePathMap.set(normalized.replace(/\.md$/, ""), resource);
-    sourcePathMap.set(`apps/spec-trace-mcp/content/${normalized.replace(/\.md$/, "")}`, resource);
+    sourcePathMap.set(normalized.replace(/\.(md|json|ps1)$/i, ""), resource);
+    sourcePathMap.set(`/${normalized}`, resource);
+  }
+
+  if (resource.group === "guides" || resource.group === "core" || resource.group === "ai") {
+    const uriLeaf = resource.uri.slice(`${namespace}://`.length).toLowerCase();
+    guidanceMap.set(uriLeaf, resource);
+    guidanceMap.set(uriLeaf.replace(/^guides\//, ""), resource);
+    guidanceMap.set(resource.title.toLowerCase(), resource);
+    for (const alias of resource.aliases ?? []) {
+      guidanceMap.set(alias.toLowerCase(), resource);
+    }
   }
 }
 
@@ -139,11 +166,13 @@ function groupLabel(group: string) {
     {
       core: "Core",
       guides: "Guides",
-      components: "Components",
-      patterns: "Patterns",
       specs: "Specs",
+      requirements: "Requirements",
+      schema: "Schemas",
+      templates: "Templates",
       examples: "Examples",
       ai: "AI",
+      files: "Files",
     }[group] ?? titleCase(group)
   );
 }
@@ -153,11 +182,13 @@ function groupOrder(group: string) {
     {
       core: 0,
       guides: 1,
-      components: 2,
-      patterns: 3,
-      specs: 4,
-      examples: 5,
-      ai: 6,
+      specs: 2,
+      requirements: 3,
+      schema: 4,
+      templates: 5,
+      examples: 6,
+      ai: 7,
+      files: 8,
     }[group] ?? 99
   );
 }
@@ -168,13 +199,11 @@ function code(text: string) {
 
 function normalizeSourcePath(filePath: string) {
   const value = String(filePath ?? "");
-  const stripped = value.startsWith(`${namespace}://file/`) ? value.slice(`${namespace}://file/`.length) : value;
+  const stripped = value.startsWith(`${namespace}://files/`) ? value.slice(`${namespace}://files/`.length) : value;
   return stripped
     .replace(/\\/g, "/")
     .replace(/^\.\//, "")
     .replace(/^\//, "")
-    .replace(/^apps\/spec-trace-mcp\/content\/+/, "")
-    .replace(/^(?:content\/)+/, "")
     .replace(/\/+/g, "/");
 }
 
@@ -350,7 +379,7 @@ function renderDocsIndexHtml(pathPrefix: string) {
     <section class="hero">
       <div>
         <p class="lead" style="text-transform:uppercase;letter-spacing:.16em;color:var(--accent);margin:0 0 12px">${escapeHtml(displayName)}</p>
-        <h1>Static markdown, MCP delivery.</h1>
+        <h1>SpecTrace standard, MCP delivery.</h1>
         <p class="lead">${escapeHtml(resourcesManifest.summary ?? mcpConfig.summary ?? "A deterministic Cloudflare Worker MCP server.")}</p>
         <div class="panel" style="margin-top:18px">
           <strong>Endpoints</strong>
@@ -360,18 +389,18 @@ function renderDocsIndexHtml(pathPrefix: string) {
       <div class="meta-grid">
         <div class="panel"><strong>Package</strong><p>${escapeHtml(packageName)}</p></div>
         <div class="panel"><strong>Version</strong><p>${escapeHtml(packageVersion)}</p></div>
-        <div class="panel"><strong>Tool</strong><p>${code("search_docs")}</p></div>
-        <div class="panel"><strong>Template</strong><p>${code(`${namespace}://file/{path}`)}</p></div>
+        <div class="panel"><strong>Tools</strong><p>${code("search_spec_trace")}, ${code("get_requirement")}, ${code("get_artifact")}, ${code("get_guidance")}</p></div>
+        <div class="panel"><strong>Template</strong><p>${code(`${namespace}://files/{path}`)}</p></div>
       </div>
     </section>
 
     <section class="section">
       <div class="section-head">
         <h2>How it works</h2>
-        <p>Front matter becomes MCP metadata at build time.</p>
+        <p>Canonical repository files become MCP metadata at build time.</p>
       </div>
       <div class="tools">
-        <div class="panel"><strong>Authoring</strong><p>Edit markdown files in ${code("apps/spec-trace-mcp/content/")}.</p></div>
+        <div class="panel"><strong>Authoring</strong><p>Edit canonical SpecTrace JSON, schema, templates, docs, or examples in the repository root.</p></div>
         <div class="panel"><strong>Build</strong><p>Compile the files into ${code("dist/mcp/*.json")}.</p></div>
         <div class="panel"><strong>Search</strong><p>Use the one dynamic tool to search all content.</p></div>
       </div>
@@ -520,15 +549,19 @@ function lookupResourceFromFilePath(filePath) {
   return sourcePathMap.get(normalized) ?? sourcePathMap.get(normalized.replace(/\.md$/, "")) ?? null;
 }
 
-function searchDocs(args) {
+function searchSpecTrace(args) {
   const query = normalizeText(args.query ?? "");
   const tokens = query.split(/\s+/g).filter(Boolean);
   const kind = args.kind ?? "any";
   const includeExamples = args.include_examples ?? true;
+  const includeFiles = args.include_files ?? false;
   const maxResults = Math.min(Math.max(args.max_results ?? 8, 1), 20);
 
   const filtered = searchEntries.filter((entry) => {
     if (!includeExamples && entry.group === "examples") {
+      return false;
+    }
+    if (!includeFiles && entry.group === "files") {
       return false;
     }
     if (kind !== "any" && entry.searchKind !== kind) {
@@ -570,6 +603,7 @@ function searchDocs(args) {
     query: args.query,
     kind,
     include_examples: includeExamples,
+    include_files: includeFiles,
     max_results: maxResults,
     results: scored.slice(0, maxResults).map((entry) => ({
       uri: entry.uri,
@@ -581,6 +615,8 @@ function searchDocs(args) {
       score: entry.score,
       excerpt: entry.excerpt,
       relatedUris: entry.relatedUris,
+      artifactId: entry.artifactId,
+      requirementId: entry.requirementId,
     })),
     starterSuggestions: scored.slice(0, 3).map((entry) => ({
       uri: entry.uri,
@@ -588,6 +624,77 @@ function searchDocs(args) {
       kind: entry.kind,
       searchKind: entry.searchKind,
     })),
+  };
+}
+
+function getRequirement(args) {
+  const requirementId = String(args.requirement_id ?? "").trim().toLowerCase();
+  const resource = requirementMap.get(requirementId);
+  if (!resource) {
+    throw new Error(`Unknown requirement id: ${args.requirement_id}`);
+  }
+
+  return {
+    requirement_id: resource.requirementId,
+    title: resource.title,
+    statement: resource.summary,
+    artifact_id: resource.artifactId,
+    sourcePaths: resource.sourcePaths,
+    uri: resource.uri,
+    body: resource.body,
+    relatedUris: resource.relatedUris,
+  };
+}
+
+function getArtifact(args) {
+  const artifactId = String(args.artifact_id ?? "").trim().toLowerCase();
+  const resource = artifactMap.get(artifactId);
+  if (!resource) {
+    throw new Error(`Unknown artifact id: ${args.artifact_id}`);
+  }
+
+  const includeRequirements = args.include_requirements ?? true;
+  const requirements = includeRequirements
+    ? resources
+        .filter((candidate) => candidate.group === "requirements" && candidate.artifactId === resource.artifactId)
+        .map((candidate) => ({
+          requirement_id: candidate.requirementId,
+          title: candidate.title,
+          statement: candidate.summary,
+          uri: candidate.uri,
+        }))
+    : [];
+
+  return {
+    artifact_id: resource.artifactId,
+    title: resource.title,
+    artifact_type: resource.artifactType,
+    domain: resource.domain,
+    capability: resource.capability,
+    sourcePaths: resource.sourcePaths,
+    uri: resource.uri,
+    summary: resource.summary,
+    body: resource.body,
+    requirements,
+    relatedUris: resource.relatedUris,
+  };
+}
+
+function getGuidance(args) {
+  const topic = String(args.topic ?? "").trim().toLowerCase();
+  const resource = guidanceMap.get(topic) ?? guidanceMap.get(topic.replace(`${namespace}://`, ""));
+  if (!resource) {
+    throw new Error(`Unknown guidance topic: ${args.topic}`);
+  }
+
+  return {
+    topic: args.topic,
+    title: resource.title,
+    summary: resource.summary,
+    uri: resource.uri,
+    sourcePaths: resource.sourcePaths,
+    body: resource.body,
+    relatedUris: resource.relatedUris,
   };
 }
 
@@ -612,57 +719,55 @@ function registerResources(server) {
     );
   }
 
-  server.registerResource(
-    "file-template",
-    new ResourceTemplate(`${namespace}://file/{path}`, {
-      list: async () => ({
-        resources: resources.map((resource) => ({
-          uri: `${namespace}://file/${resource.sourcePaths[0]}`,
-          name: resource.title,
-          title: resource.title,
-          description: resource.summary,
-          mimeType: resource.mimeType,
-        })),
+  for (const template of resourcesManifest.resourceTemplates ?? []) {
+    server.registerResource(
+      `${template.group}-template`,
+      new ResourceTemplate(template.uriTemplate, {
+        list: async () => ({
+          resources: template.list,
+        }),
       }),
-    }),
-    {
-      description: "static file template",
-      mimeType: "text/markdown; charset=utf-8",
-    },
-    async (uri: URL, variables: Record<string, string>) => {
-      const filePath = variables.path ?? decodeURIComponent(uri.pathname.split("/").pop() ?? "");
-      const resource = lookupResourceFromFilePath(filePath) ?? lookupResourceFromUri(uri.toString());
-      if (!resource) {
-        throw new Error(`Unknown resource: ${filePath}`);
-      }
-      return {
-        contents: [
-          {
-            uri: resource.uri,
-            mimeType: resource.mimeType,
-            text: resource.body,
-          },
-        ],
-      };
-    },
-  );
+      {
+        description: template.description,
+        mimeType: template.mimeType,
+      },
+      async (uri: URL, variables: Record<string, string>) => {
+        const variableValue = Object.values(variables ?? {})[0];
+        const resource = lookupResourceFromUri(uri.toString()) ?? lookupResourceFromFilePath(variableValue ?? decodeURIComponent(uri.pathname));
+        if (!resource) {
+          throw new Error(`Unknown resource: ${uri.toString()}`);
+        }
+        return {
+          contents: [
+            {
+              uri: resource.uri,
+              mimeType: resource.mimeType,
+              text: resource.body,
+            },
+          ],
+        };
+      },
+    );
+  }
 }
 
 function registerTools(server) {
   server.registerTool(
-    "search_docs",
+    "search_spec_trace",
     {
-      description: resourcesManifest.searchTool?.description ?? "Search the static markdown docs index.",
+      description: resourcesManifest.searchTool?.description ?? "Search the generated SpecTrace MCP index.",
       inputSchema: {
         query: z.string().describe("Search text"),
-        kind: z.enum(["guide", "component", "pattern", "spec", "example", "any"]).default("any"),
+        kind: z.enum(["guide", "spec", "requirement", "schema", "template", "example", "ai", "file", "any"]).default("any"),
         include_examples: z.boolean().default(true),
+        include_files: z.boolean().default(false),
         max_results: z.number().int().positive().max(20).default(8),
       },
       outputSchema: {
         query: z.string(),
         kind: z.string(),
         include_examples: z.boolean(),
+        include_files: z.boolean(),
         max_results: z.number(),
         results: z.array(
           z.object({
@@ -675,6 +780,8 @@ function registerTools(server) {
             score: z.number(),
             excerpt: z.string(),
             relatedUris: z.array(z.string()),
+            artifactId: z.string().optional(),
+            requirementId: z.string().optional(),
           }),
         ),
         starterSuggestions: z.array(
@@ -688,9 +795,102 @@ function registerTools(server) {
       },
     },
     async (args) => {
-      const result = searchDocs(args);
+      const result = searchSpecTrace(args);
       return {
         content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        structuredContent: result,
+      };
+    },
+  );
+
+  server.registerTool(
+    "get_requirement",
+    {
+      description: "Return a canonical SpecTrace requirement by requirement id.",
+      inputSchema: {
+        requirement_id: z.string().describe("Requirement id such as REQ-STD-0001"),
+      },
+      outputSchema: {
+        requirement_id: z.string().optional(),
+        title: z.string(),
+        statement: z.string(),
+        artifact_id: z.string().optional(),
+        sourcePaths: z.array(z.string()),
+        uri: z.string(),
+        body: z.string(),
+        relatedUris: z.array(z.string()),
+      },
+    },
+    async (args) => {
+      const result = getRequirement(args);
+      return {
+        content: [{ type: "text", text: result.body }],
+        structuredContent: result,
+      };
+    },
+  );
+
+  server.registerTool(
+    "get_artifact",
+    {
+      description: "Return a canonical SpecTrace artifact by artifact id.",
+      inputSchema: {
+        artifact_id: z.string().describe("Artifact id such as SPEC-STD"),
+        include_requirements: z.boolean().default(true),
+      },
+      outputSchema: {
+        artifact_id: z.string().optional(),
+        title: z.string(),
+        artifact_type: z.string().optional(),
+        domain: z.string().optional(),
+        capability: z.string().optional(),
+        sourcePaths: z.array(z.string()),
+        uri: z.string(),
+        summary: z.string(),
+        body: z.string(),
+        requirements: z.array(
+          z.object({
+            requirement_id: z.string().optional(),
+            title: z.string(),
+            statement: z.string(),
+            uri: z.string(),
+          }),
+        ),
+        relatedUris: z.array(z.string()),
+      },
+    },
+    async (args) => {
+      const result = getArtifact(args);
+      return {
+        content: [{ type: "text", text: result.body }],
+        structuredContent: result,
+      };
+    },
+  );
+
+  server.registerTool(
+    "get_guidance",
+    {
+      description: "Return full SpecTrace guidance documentation by topic or alias.",
+      inputSchema: {
+        topic: z
+          .string()
+          .describe("Guidance topic such as document-to-requirements, rfc-to-requirements, requirement-slicing, authoring, or overview"),
+      },
+      outputSchema: {
+        topic: z.string(),
+        title: z.string(),
+        summary: z.string(),
+        uri: z.string(),
+        sourcePaths: z.array(z.string()),
+        body: z.string(),
+        relatedUris: z.array(z.string()),
+      },
+    },
+    async (args) => {
+      const result = getGuidance(args);
+      return {
+        content: [{ type: "text", text: result.body }],
         structuredContent: result,
       };
     },
@@ -781,3 +981,7 @@ export async function fetch(request: Request, env: WorkerEnv = {}) {
 
   return new Response("Not found", { status: 404 });
 }
+
+export default {
+  fetch,
+};

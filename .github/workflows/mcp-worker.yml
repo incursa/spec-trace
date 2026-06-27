@@ -1,0 +1,65 @@
+name: MCP Worker
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/mcp-worker.yml"
+      - "apps/spec-trace-mcp/**"
+      - "AGENTS.md"
+      - "LLMS.txt"
+      - "README.md"
+      - "authoring.md"
+      - "overview.md"
+      - "layout.md"
+      - "artifact-model-explainer.md"
+      - "profiles-and-attestation-explainer.md"
+      - "model/**"
+      - "schemas/**"
+      - "specs/requirements/spec-trace/**"
+      - "examples/**"
+      - "catalog/retired-requirements.json"
+      - "publish/README.md"
+      - "scripts/Test-SpecTraceRepository.ps1"
+      - "scripts/Build-SpecTraceCatalog.ps1"
+      - "scripts/Resolve-SpecTraceTopicView.ps1"
+      - "scripts/Validate-SpecTraceEvidence.ps1"
+      - "scripts/Render-SpecTraceAttestation.ps1"
+      - "scripts/Sync-PublishModule.ps1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: spec-trace-mcp-worker
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/spec-trace-mcp/package-lock.json
+
+      - name: Install MCP dependencies
+        run: npm ci --prefix apps/spec-trace-mcp
+
+      - name: Verify MCP package
+        run: npm --prefix apps/spec-trace-mcp run verify
+
+      - name: Deploy Worker
+        run: npm --prefix apps/spec-trace-mcp run deploy:mcp

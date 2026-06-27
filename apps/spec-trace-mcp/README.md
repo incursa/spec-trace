@@ -1,19 +1,32 @@
-# SpecTrace MCP Docs
+# SpecTrace MCP Server
 
-Deterministic Cloudflare Worker documentation server for the `spec-trace` repository.
+Deterministic Cloudflare Worker MCP server for the `spec-trace` reference repository.
 
-The source of truth is static markdown under [`content/`](./content/). [`mcp.config.json`](./mcp.config.json) centralizes the display name, server name, URI namespace, and package identifier. [`wrangler.toml`](./wrangler.toml) sets the public path prefix through `MCP_PATH_PREFIX`, which defaults to `/spec-trace`. A build step reads front matter from those files, compiles a manifest and search index into [`dist/mcp/`](./dist/mcp/), and bundles a small Worker that serves:
+The generated MCP surface is built from the real repository authority chain, not a copied docs folder:
 
-- `GET /mcp` for the human-readable docs index
+1. canonical SPEC artifacts under `specs/requirements/spec-trace/`
+2. `model/model.schema.json`, root JSON templates, and compatibility schema files
+3. worked examples, root guidance, AI guidance, and curated tool/readiness files
+
+`mcp.config.json` centralizes the display name, server name, URI namespace, and package identifier. `wrangler.toml` sets the public path prefix through `MCP_PATH_PREFIX`, which defaults to `/spec-trace`.
+
+The Worker serves:
+
+- `GET /mcp` for the human-readable resource index
 - `POST /mcp` for MCP JSON-RPC traffic
 - `GET /mcp/resource/<uri>` for browsable resource pages
-- `spec-trace://file/{path}` as the markdown source-path template
+- resource templates such as `spec-trace://specs/{artifact_id}`, `spec-trace://requirements/{requirement_id}`, and `spec-trace://files/{path}`
 
-The only dynamic tool in v1 is `search_docs`.
+The dynamic MCP tools are:
+
+- `search_spec_trace`: search canonical specs, requirements, schema, templates, examples, AI guidance, and curated docs
+- `get_requirement`: return a canonical requirement by `REQ-...` id
+- `get_artifact`: return a canonical artifact by `SPEC-...`, `ARC-...`, `WI-...`, or `VER-...` id when present in the generated catalog
+- `get_guidance`: return full authoring guidance by topic, including `document-to-requirements`, `rfc-to-requirements`, and `requirement-slicing`
 
 ## Local Development
 
-Run the commands from the repository root:
+Run from the repository root:
 
 ```bash
 npm ci --prefix apps/spec-trace-mcp
@@ -24,79 +37,37 @@ npm run dev:mcp
 
 `npm run dev:mcp` starts the Worker locally through Wrangler. Open the URL it prints and use:
 
-- `GET /mcp` to browse the generated docs index
-- `GET /mcp/resource/<uri>` to inspect a specific resource page
+- `GET /mcp` to browse the generated index
+- `GET /mcp/resource/<uri>` to inspect a resource page
 - `POST /mcp` from an MCP client
 
-When you want to mirror the deployed path prefix, use the configured public path such as `/spec-trace/mcp`.
-
-## Markdown Authoring
-
-Each documentation file is a markdown file with JSON front matter.
-
-Example:
-
-```md
----
-{
-  "uri": "spec-trace://overview",
-  "slug": "overview",
-  "title": "Overview",
-  "summary": "What the server does and how to extend it.",
-  "kind": "guide",
-  "group": "core",
-  "aliases": ["home", "intro"],
-  "relatedUris": ["spec-trace://install", "spec-trace://fast-path"],
-  "tags": ["overview", "getting-started"],
-  "priority": 120,
-  "includeInSearch": true,
-  "searchKind": "guide"
-}
----
-
-# Overview
-
-The body contains the actual documentation.
-```
-
-Supported front matter fields:
-
-- `uri`
-- `slug`
-- `title`
-- `summary`
-- `kind`
-- `group`
-- `aliases`
-- `relatedUris`
-- `tags`
-- `priority`
-- `includeInSearch`
-- `searchKind`
-
-Build-time validation fails on duplicate URIs, duplicate slugs within a group, unsupported kinds, and broken related-resource references.
+When you want to mirror the deployed path prefix, use `/spec-trace/mcp`.
 
 ## Build Pipeline
 
 The build stays deterministic:
 
-1. Read markdown files from [`content/`](./content/)
-2. Parse front matter and validate the file graph
-3. Compile `dist/mcp/manifest.json`, `dist/mcp/resources.json`, and `dist/mcp/search-index.json`
-4. Bundle the Worker into `dist/mcp/worker.mjs`
+1. read curated repository files from the `spec-trace` repo root
+2. compile `dist/mcp/manifest.json`, `dist/mcp/resources.json`, and `dist/mcp/search-index.json`
+3. emit grouped JSON indexes for specs, requirements, schemas, templates, examples, AI guidance, and files
+4. bundle the Worker into `dist/mcp/worker.mjs`
 
 Generated files under `dist/mcp/` are build output only.
 
 ## Tests
 
-The test suite rebuilds the Worker and checks:
+The package test rebuilds the Worker and checks:
 
-- docs index rendering
+- index rendering
+- prefixed routing through `MCP_PATH_PREFIX`
 - `initialize`
 - resource listing
 - resource templates
 - resource reads
-- `search_docs`
+- `search_spec_trace`
+- `get_requirement`
+- `get_artifact`
+- `get_guidance`
 
 ## Cloudflare Deployment
 
@@ -104,35 +75,21 @@ The test suite rebuilds the Worker and checks:
 npm run deploy:mcp
 ```
 
-The deployment workflow expects:
+The repo-root MCP workflow expects:
 
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
-- `MCP_PATH_PREFIX` in [`wrangler.toml`](./wrangler.toml) should match the public load-balancer path
 
-The Worker endpoint is:
+`MCP_PATH_PREFIX` in `wrangler.toml` should match the public load-balancer or Astro-site path. Without a route binding, the direct Worker endpoint is:
 
 ```text
 https://<your-worker-host>/mcp
 ```
 
-If you are serving the Worker behind the configured prefix, the public endpoint becomes `https://<your-worker-host>/spec-trace/mcp`.
+If you serve the Worker behind the configured prefix, the public endpoint is:
 
-## Adapting This Project
+```text
+https://<your-worker-host>/spec-trace/mcp
+```
 
-To reuse this for another project:
-
-1. Update the package name in [`package.json`](./package.json).
-2. Replace the markdown files in [`content/`](./content/) with your own docs.
-3. Change the branding fields in [`mcp.config.json`](./mcp.config.json).
-4. Adjust `MCP_PATH_PREFIX` in [`wrangler.toml`](./wrangler.toml) if the public load-balancer path changes.
-5. Adjust front matter `uri` values if you want a different URI namespace.
-6. Re-run `npm run build:mcp`.
-7. Deploy the Worker.
-
-Keep the runtime simple:
-
-- no runtime crawling
-- no LLM calls
-- no database unless you truly need one
-- no dynamic content generation beyond search
+The `wrangler.toml` file intentionally does not declare a custom domain yet. Add Cloudflare routes during deployment setup once the public host/path decision is final.

@@ -42,7 +42,7 @@ If those layers disagree, fix the lower-authority layer or open a requirement ga
 - [`../schemas/`](../schemas/): slice schemas and compatibility schemas derived from the authoritative model.
 - [`../src/SpecTrace.Tool/`](../src/SpecTrace.Tool/): repository validator, catalog builder, evidence validator, topic-view resolver, and attestation renderer.
 - [`../tools/SpecTrace.Rfc/`](../tools/SpecTrace.Rfc/): RFC intake and requirement-candidate workbench.
-- [`../apps/spec-trace-mcp/`](../apps/spec-trace-mcp/): Markdown-first MCP documentation server.
+- [`../apps/spec-trace-mcp/`](../apps/spec-trace-mcp/): Cloudflare Worker MCP server generated from the canonical SpecTrace repository files.
 
 ## Command-Line Workflows
 
