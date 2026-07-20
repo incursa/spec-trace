@@ -263,6 +263,7 @@ function renderDocsIndexHtml(pathPrefix: string) {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${escapeHtml(displayName)}</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23EEF1FF'/%3E%3Cg fill='none' stroke='%234459C6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M31 12H17V19M17 45V52H31' stroke-width='8'/%3E%3Cpath d='M17 19L30 32L17 45L4 32Z' stroke-width='7'/%3E%3Cpath d='M29 32H50' stroke-width='8'/%3E%3C/g%3E%3Crect x='49' y='25.5' width='13' height='13' rx='3' fill='%232B397F'/%3E%3Ccircle cx='17' cy='32' r='3.5' fill='%232B397F'/%3E%3C/svg%3E" />
   <style>
     :root {
       color-scheme: dark;
@@ -271,7 +272,7 @@ function renderDocsIndexHtml(pathPrefix: string) {
       --line: rgba(158, 177, 200, 0.16);
       --text: #e8f0fb;
       --muted: #9eb1c8;
-      --accent: #7dd3fc;
+      --accent: #bfc7ee;
       --shadow: 0 28px 60px rgba(2, 6, 23, 0.45);
     }
     * { box-sizing: border-box; }
@@ -310,6 +311,15 @@ function renderDocsIndexHtml(pathPrefix: string) {
       border: 1px solid rgba(255, 255, 255, 0.06);
       background: rgba(255, 255, 255, 0.04);
     }
+    .brand-lockup {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      margin: 0 0 22px;
+      color: #fff;
+    }
+    .brand-lockup svg { width: 58px; height: 58px; flex: 0 0 auto; }
+    .brand-lockup strong { font-size: 1.6rem; letter-spacing: -0.02em; }
     h1 {
       margin: 0;
       font-size: clamp(2.4rem, 5vw, 4.4rem);
@@ -378,6 +388,18 @@ function renderDocsIndexHtml(pathPrefix: string) {
   <main>
     <section class="hero">
       <div>
+        <div class="brand-lockup" aria-label="SpecTrace">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M31 12H17V21M17 43V52H31" stroke-width="8" />
+              <path d="M17 21L28 32L17 43L6 32Z" stroke-width="6" />
+              <path d="M27 32H50" stroke-width="8" />
+            </g>
+            <rect x="49" y="26" width="12" height="12" rx="3" fill="currentColor" />
+            <circle cx="17" cy="32" r="2.75" fill="currentColor" />
+          </svg>
+          <strong>SpecTrace</strong>
+        </div>
         <p class="lead" style="text-transform:uppercase;letter-spacing:.16em;color:var(--accent);margin:0 0 12px">${escapeHtml(displayName)}</p>
         <h1>SpecTrace standard, MCP delivery.</h1>
         <p class="lead">${escapeHtml(resourcesManifest.summary ?? mcpConfig.summary ?? "A deterministic Cloudflare Worker MCP server.")}</p>

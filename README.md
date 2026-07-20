@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/brand/spectrace-readme-header-white.svg">
+    <img src="./assets/brand/spectrace-readme-header.svg" width="430" alt="SpecTrace">
+  </picture>
+</p>
+
 # SpecTrace
 
 SpecTrace is a small, JSON-first standard for keeping software requirements inside the repository they govern.
@@ -182,3 +189,7 @@ you need a concise handoff summary rather than the full standard.
 Use [`CONTRIBUTING.md`](./CONTRIBUTING.md) for contribution expectations. In short: keep changes focused, keep the canonical SPEC suite and schema-aligned surfaces consistent, call out breaking changes to the standard, and validate the repository before review.
 
 Security reports should follow [`SECURITY.md`](./SECURITY.md).
+
+## Brand And Trademarks
+
+The repository's software and documentation are licensed under Apache-2.0. The SpecTrace name, E3 logo, icons, and files under [`assets/brand/`](./assets/brand/) are separate brand assets governed by [`BRAND-ASSET-LICENSE.md`](./BRAND-ASSET-LICENSE.md) and [`TRADEMARKS.md`](./TRADEMARKS.md); they are not licensed under Apache-2.0.

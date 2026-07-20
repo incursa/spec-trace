@@ -8,6 +8,7 @@ test("GET /mcp renders the SpecTrace MCP index", async () => {
 
   const html = await response.text();
   assert.match(html, /SpecTrace standard, MCP delivery/i);
+  assert.match(html, /class="brand-lockup" aria-label="SpecTrace"/i);
   assert.match(html, /search_spec_trace/i);
   assert.match(html, /get_requirement/i);
   assert.match(html, /get_guidance/i);
