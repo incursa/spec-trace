@@ -5,9 +5,9 @@
   "domain": "spec-trace",
   "capability": "templates-and-grammar",
   "status": "draft",
-  "owner": "spec-trace-maintainers",
+  "owner": "specattest-maintainers",
   "tags": [
-    "spec-trace",
+    "specattest",
     "templates",
     "grammar",
     "json"

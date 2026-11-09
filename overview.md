@@ -1,6 +1,6 @@
 # Overview
 
-This file summarizes the standard described in [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/). It is a practical guide, not a second source of truth.
+This file summarizes the SpecAttest Standard described in the existing technical directory [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/). It is a practical guide, not a second source of truth.
 
 The reference repository is JSON-first. Canonical artifacts are authored in `*.json`, and JSON Schema validates their document shape.
 

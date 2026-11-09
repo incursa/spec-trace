@@ -1,6 +1,6 @@
-# SpecTrace Spec Suite
+# SpecAttest Standard
 
-This folder contains the canonical SPEC suite for the `spec-trace` standard.
+This folder contains the canonical SPEC suite for the SpecAttest Standard. The `spec-trace` directory name remains the repository's existing technical identifier and is intentionally unchanged in this edition.
 
 The suite intentionally uses the standard to specify itself. Canonical authored sources are the JSON artifacts in this directory. This index is a navigation aid only.
 

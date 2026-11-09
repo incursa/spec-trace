@@ -5,9 +5,9 @@
   "domain": "spec-trace",
   "capability": "derived-reporting",
   "status": "draft",
-  "owner": "spec-trace-maintainers",
+  "owner": "specattest-maintainers",
   "tags": [
-    "spec-trace",
+    "specattest",
     "reporting",
     "attestation",
     "coverage"

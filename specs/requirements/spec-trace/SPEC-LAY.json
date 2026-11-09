@@ -5,9 +5,9 @@
   "domain": "spec-trace",
   "capability": "repository-layout",
   "status": "draft",
-  "owner": "spec-trace-maintainers",
+  "owner": "specattest-maintainers",
   "tags": [
-    "spec-trace",
+    "specattest",
     "layout",
     "placement"
   ],
@@ -56,7 +56,7 @@
     {
       "id": "REQ-LAY-0008",
       "title": "Keep the reference package packaging-friendly",
-      "statement": "The public reference package MUST keep its canonical suite under `specs/requirements/spec-trace/`."
+      "statement": "The public reference package MUST keep the SpecAttest Standard canonical suite under the existing technical directory `specs/requirements/spec-trace/`."
     },
     {
       "id": "REQ-LAY-0009",

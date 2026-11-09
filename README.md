@@ -1,10 +1,10 @@
-# SpecTrace
+# SpecAttest Standard
 
-SpecTrace is a small, JSON-first standard for keeping software requirements inside the repository they govern.
+The SpecAttest Standard is a small, JSON-first standard for keeping software requirements inside the repository they govern.
 
-It is for teams that want requirements to be precise, reviewable, and traceable without moving the source of truth into a heavyweight requirements system. A SpecTrace repository can start with a few stable requirement IDs and grow into design links, work tracking, verification evidence, generated catalogs, and attestation reports when the project needs them.
+It is for teams that want requirements to be precise, reviewable, and traceable without moving the source of truth into a heavyweight requirements system. A SpecAttest repository can start with a few stable requirement IDs and grow into design links, work tracking, verification evidence, generated catalogs, and attestation reports when the project needs them.
 
-The canonical standard lives in [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/). This README is the practical front door, not the authority.
+The canonical standard lives in the existing technical directory [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/). Repository paths, package identifiers, schemas, namespaces, and tool names that still use `SpecTrace` or `spec-trace` remain technical compatibility identifiers in this edition. This README is the practical front door, not the authority.
 
 ## Documentation And Mirroring
 

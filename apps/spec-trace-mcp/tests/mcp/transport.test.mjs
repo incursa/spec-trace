@@ -15,7 +15,7 @@ test("GET /mcp renders the SpecTrace MCP index", async () => {
   assert.match(html, /SpecTrace Documentation/i);
   assert.match(html, /GET \/spec-trace\/mcp/i);
   assert.match(html, /href="\/spec-trace\/mcp\/resource\//i);
-  assert.match(html, /SPEC-STD: Core Standard Model/i);
+  assert.match(html, /SPEC-STD: SpecAttest Standard/i);
 });
 
 test("worker module exposes both named and default fetch handlers", async () => {
@@ -102,7 +102,7 @@ test("resources/read returns canonical specs, requirements, and file-template co
   });
 
   assert.equal(spec.result.contents.length, 1);
-  assert.match(spec.result.contents[0].text, /Core Standard Model and Publication Rules/i);
+  assert.match(spec.result.contents[0].text, /SpecAttest Standard/i);
 
   const requirement = await callJsonRpc("resources/read", {
     uri: "spec-trace://requirements/REQ-STD-0001",
@@ -116,7 +116,7 @@ test("resources/read returns canonical specs, requirements, and file-template co
   });
 
   assert.equal(fileTemplate.result.contents.length, 1);
-  assert.match(fileTemplate.result.contents[0].text, /SpecTrace is a small, JSON-first standard/i);
+  assert.match(fileTemplate.result.contents[0].text, /SpecAttest Standard is a small, JSON-first standard/i);
 });
 
 test("tools/list exposes SpecTrace search and lookup tools", async () => {
@@ -132,7 +132,7 @@ test("resource page renders browsable HTML for canonical resources", async () =>
   assert.equal(response.status, 200);
 
   const html = await response.text();
-  assert.match(html, /Core Standard Model and Publication Rules/i);
+  assert.match(html, /SpecAttest Standard/i);
   assert.match(html, /Source/i);
   assert.match(html, /href="\/spec-trace\/mcp"/i);
 });

@@ -5,9 +5,9 @@
   "domain": "spec-trace",
   "capability": "identifier-policy",
   "status": "draft",
-  "owner": "spec-trace-maintainers",
+  "owner": "specattest-maintainers",
   "tags": [
-    "spec-trace",
+    "specattest",
     "identifiers",
     "policy"
   ],
