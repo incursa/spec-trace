@@ -5,9 +5,9 @@
   "domain": "spec-trace",
   "capability": "trace-lineage",
   "status": "draft",
-  "owner": "spec-trace-maintainers",
+  "owner": "specattest-maintainers",
   "tags": [
-    "spec-trace",
+    "specattest",
     "lineage",
     "traceability",
     "evolution"

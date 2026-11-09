@@ -1,6 +1,6 @@
-# SpecTrace Publish Mirror
+# SpecAttest Standard Publish Mirror
 
-This directory is the curated publish mirror for the reusable `spec-trace` JSON Schema and template surfaces.
+This directory is the curated publish mirror for the SpecAttest Standard's reusable `spec-trace` JSON Schema and template surfaces. The `spec-trace` name remains the technical compatibility identifier for these schemas and templates.
 
 It intentionally contains only:
 

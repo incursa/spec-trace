@@ -1,18 +1,18 @@
 {
   "artifact_id": "SPEC-STD",
   "artifact_type": "specification",
-  "title": "Core Standard Model and Publication Rules",
+  "title": "SpecAttest Standard",
   "domain": "spec-trace",
   "capability": "core-standard-model",
   "status": "draft",
-  "owner": "spec-trace-maintainers",
+  "owner": "specattest-maintainers",
   "tags": [
-    "spec-trace",
+    "specattest",
     "standard",
     "traceability",
     "governance"
   ],
-  "purpose": "Define the core vocabulary, authority model, and publication rules for the spec-trace standard.",
+  "purpose": "Define the core vocabulary, authority model, and publication rules for the SpecAttest Standard.",
   "scope": "This specification covers what a specification is, what a requirement is,\nwhere the canonical standard lives, how the reference package keeps its\nsupport material aligned, how the canonical conformance profiles are named, how\nderived reporting and generated evidence stay non-canonical, and how inline\nidentifier references and structured trace differ.",
   "context": "The repository exists to make precise software requirements easy to author, review, and trace from a strongly validated canonical source. Canonical JSON provides that source of truth while tooling may project derived browsing views when needed.",
   "requirements": [
@@ -42,7 +42,7 @@
     {
       "id": "REQ-STD-0003",
       "title": "Keep the canonical standard in the SPEC suite",
-      "statement": "The `spec-trace` standard MUST be expressed as canonical JSON SPEC artifacts under `specs/requirements/spec-trace/`.",
+      "statement": "The SpecAttest Standard MUST be expressed as canonical JSON SPEC artifacts under the existing technical directory `specs/requirements/spec-trace/`.",
       "trace": {
         "related": [
           "SPEC-ID",

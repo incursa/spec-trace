@@ -5,9 +5,9 @@
   "domain": "spec-trace",
   "capability": "generated-evidence",
   "status": "draft",
-  "owner": "spec-trace-maintainers",
+  "owner": "specattest-maintainers",
   "tags": [
-    "spec-trace",
+    "specattest",
     "evidence",
     "reporting",
     "generated"
@@ -216,7 +216,7 @@
     {
       "id": "REQ-EVD-0015",
       "title": "Emit Source Context Notes through generated outputs",
-      "statement": "Tooling that collects Source Context Notes for SpecTrace reporting MUST emit\ngenerated evidence observations instead of writing collected source locations\nback into canonical requirement records.",
+      "statement": "Tooling that collects Source Context Notes for SpecAttest reporting MUST emit\ngenerated evidence observations instead of writing collected source locations\nback into canonical requirement records.",
       "trace": {
         "related": [
           "SPEC-SCH",

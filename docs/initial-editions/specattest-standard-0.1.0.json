@@ -1,0 +1,30 @@
+{
+  "standardTitle": "SpecAttest Standard",
+  "edition": "0.1.0",
+  "editionMaturity": "initial-public-draft",
+  "versioningPolicy": "semantic",
+  "publisher": {
+    "displayName": "Incursa"
+  },
+  "canonicalSource": {
+    "repository": "incursa/spec-trace",
+    "baseRevision": "37a1f73237147427c689c28a75b8fe024a2d0f47",
+    "path": "specs/requirements/spec-trace/"
+  },
+  "specificationOrder": [
+    "SPEC-STD",
+    "SPEC-ID",
+    "SPEC-LIN",
+    "SPEC-PRF",
+    "SPEC-RPT",
+    "SPEC-TOP",
+    "SPEC-EVD",
+    "SPEC-LAY",
+    "SPEC-TPL",
+    "SPEC-SCH",
+    "SPEC-EXM"
+  ],
+  "requirementCount": 200,
+  "distributionState": "prepared-not-public",
+  "sourceRevisionNote": "The exact post-rename source revision is recorded by the immutable publication manifest when the edition is generated."
+}
