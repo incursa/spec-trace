@@ -9,6 +9,7 @@ Canonical entry points:
 - [`SPEC-STD.json`](./SPEC-STD.json) - core definitions, authority model, and publication rules
 - [`SPEC-ID.json`](./SPEC-ID.json) - identifier policy and grouping-key registry
 - [`SPEC-LIN.json`](./SPEC-LIN.json) - trace lineage and requirement evolution
+- [`SPEC-VER.json`](./SPEC-VER.json) - immutable requirement revisions, Standard editions, maturity, compatibility, and bootstrap trust
 - [`SPEC-PRF.json`](./SPEC-PRF.json) - conformance profiles and enforcement levels
 - [`SPEC-RPT.json`](./SPEC-RPT.json) - derived reporting dimensions and attestation views
 - [`SPEC-TOP.json`](./SPEC-TOP.json) - topic views and JSON selection semantics

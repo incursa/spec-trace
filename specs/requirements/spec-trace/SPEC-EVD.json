@@ -18,6 +18,7 @@
   "requirements": [
     {
       "id": "REQ-EVD-0001",
+      "revision": 1,
       "title": "Keep evidence snapshots derived rather than canonical",
       "statement": "Generated evidence snapshots MUST be treated as derived outputs rather than as\ncanonical requirement artifacts or a fifth canonical artifact family.",
       "trace": {
@@ -33,6 +34,7 @@
     },
     {
       "id": "REQ-EVD-0002",
+      "revision": 1,
       "title": "Identify evidence snapshot provenance",
       "statement": "An evidence snapshot MUST record a stable snapshot identifier, generation\ntimestamp, and producer identity.",
       "trace": {
@@ -47,6 +49,7 @@
     },
     {
       "id": "REQ-EVD-0003",
+      "revision": 1,
       "title": "Record requirement-scoped observations",
       "statement": "An evidence snapshot MUST record observations by `REQ-...` identifier and\nevidence kind, with one status per observation entry.",
       "trace": {
@@ -60,6 +63,7 @@
     },
     {
       "id": "REQ-EVD-0004",
+      "revision": 1,
       "title": "Keep evidence kinds extensible and machine-friendly",
       "statement": "An evidence kind MUST use a lowercase token that starts with a letter and then\nuses only lowercase letters, digits, or underscores.",
       "trace": {
@@ -73,6 +77,7 @@
     },
     {
       "id": "REQ-EVD-0005",
+      "revision": 1,
       "title": "Define well-known evidence kinds without closing extension",
       "statement": "The standard MUST define well-known evidence kinds while allowing repositories\nand tools to emit additional kinds.",
       "trace": {
@@ -87,6 +92,7 @@
     },
     {
       "id": "REQ-EVD-0006",
+      "revision": 1,
       "title": "Keep evidence statuses canonical and finite",
       "statement": "An evidence observation status MUST use one of `observed`, `passed`, `failed`,\n`not_observed`, `not_collected`, or `unsupported`.",
       "trace": {
@@ -102,6 +108,7 @@
     },
     {
       "id": "REQ-EVD-0007",
+      "revision": 1,
       "title": "Allow partial evidence collection",
       "statement": "An evidence snapshot MAY cover only a subset of requirements or only a subset\nof evidence kinds.",
       "trace": {
@@ -115,6 +122,7 @@
     },
     {
       "id": "REQ-EVD-0008",
+      "revision": 1,
       "title": "Merge overlapping evidence snapshots additively",
       "statement": "Derived reporting MUST treat multiple evidence snapshots as additive inputs\nrather than require one combined master evidence file.",
       "trace": {
@@ -129,6 +137,7 @@
     },
     {
       "id": "REQ-EVD-0009",
+      "revision": 1,
       "title": "Avoid negative inference from snapshot absence",
       "statement": "Reporting MUST NOT infer that evidence is absent from the repository solely\nbecause one evidence snapshot omits a requirement or evidence kind.",
       "trace": {
@@ -143,6 +152,7 @@
     },
     {
       "id": "REQ-EVD-0010",
+      "revision": 1,
       "title": "Keep discovery conventions outside the core standard",
       "statement": "The core standard MUST NOT prescribe one universal discovery convention for how\ntools extract evidence from programming languages, frameworks, or repositories.",
       "trace": {
@@ -157,6 +167,7 @@
     },
     {
       "id": "REQ-EVD-0011",
+      "revision": 1,
       "title": "Treat Source Context Notes as optional authoring aids",
       "statement": "A Source Context Note that uses `CONTEXT` and `SEE` markers MAY be used as a\nnon-canonical authoring aid to explain the durable context for nearby source.",
       "trace": {
@@ -172,6 +183,7 @@
     },
     {
       "id": "REQ-EVD-0012",
+      "revision": 1,
       "title": "Keep Source Context Notes non-canonical and non-proof",
       "statement": "A Source Context Note MUST be treated as non-canonical; it is not verification\nsuccess.",
       "trace": {
@@ -187,6 +199,7 @@
     },
     {
       "id": "REQ-EVD-0013",
+      "revision": 1,
       "title": "Document Source Context Note conventions",
       "statement": "When a repository supports Source Context Notes, it MUST document the accepted\nmarkers, reference categories, scoping rules, and local extensions.",
       "trace": {
@@ -201,6 +214,7 @@
     },
     {
       "id": "REQ-EVD-0014",
+      "revision": 1,
       "title": "Bound region-scoped Source Context Notes explicitly",
       "statement": "A region-scoped Source Context Note MUST provide an explicit end marker or\nequivalent machine-readable range metadata when its scope extends beyond the\nimmediately following declaration or statement.",
       "trace": {
@@ -215,6 +229,7 @@
     },
     {
       "id": "REQ-EVD-0015",
+      "revision": 1,
       "title": "Emit Source Context Notes through generated outputs",
       "statement": "Tooling that collects Source Context Notes for SpecAttest reporting MUST emit\ngenerated evidence observations instead of writing collected source locations\nback into canonical requirement records.",
       "trace": {

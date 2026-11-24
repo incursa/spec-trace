@@ -1,0 +1,8 @@
+{
+  "case": "invalid-successor-without-review",
+  "valid": false,
+  "edition": "0.2.0-rc.1",
+  "maturity": "candidate",
+  "bootstrap": false,
+  "requirement": { "id": "REQ-EXAMPLE-0001", "revision": 2 }
+}

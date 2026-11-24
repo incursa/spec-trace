@@ -53,6 +53,7 @@ Requirements do not stand alone. They are nested records inside a specification 
 Each requirement should carry:
 
 - `id`
+- `revision`, starting at 1 and incremented for every accepted edit to the same obligation
 - `title`
 - `statement`
 - optional `coverage`

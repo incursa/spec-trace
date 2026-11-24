@@ -12,6 +12,7 @@ These files are compatibility or slice schemas aligned to the authoritative mode
 - [`artifact-frontmatter.schema.json`](./artifact-frontmatter.schema.json)
 - [`artifact-id-policy.schema.json`](./artifact-id-policy.schema.json)
 - [`requirement-clause.schema.json`](./requirement-clause.schema.json) - compact requirement clauses and coverage expectations
+- [`standard-edition.schema.json`](./standard-edition.schema.json) - immutable Standard edition manifests and bootstrap/successor provenance
 - [`topic-view.schema.json`](./topic-view.schema.json) - portable topic-view selection objects with a closed selector vocabulary
 - [`topic-view-result.schema.json`](./topic-view-result.schema.json) - portable topic-view lookup results with selection provenance
 - [`requirement-trace-fields.schema.json`](./requirement-trace-fields.schema.json)

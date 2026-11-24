@@ -25,6 +25,7 @@
   "requirements": [
     {
       "id": "REQ-BEM-CONCEPTS-0001",
+      "revision": 1,
       "title": "Define a block as an independent reusable unit",
       "statement": "A block MUST be a functionally independent reusable unit.",
       "trace": {
@@ -50,6 +51,7 @@
     },
     {
       "id": "REQ-BEM-CONCEPTS-0002",
+      "revision": 1,
       "title": "Define an element as part of a block",
       "statement": "An element MUST be a composite part of a block that cannot be used separately from it.",
       "trace": {
@@ -76,6 +78,7 @@
     },
     {
       "id": "REQ-BEM-CONCEPTS-0003",
+      "revision": 1,
       "title": "Define a modifier as a variation of a block or element",
       "statement": "A modifier MUST define the appearance, state, or behavior of a block or element.",
       "trace": {
@@ -104,6 +107,7 @@
     },
     {
       "id": "REQ-BEM-CONCEPTS-0004",
+      "revision": 1,
       "title": "Keep block names semantic",
       "statement": "A block name MUST describe purpose rather than appearance or state.",
       "trace": {
@@ -128,6 +132,7 @@
     },
     {
       "id": "REQ-BEM-CONCEPTS-0005",
+      "revision": 1,
       "title": "Keep element names semantic",
       "statement": "An element name MUST describe purpose rather than appearance or state.",
       "trace": {
@@ -151,6 +156,7 @@
     },
     {
       "id": "REQ-BEM-CONCEPTS-0006",
+      "revision": 1,
       "title": "Allow mixes to combine BEM entities",
       "statement": "A mix MAY combine multiple BEM entities on the same DOM node.",
       "trace": {
@@ -176,6 +182,7 @@
     },
     {
       "id": "REQ-BEM-CONCEPTS-0007",
+      "revision": 1,
       "title": "Keep blocks independent from external geometry",
       "statement": "A block SHOULD NOT set its own external geometry or positioning.",
       "trace": {

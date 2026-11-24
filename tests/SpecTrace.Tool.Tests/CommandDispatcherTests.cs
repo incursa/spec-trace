@@ -36,6 +36,7 @@ public sealed class CommandDispatcherTests : IDisposable
   "requirements": [
     {
       "id": "REQ-SAMPLE-0001",
+      "revision": 1,
       "title": "Carry one keyword",
       "statement": "The sample MUST carry one keyword.",
       "coverage": {
@@ -89,6 +90,7 @@ public sealed class CommandDispatcherTests : IDisposable
   "requirements": [
     {
       "id": "REQ-SAMPLE-0001",
+      "revision": 1,
       "title": "Missing purpose",
       "statement": "The sample MUST validate."
     }
@@ -116,6 +118,7 @@ public sealed class CommandDispatcherTests : IDisposable
   "requirements": [
     {
       "id": "REQ-SAMPLE-0001",
+      "revision": 1,
       "title": "Broken reference",
       "statement": "The sample MUST validate.",
       "trace": {
@@ -148,6 +151,7 @@ public sealed class CommandDispatcherTests : IDisposable
   "requirements": [
     {
       "id": "REQ-SAMPLE-0001",
+      "revision": 1,
       "title": "Unexpected property",
       "statement": "The sample MUST validate."
     }
@@ -176,6 +180,7 @@ public sealed class CommandDispatcherTests : IDisposable
   "requirements": [
     {
       "id": "REQ-SAMPLE-0001",
+      "revision": 1,
       "title": "Invalid coverage status",
       "statement": "The sample MUST validate.",
       "coverage": {
@@ -209,6 +214,7 @@ public sealed class CommandDispatcherTests : IDisposable
   "requirements": [
     {
       "id": "REQ-SAMPLE-0001",
+      "revision": 1,
       "title": "Unexpected coverage key",
       "statement": "The sample MUST validate.",
       "coverage": {
@@ -243,6 +249,7 @@ public sealed class CommandDispatcherTests : IDisposable
   "requirements": [
     {
       "id": "REQ-SAMPLE-0001",
+      "revision": 1,
       "title": "Carry one keyword",
       "statement": "The sample MUST carry one keyword.",
       "trace": {
@@ -326,6 +333,8 @@ public sealed class CommandDispatcherTests : IDisposable
 
         var json = File.ReadAllText(jsonOutputPath);
         Assert.Contains("SPEC-SAMPLE", json, StringComparison.Ordinal);
+        using var catalog = JsonDocument.Parse(json);
+        Assert.Equal(1, catalog.RootElement.GetProperty("entries").GetProperty("REQ-SAMPLE-0001").GetProperty("revision").GetInt64());
         Assert.Contains("REQ-SAMPLE-0001", json, StringComparison.Ordinal);
         Assert.DoesNotContain("markdown_path", json, StringComparison.Ordinal);
     }
@@ -346,6 +355,7 @@ public sealed class CommandDispatcherTests : IDisposable
   "requirements": [
     {
       "id": "REQ-SAMPLE-0001",
+      "revision": 1,
       "title": "Carry one keyword",
       "statement": "The sample MUST mention TLS behavior.",
       "trace": {
@@ -356,6 +366,7 @@ public sealed class CommandDispatcherTests : IDisposable
     },
     {
       "id": "REQ-SAMPLE-0002",
+      "revision": 1,
       "title": "Carry another keyword",
       "statement": "The sample MUST mention QUIC behavior."
     }
@@ -418,6 +429,7 @@ public sealed class CommandDispatcherTests : IDisposable
 
             var selected = root.GetProperty("selected_requirements").EnumerateArray().Single();
             Assert.Equal("REQ-SAMPLE-0001", selected.GetProperty("requirement_id").GetString());
+            Assert.Equal(1, selected.GetProperty("revision").GetInt64());
             Assert.Equal("SPEC-SAMPLE", selected.GetProperty("artifact_id").GetString());
             Assert.True(selected.GetProperty("selection").GetProperty("selected").GetBoolean());
             Assert.True(selected.GetProperty("selection").GetProperty("matched").GetBoolean());
@@ -447,6 +459,7 @@ public sealed class CommandDispatcherTests : IDisposable
   "requirements": [
     {
       "id": "REQ-SAMPLE-0001",
+      "revision": 1,
       "title": "Carry one keyword",
       "statement": "The sample MUST mention TLS behavior."
     }
@@ -513,6 +526,7 @@ public sealed class CommandDispatcherTests : IDisposable
   "requirements": [
     {
       "id": "REQ-SAMPLE-0001",
+      "revision": 1,
       "title": "Carry one keyword",
       "statement": "The sample MUST mention TLS behavior."
     }
@@ -588,6 +602,7 @@ public sealed class CommandDispatcherTests : IDisposable
   "requirements": [
     {
       "id": "REQ-SAMPLE-0001",
+      "revision": 1,
       "title": "Collect evidence",
       "statement": "The sample MUST collect evidence."
     }
@@ -646,6 +661,7 @@ public sealed class CommandDispatcherTests : IDisposable
   "requirements": [
     {
       "id": "REQ-SAMPLE-0001",
+      "revision": 1,
       "title": "Collect evidence",
       "statement": "The sample MUST collect evidence.",
       "trace": {

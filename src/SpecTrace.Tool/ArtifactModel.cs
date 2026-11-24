@@ -124,6 +124,9 @@ public sealed class RequirementModel
     [JsonPropertyName("id")]
     public required string Id { get; init; }
 
+    [JsonPropertyName("revision")]
+    public required long Revision { get; init; }
+
     [JsonPropertyName("title")]
     public required string Title { get; init; }
 
@@ -211,6 +214,10 @@ public sealed class CatalogItem
 
     [JsonPropertyName("parent_id")]
     public string? ParentArtifactId { get; init; }
+
+    [JsonPropertyName("revision")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public long? Revision { get; init; }
 
     [JsonPropertyName("domain")]
     public required string Domain { get; init; }

@@ -1,0 +1,8 @@
+{
+  "case": "invalid-zero-prerelease-ordinal",
+  "valid": false,
+  "edition": "0.1.0-draft.0",
+  "maturity": "draft",
+  "bootstrap": true,
+  "requirement": { "id": "REQ-EXAMPLE-0001", "revision": 1 }
+}

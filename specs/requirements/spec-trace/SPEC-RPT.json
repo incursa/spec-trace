@@ -18,6 +18,7 @@
   "requirements": [
     {
       "id": "REQ-RPT-0001",
+      "revision": 1,
       "title": "Keep derived reporting separate from canonical trace",
       "statement": "Coverage, attestation, and current-state status views MUST be treated as derived reporting over the canonical repository graph and evidence sources rather than as new canonical requirement metadata.",
       "notes": [
@@ -28,6 +29,7 @@
     },
     {
       "id": "REQ-RPT-0002",
+      "revision": 1,
       "title": "Report coverage dimensions independently of profile choice",
       "statement": "Reporting SHOULD be able to surface upstream, design, implementation,\nverification, and evidence coverage by kind independently of the repository's\nchosen conformance profile.",
       "notes": [
@@ -37,6 +39,7 @@
     },
     {
       "id": "REQ-RPT-0003",
+      "revision": 1,
       "title": "Support staged adoption across repository histories",
       "statement": "The standard MUST support staged adoption in both greenfield and brownfield repositories without requiring every reporting dimension to be complete from day one.",
       "notes": [
@@ -46,6 +49,7 @@
     },
     {
       "id": "REQ-RPT-0004",
+      "revision": 1,
       "title": "Avoid synthetic work history as an implementation proxy",
       "statement": "Reporting and repository policy MUST NOT infer that a requirement is unimplemented solely because it lacks an `Implemented By` work-item link.",
       "notes": [
@@ -55,6 +59,7 @@
     },
     {
       "id": "REQ-RPT-0005",
+      "revision": 1,
       "title": "Keep local attestation states policy-derived",
       "statement": "Repositories MAY derive local attestation states such as implemented, verified,\nand release-ready from their own combination of trace coverage, verification\nartifacts, evidence snapshots, freshness rules, and execution results.",
       "notes": [
@@ -64,6 +69,7 @@
     },
     {
       "id": "REQ-RPT-0006",
+      "revision": 1,
       "title": "Keep evidence freshness and health derived",
       "statement": "Evidence freshness, stale manual QA, failing tests, benchmark regressions, and similar health signals MUST remain derived report states or local extension metadata rather than canonical requirement states.",
       "notes": [
@@ -73,6 +79,7 @@
     },
     {
       "id": "REQ-RPT-0007",
+      "revision": 1,
       "title": "Support source-coverage reporting when locators are precise",
       "statement": "Reporting SHOULD be able to surface which source materials or source regions are represented by requirements when `Upstream Refs` entries are precise enough to support that view.",
       "notes": [
@@ -82,6 +89,7 @@
     },
     {
       "id": "REQ-RPT-0008",
+      "revision": 1,
       "title": "Ground reporting in real repository evidence",
       "statement": "Derived reporting MUST be able to use verification artifacts, generated\nevidence snapshots, and other repository-policy evidence sources as grounding\nsignals for attestation views.",
       "notes": [
@@ -91,6 +99,7 @@
     },
     {
       "id": "REQ-RPT-0009",
+      "revision": 1,
       "title": "Distinguish missing evidence from uncollected evidence",
       "statement": "Derived reporting SHOULD distinguish missing evidence from uncollected,\nunsupported, or stale evidence rather than collapse those cases into one\nundifferentiated gap state.",
       "notes": [
@@ -101,6 +110,7 @@
     },
     {
       "id": "REQ-RPT-0010",
+      "revision": 1,
       "title": "Emit machine-readable topic view results when practical",
       "statement": "Derived reporting SHOULD be able to emit a machine-readable topic-view selection result that records the normalized topic view input, repository root, summary counts, selected requirements, explicit exclusions, and provenance for each selected or excluded requirement.",
       "trace": {

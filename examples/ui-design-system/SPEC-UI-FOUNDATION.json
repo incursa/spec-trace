@@ -23,6 +23,7 @@
   "requirements": [
     {
       "id": "REQ-UI-FOUNDATION-0001",
+      "revision": 1,
       "title": "Define focus-visible behavior",
       "statement": "Interactive controls MUST expose a visible focus indicator when keyboard focus lands on them.",
       "trace": {
@@ -35,6 +36,7 @@
     },
     {
       "id": "REQ-UI-FOUNDATION-0002",
+      "revision": 1,
       "title": "Define disabled-state expectations",
       "statement": "Disabled controls MUST remain non-interactive.",
       "trace": {
@@ -46,6 +48,7 @@
     },
     {
       "id": "REQ-UI-FOUNDATION-0003",
+      "revision": 1,
       "title": "Define shared interaction behavior",
       "statement": "Interactive controls MUST keep pointer and keyboard behavior aligned with their role.",
       "trace": {

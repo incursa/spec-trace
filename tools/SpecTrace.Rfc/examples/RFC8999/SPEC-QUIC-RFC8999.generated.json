@@ -10,6 +10,7 @@
   "requirements": [
     {
       "id": "REQ-QUIC-RFC8999-S1-0001",
+      "revision": 1,
       "title": "Use stable requirement identifiers",
       "statement": "QUIC implementations MUST use stable requirement identifiers when converting RFC text into SpecTrace requirements.",
       "coverage": {

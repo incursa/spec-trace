@@ -32,6 +32,7 @@ internal sealed class ArtifactCatalog
                     Title = requirement.Title,
                     ArtifactType = "requirement",
                     ParentArtifactId = artifact.ArtifactId,
+                    Revision = requirement.Revision,
                     Domain = artifact.Domain,
                 };
             }
@@ -113,6 +114,7 @@ internal sealed class ArtifactCatalog
             Title = item.Title,
             ArtifactType = item.ArtifactType,
             ParentArtifactId = item.ParentArtifactId,
+            Revision = item.Revision,
             Domain = item.Domain,
         };
     }

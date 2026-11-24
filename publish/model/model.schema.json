@@ -280,12 +280,18 @@
       "type": "object",
       "required": [
         "id",
+        "revision",
         "title",
         "statement"
       ],
       "properties": {
         "id": {
           "$ref": "#/$defs/requirementId"
+        },
+        "revision": {
+          "description": "Monotonically increasing immutable revision of this stable requirement identifier.",
+          "type": "integer",
+          "minimum": 1
         },
         "title": {
           "$ref": "#/$defs/nonEmptyString"
@@ -1108,6 +1114,10 @@
         "parent_id": {
           "$ref": "#/$defs/specificationId"
         },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
         "source_path": {
           "$ref": "#/$defs/nonEmptyString"
         },
@@ -1121,6 +1131,15 @@
       "patternProperties": {
         "^x_[A-Za-z0-9_]+$": {}
       },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "kind": { "const": "requirement" } },
+            "required": ["kind"]
+          },
+          "then": { "required": ["revision"] }
+        }
+      ],
       "additionalProperties": false
     },
     "catalog": {

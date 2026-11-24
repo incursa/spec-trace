@@ -1,8 +1,10 @@
 {
   "standardTitle": "SpecAttest Standard",
-  "edition": "0.1.0",
-  "editionMaturity": "initial-public-draft",
+  "edition": "0.1.0-draft.1",
+  "editionMaturity": "draft",
   "versioningPolicy": "semantic",
+  "governance": "incursa-owner-approved",
+  "bootstrap": true,
   "publisher": {
     "displayName": "Incursa"
   },
@@ -15,6 +17,7 @@
     "SPEC-STD",
     "SPEC-ID",
     "SPEC-LIN",
+    "SPEC-VER",
     "SPEC-PRF",
     "SPEC-RPT",
     "SPEC-TOP",
@@ -24,7 +27,7 @@
     "SPEC-SCH",
     "SPEC-EXM"
   ],
-  "requirementCount": 200,
+  "requirementCount": 228,
   "distributionState": "prepared-not-public",
-  "sourceRevisionNote": "The exact post-rename source revision is recorded by the immutable publication manifest when the edition is generated."
+  "sourceRevisionNote": "This preparation record is not the immutable edition manifest. The final source commit, payload and schema hashes, validator result hashes, conformance corpus hash, approval reference, and signature reference are recorded only after the exact bundle is frozen."
 }

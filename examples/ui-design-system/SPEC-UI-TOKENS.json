@@ -23,6 +23,7 @@
   "requirements": [
     {
       "id": "REQ-UI-TOKENS-0001",
+      "revision": 1,
       "title": "Define the primary action token",
       "statement": "The design system MUST define `color-action-primary` as the canonical token for primary action surfaces.",
       "trace": {
@@ -34,6 +35,7 @@
     },
     {
       "id": "REQ-UI-TOKENS-0002",
+      "revision": 1,
       "title": "Define the secondary action token",
       "statement": "The design system MUST define `color-action-secondary` as the canonical token for secondary action surfaces.",
       "trace": {
@@ -44,6 +46,7 @@
     },
     {
       "id": "REQ-UI-TOKENS-0003",
+      "revision": 1,
       "title": "Define the standard spacing token",
       "statement": "The design system MUST define `space-control-x-medium` as the canonical horizontal spacing token for controls.",
       "trace": {
@@ -55,6 +58,7 @@
     },
     {
       "id": "REQ-UI-TOKENS-0004",
+      "revision": 1,
       "title": "Define the compact control-height token",
       "statement": "The design system MUST define `control-height-small` as the canonical compact control height token.",
       "trace": {
@@ -66,6 +70,7 @@
     },
     {
       "id": "REQ-UI-TOKENS-0005",
+      "revision": 1,
       "title": "Define the standard control-height token",
       "statement": "The design system MUST define `control-height-medium` as the canonical standard control height token.",
       "trace": {
@@ -77,6 +82,7 @@
     },
     {
       "id": "REQ-UI-TOKENS-0006",
+      "revision": 1,
       "title": "Define the spacious control-height token",
       "statement": "The design system MUST define `control-height-large` as the canonical spacious control height token.",
       "trace": {

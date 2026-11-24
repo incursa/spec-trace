@@ -154,6 +154,7 @@ internal static class SpecTraceAttestationService
         return new SpecTraceAttestationRequirement
         {
             RequirementId = requirement.Id,
+            Revision = requirement.Revision,
             Title = requirement.Title,
             Statement = requirement.Statement,
             SourcePath = NormalizeRepoPath(rootPath, sourcePath),

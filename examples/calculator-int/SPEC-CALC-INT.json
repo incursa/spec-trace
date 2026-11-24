@@ -23,6 +23,7 @@
   "requirements": [
     {
       "id": "REQ-CALC-INT-0001",
+      "revision": 1,
       "title": "Expose one integer calculator class",
       "statement": "The calculator capability MUST be exposed through one `IntegerCalculator` class\nthat defines `Add(int left, int right)`, `Subtract(int left, int right)`,\n`Multiply(int left, int right)`, `Divide(int dividend, int divisor)`, and\n`Modulus(int dividend, int divisor)`.",
       "trace": {
@@ -42,6 +43,7 @@
     },
     {
       "id": "REQ-CALC-INT-0002",
+      "revision": 1,
       "title": "Return the mathematical sum",
       "statement": "The `Add` method MUST return `left + right` when the exact mathematical sum is\nrepresentable in the signed 32-bit integer range.",
       "trace": {
@@ -64,6 +66,7 @@
     },
     {
       "id": "REQ-CALC-INT-0003",
+      "revision": 1,
       "title": "Keep addition operand-order invariant",
       "statement": "The `Add` method MUST return the same result for `(left, right)` and\n`(right, left)`.",
       "trace": {
@@ -86,6 +89,7 @@
     },
     {
       "id": "REQ-CALC-INT-0004",
+      "revision": 1,
       "title": "Use declared subtraction order",
       "statement": "The `Subtract` method MUST return `left - right` using the declared operand\norder.",
       "trace": {
@@ -109,6 +113,7 @@
     },
     {
       "id": "REQ-CALC-INT-0005",
+      "revision": 1,
       "title": "Return the mathematical product",
       "statement": "The `Multiply` method MUST return `left * right` when the exact mathematical\nproduct is representable in the signed 32-bit integer range.",
       "trace": {
@@ -131,6 +136,7 @@
     },
     {
       "id": "REQ-CALC-INT-0006",
+      "revision": 1,
       "title": "Keep multiplication operand-order invariant",
       "statement": "The `Multiply` method MUST return the same result for `(left, right)` and\n`(right, left)`.",
       "trace": {
@@ -150,6 +156,7 @@
     },
     {
       "id": "REQ-CALC-INT-0007",
+      "revision": 1,
       "title": "Reject division by zero",
       "statement": "The `Divide` method MUST reject `divisor = 0` with a divide-by-zero error.",
       "trace": {
@@ -172,6 +179,7 @@
     },
     {
       "id": "REQ-CALC-INT-0008",
+      "revision": 1,
       "title": "Return exact quotients when evenly divisible",
       "statement": "The `Divide` method MUST return the exact integer quotient when `dividend` is\nevenly divisible by `divisor` and the quotient is representable in the signed\n32-bit integer range.",
       "trace": {
@@ -192,6 +200,7 @@
     },
     {
       "id": "REQ-CALC-INT-0009",
+      "revision": 1,
       "title": "Truncate fractional quotients toward zero",
       "statement": "The `Divide` method MUST truncate the mathematical quotient toward `0` when\n`dividend / divisor` is not an integer and the truncated quotient is\nrepresentable in the signed 32-bit integer range.",
       "trace": {
@@ -217,6 +226,7 @@
     },
     {
       "id": "REQ-CALC-INT-0010",
+      "revision": 1,
       "title": "Reject modulus by zero",
       "statement": "The `Modulus` method MUST reject `divisor = 0` with a divide-by-zero error.",
       "trace": {
@@ -236,6 +246,7 @@
     },
     {
       "id": "REQ-CALC-INT-0011",
+      "revision": 1,
       "title": "Return truncation-based signed remainders",
       "statement": "The `Modulus` method MUST return the unique remainder `r` such that\n`dividend = (divisor * q) + r`, `|r| < |divisor|`, and `r` has the same sign as\n`dividend` or is `0`, where `q` is the mathematical quotient truncated toward\n`0`.",
       "trace": {
@@ -260,6 +271,7 @@
     },
     {
       "id": "REQ-CALC-INT-0012",
+      "revision": 1,
       "title": "Accept boundary operands when results are representable",
       "statement": "Each method MUST accept `Int32.MinValue` and `Int32.MaxValue` as operands when\nits specified result remains representable in the signed 32-bit integer range.",
       "trace": {
@@ -283,6 +295,7 @@
     },
     {
       "id": "REQ-CALC-INT-0013",
+      "revision": 1,
       "title": "Reject unrepresentable results as overflow",
       "statement": "Each method MUST reject an operation when the exact mathematical result\nrequired by its contract falls outside the signed 32-bit integer range from\n`-2147483648` to `2147483647`.",
       "trace": {
@@ -310,6 +323,7 @@
     },
     {
       "id": "REQ-CALC-INT-0014",
+      "revision": 1,
       "title": "Reject unrepresentable sums",
       "statement": "The `Add` method MUST reject a call when `left + right` is greater than\n`2147483647` or less than `-2147483648`.",
       "trace": {
@@ -334,6 +348,7 @@
     },
     {
       "id": "REQ-CALC-INT-0015",
+      "revision": 1,
       "title": "Reject unrepresentable differences",
       "statement": "The `Subtract` method MUST reject a call when `left - right` is greater than\n`2147483647` or less than `-2147483648`.",
       "trace": {
@@ -358,6 +373,7 @@
     },
     {
       "id": "REQ-CALC-INT-0016",
+      "revision": 1,
       "title": "Reject unrepresentable products",
       "statement": "The `Multiply` method MUST reject a call when `left * right` is greater than\n`2147483647` or less than `-2147483648`.",
       "trace": {
@@ -382,6 +398,7 @@
     },
     {
       "id": "REQ-CALC-INT-0017",
+      "revision": 1,
       "title": "Use signed quotients for negative divisors",
       "statement": "The `Divide` method MUST allow a negative non-zero `divisor` and return a\npositive quotient when `dividend` and `divisor` have the same sign or a\nnegative quotient when they have different signs.",
       "trace": {

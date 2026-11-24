@@ -19,6 +19,7 @@ A requirement is the smallest normative, testable statement in the system.
 Each requirement:
 
 - has a stable `REQ-...` identifier
+- has a positive integer `revision` that increments for every accepted edit to the same obligation
 - has a short descriptive title
 - has a compact normative clause in `statement`
 - may carry optional `coverage` expectations for positive, negative, edge, and fuzz evidence dimensions
@@ -42,6 +43,7 @@ The canonical authored form is a JSON record:
 ```json
 {
   "id": "REQ-EXAMPLE-0001",
+  "revision": 1,
   "title": "Short label",
   "statement": "The system MUST do something directly testable.",
   "coverage": {
