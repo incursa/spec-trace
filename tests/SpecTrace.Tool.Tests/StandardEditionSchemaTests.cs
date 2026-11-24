@@ -61,7 +61,7 @@ public sealed class StandardEditionSchemaTests
             Assert.Equal(0, exitCode);
             using var report = JsonDocument.Parse(File.ReadAllText(reportPath));
             Assert.Equal("passed", report.RootElement.GetProperty("result").GetString());
-            Assert.Equal(5, report.RootElement.GetProperty("conformanceCases").GetInt32());
+            Assert.Equal(20, report.RootElement.GetProperty("conformanceCases").GetInt32());
             Assert.Matches("^[a-f0-9]{64}$", report.RootElement.GetProperty("validationSubjectSha256").GetString());
         }
         finally
@@ -84,6 +84,7 @@ public sealed class StandardEditionSchemaTests
     "path": "specs/requirements/spec-trace/"
   },
   "payloadSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "modelSchemaSha256": "0000000000000000000000000000000000000000000000000000000000000000",
   "schemaSha256": "0000000000000000000000000000000000000000000000000000000000000000",
   "canonicalization": "utf8-json-sorted-object-keys-v1",
   "specificationOrder": ["SPEC-STD"],

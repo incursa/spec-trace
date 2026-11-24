@@ -8,6 +8,7 @@ import hashlib
 import json
 import pathlib
 import re
+import subprocess
 import sys
 
 SEMVER = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-(draft|rc)\.([1-9][0-9]*))?$")
@@ -29,27 +30,16 @@ def validation_subject(manifest: dict[str, object]) -> dict[str, object]:
 
 
 def validate_conformance_corpus(root: pathlib.Path) -> int:
-    corpus = root / "conformance" / "versioning"
-    cases = sorted(corpus.glob("*.json"))
-    if not cases:
-        fail("versioning conformance corpus is empty")
-
-    for path in cases:
-        case = json.loads(path.read_text(encoding="utf-8"))
-        match = SEMVER.fullmatch(case.get("edition", ""))
-        valid = match is not None
-        if match:
-            prerelease = match.group(4)
-            expected_maturity = "draft" if prerelease == "draft" else "candidate" if prerelease == "rc" else "stable"
-            valid = case.get("maturity") == expected_maturity
-        requirement = case.get("requirement", {})
-        valid = valid and isinstance(requirement.get("revision"), int) and requirement["revision"] >= 1
-        if not case.get("bootstrap", False):
-            valid = valid and bool(case.get("previousEdition")) and bool(case.get("behavioralReview"))
-        if valid != case.get("valid"):
-            fail(f"conformance case produced the wrong result: {path.name}")
-
-    return len(cases)
+    result = subprocess.run(
+        [sys.executable, str(root / "scripts" / "Validate-ConformanceCorpus.py"), "--root", str(root)],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    report = json.loads(result.stdout)
+    if report.get("result") != "passed" or not isinstance(report.get("cases"), int):
+        fail("conformance validator did not produce a passing result")
+    return report["cases"]
 
 
 def fail(message: str) -> None:
@@ -77,6 +67,9 @@ def main() -> int:
     schema_path = root / "schemas" / "standard-edition.schema.json"
     if sha256(schema_path.read_bytes()) != manifest.get("schemaSha256"):
         fail("schemaSha256 does not match schemas/standard-edition.schema.json")
+    model_schema_path = root / "model" / "model.schema.json"
+    if sha256(model_schema_path.read_bytes()) != manifest.get("modelSchemaSha256"):
+        fail("modelSchemaSha256 does not match model/model.schema.json")
 
     revisions = manifest.get("requirementRevisions", [])
     declared = {(item["id"], item["revision"]): item["sha256"] for item in revisions}
@@ -113,7 +106,7 @@ def main() -> int:
     validators = manifest.get("validatedBy", [])
     if len(validators) < 2:
         fail("at least two validator records are required")
-    expected_roles = {"independent", "candidate"} if manifest.get("bootstrap") else {"accepted", "candidate"}
+    expected_roles = {"independent", "candidate"} if manifest.get("bootstrap") or manifest.get("maturity") == "draft" else {"accepted", "candidate"}
     actual_roles = {item.get("role") for item in validators}
     if not expected_roles.issubset(actual_roles):
         fail(f"validator roles must include {sorted(expected_roles)}")
@@ -143,6 +136,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (KeyError, OSError, TypeError, ValueError, json.JSONDecodeError) as error:
+    except (KeyError, OSError, TypeError, ValueError, json.JSONDecodeError, subprocess.CalledProcessError) as error:
         print(f"edition bootstrap validation failed: {error}", file=sys.stderr)
         raise SystemExit(1)

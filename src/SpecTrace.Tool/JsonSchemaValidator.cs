@@ -14,8 +14,9 @@ internal sealed class JsonSchemaValidator
     private readonly JsonSchema _topicViewSchema;
     private readonly JsonSchema _topicViewResultSchema;
     private readonly JsonSchema _standardEditionSchema;
+    private readonly JsonSchema _specAttestInterchangeSchema;
 
-    private JsonSchemaValidator(JsonSchema artifactSchema, JsonSchema evidenceSchema, JsonSchema retiredLedgerSchema, JsonSchema topicViewSchema, JsonSchema topicViewResultSchema, JsonSchema standardEditionSchema)
+    private JsonSchemaValidator(JsonSchema artifactSchema, JsonSchema evidenceSchema, JsonSchema retiredLedgerSchema, JsonSchema topicViewSchema, JsonSchema topicViewResultSchema, JsonSchema standardEditionSchema, JsonSchema specAttestInterchangeSchema)
     {
         _artifactSchema = artifactSchema;
         _evidenceSchema = evidenceSchema;
@@ -23,6 +24,7 @@ internal sealed class JsonSchemaValidator
         _topicViewSchema = topicViewSchema;
         _topicViewResultSchema = topicViewResultSchema;
         _standardEditionSchema = standardEditionSchema;
+        _specAttestInterchangeSchema = specAttestInterchangeSchema;
     }
 
     public static JsonSchemaValidator Load(string rootPath)
@@ -35,7 +37,8 @@ internal sealed class JsonSchemaValidator
                 LoadSchema(Path.Combine(rootPath, "schemas", "retired-requirement-ledger.schema.json")),
                 LoadSchema(Path.Combine(rootPath, "schemas", "topic-view.schema.json")),
                 LoadSchema(Path.Combine(rootPath, "schemas", "topic-view-result.schema.json")),
-                LoadSchema(Path.Combine(rootPath, "schemas", "standard-edition.schema.json")));
+                LoadSchema(Path.Combine(rootPath, "schemas", "standard-edition.schema.json")),
+                LoadSchema(Path.Combine(rootPath, "schemas", "specattest-interchange.schema.json")));
 
             return _cached;
         }
@@ -69,6 +72,11 @@ internal sealed class JsonSchemaValidator
     public JsonElement LoadStandardEdition(string rootPath, string jsonPath)
     {
         return LoadAndDeserialize<JsonElement>(_standardEditionSchema, rootPath, jsonPath, "standard edition manifest");
+    }
+
+    public JsonElement LoadSpecAttestInterchange(string rootPath, string jsonPath)
+    {
+        return LoadAndDeserialize<JsonElement>(_specAttestInterchangeSchema, rootPath, jsonPath, "SpecAttest interchange envelope");
     }
 
     private static T LoadAndDeserialize<T>(JsonSchema schema, string rootPath, string jsonPath, string documentKind)

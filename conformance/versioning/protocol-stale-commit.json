@@ -1,0 +1,9 @@
+{
+  "case": "protocol-stale-commit",
+  "kind": "safe-mutation-protocol",
+  "valid": true,
+  "scenario": "stale-commit",
+  "restOutcome": "rejected",
+  "mcpOutcome": "rejected",
+  "partialMutation": false
+}

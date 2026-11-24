@@ -31,11 +31,11 @@
     },
     {
       "id": "REQ-VER-0002",
-      "revision": 1,
+      "revision": 2,
       "title": "Assign immutable requirement revisions",
-      "statement": "Every accepted edit to a requirement MUST create a new positive integer revision whose prior content remains recoverable.",
+      "statement": "A system assigning or importing requirement revisions MUST create a new positive integer revision for every accepted edit, keep prior content recoverable, preserve a supplied positive revision for immutable imported content, and never derive the normative revision from a provider storage or concurrency version.",
       "notes": [
-        "Revision numbers are ordinal history and concurrency coordinates, not Semantic Versioning labels."
+        "Normative requirement revision and provider concurrency coordinates are independent even when their numeric values happen to match."
       ]
     },
     {
@@ -137,9 +137,9 @@
     },
     {
       "id": "REQ-VER-0014",
-      "revision": 1,
+      "revision": 2,
       "title": "Record edition provenance",
-      "statement": "An edition manifest MUST record governance, source commit and path, payload and schema hashes, canonicalization, exact requirement revisions, conformance-corpus hash, validator results, approval reference, and signature reference.",
+      "statement": "An edition manifest MUST record governance, source commit and path, payload, model-schema, and edition-manifest-schema hashes, canonicalization, exact requirement revisions, conformance-corpus hash, validator results, approval reference, and signature reference.",
       "trace": { "related": ["SPEC-SCH"] }
     },
     {
@@ -201,6 +201,38 @@
       "statement": "A conforming consumer MUST support pinning to an exact edition manifest and its payload digest rather than treating a branch head as an edition.",
       "notes": [
         "Development can continue on the canonical branch while consumers remain pinned."
+      ]
+    },
+    {
+      "id": "REQ-VER-0022",
+      "revision": 1,
+      "title": "Separate requirement identity from provider concurrency",
+      "statement": "An interchange or authority-transfer implementation MUST preserve the stable requirement ID and exact normative revision while carrying provider storage, project, and operation concurrency coordinates separately.",
+      "trace": { "related": ["SPEC-SCH"] }
+    },
+    {
+      "id": "REQ-VER-0023",
+      "revision": 1,
+      "title": "Make safe-mutation replay deterministic",
+      "statement": "A safe-mutation implementation MUST compute its idempotency digest from caller-controlled logical input after deterministic normalization and exclude server-generated timestamps, identifiers, and other defaults.",
+      "notes": [
+        "Replaying the same logical request and idempotency key produces the same digest even when omitted operational timestamps receive different server values."
+      ]
+    },
+    {
+      "id": "REQ-VER-0024",
+      "revision": 1,
+      "title": "Keep normative and concurrency revisions distinct in safe mutation",
+      "statement": "A safe-mutation envelope MUST represent normative requirement `revision`, `expectedProjectVersion`, and `expectedOperationVersion` as distinct coordinates with no implicit conversion among them.",
+      "trace": { "related": ["SPEC-SCH"] }
+    },
+    {
+      "id": "REQ-VER-0025",
+      "revision": 1,
+      "title": "Preserve atomic authority transfer behavior",
+      "statement": "A safe-mutation authority transfer MUST require an idempotency key and expected versions, reject stale state without partial mutation or automatic merge, and make commit, cancel, and resume retries deterministic.",
+      "notes": [
+        "The protocol contract is transport-neutral; REST and MCP bindings expose equivalent observable outcomes."
       ]
     }
   ]

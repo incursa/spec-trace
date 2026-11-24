@@ -18,7 +18,7 @@ The standard uses four core artifact families:
 
 Those are different roles on purpose. None of them replaces the requirement text itself.
 
-Each requirement keeps a stable `REQ-...` identity while its positive integer `revision` identifies exact immutable content. A published Standard edition freezes exact requirement revisions; edition maturity and later superseded or withdrawn disposition remain separate.
+Each requirement keeps a stable `REQ-...` identity while its positive integer `revision` identifies exact immutable content. That normative revision is not a database record version, project version, or operation version. Immutable imports preserve it exactly. A published Standard edition freezes exact requirement revisions; edition maturity and later superseded or withdrawn disposition remain separate.
 
 ## Profiles In Practice
 

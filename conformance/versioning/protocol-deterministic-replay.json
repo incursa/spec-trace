@@ -1,0 +1,19 @@
+{
+  "case": "protocol-deterministic-replay",
+  "kind": "safe-mutation-protocol",
+  "valid": true,
+  "scenario": "deterministic-replay",
+  "restOutcome": "staged",
+  "mcpOutcome": "staged",
+  "serverDefaultsExcluded": true,
+  "logicalRequest": {
+    "idempotencyKey": "qualification-replay-001",
+    "expectedProjectVersion": 4,
+    "requirements": [{ "id": "REQ-DEMO-0003", "revision": 11 }]
+  },
+  "replayedLogicalRequest": {
+    "requirements": [{ "revision": 11, "id": "REQ-DEMO-0003" }],
+    "expectedProjectVersion": 4,
+    "idempotencyKey": "qualification-replay-001"
+  }
+}

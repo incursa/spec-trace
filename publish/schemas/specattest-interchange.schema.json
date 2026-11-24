@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "specattest-interchange.schema.json",
+  "title": "SpecAttest Interchange and Safe Mutation Envelope",
+  "description": "Transport-neutral interchange contract that keeps normative requirement revision separate from provider concurrency coordinates.",
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "positiveInteger": { "type": "integer", "minimum": 1 },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "requirementId": {
+      "type": "string",
+      "pattern": "^REQ-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$"
+    },
+    "standardPin": {
+      "type": "object",
+      "required": [
+        "contract", "repository", "edition", "commit", "schemaPath", "schemaSha256",
+        "editionManifestSha256", "editionManifestSchemaPath", "editionManifestSchemaSha256",
+        "payloadSha256", "conformanceCorpusSha256", "signatureReference", "signatureSha256",
+        "canonicalization", "canonicalProfiles", "proofProfile"
+      ],
+      "properties": {
+        "contract": { "const": "specattest.standard-pin.v1" },
+        "repository": { "type": "string", "format": "uri", "pattern": "^https://" },
+        "edition": {
+          "type": "string",
+          "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-(?:draft|rc)\\.[1-9][0-9]*)?$"
+        },
+        "commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "schemaPath": { "$ref": "#/$defs/nonEmptyString" },
+        "schemaSha256": { "$ref": "#/$defs/sha256" },
+        "editionManifestSha256": { "$ref": "#/$defs/sha256" },
+        "editionManifestSchemaPath": { "$ref": "#/$defs/nonEmptyString" },
+        "editionManifestSchemaSha256": { "$ref": "#/$defs/sha256" },
+        "payloadSha256": { "$ref": "#/$defs/sha256" },
+        "conformanceCorpusSha256": { "$ref": "#/$defs/sha256" },
+        "signatureReference": { "type": "string", "pattern": "^refs/tags/[A-Za-z0-9._/-]+$" },
+        "signatureSha256": { "$ref": "#/$defs/sha256" },
+        "canonicalization": { "const": "utf8-json-sorted-object-keys-v1" },
+        "canonicalProfiles": {
+          "type": "array",
+          "prefixItems": [
+            { "const": "core" },
+            { "const": "traceable" },
+            { "const": "auditable" }
+          ],
+          "items": false
+        },
+        "proofProfile": { "enum": ["core", "traceable", "auditable"] }
+      },
+      "additionalProperties": false
+    },
+    "trace": {
+      "type": "object",
+      "properties": {
+        "derived_from": { "type": "array", "items": { "$ref": "#/$defs/requirementId" }, "uniqueItems": true },
+        "supersedes": { "type": "array", "items": { "$ref": "#/$defs/requirementId" }, "uniqueItems": true },
+        "related": { "type": "array", "items": { "$ref": "#/$defs/requirementId" }, "uniqueItems": true }
+      },
+      "additionalProperties": false
+    },
+    "requirement": {
+      "type": "object",
+      "required": ["id", "revision", "statement"],
+      "properties": {
+        "id": { "$ref": "#/$defs/requirementId" },
+        "revision": { "$ref": "#/$defs/positiveInteger" },
+        "statement": { "$ref": "#/$defs/nonEmptyString" },
+        "trace": { "$ref": "#/$defs/trace" },
+        "providerRecordVersion": { "$ref": "#/$defs/positiveInteger" },
+        "extensions": { "type": "object" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "required": [
+    "format", "operation", "standardPin", "authorityMode", "idempotencyKey",
+    "expectedProjectVersion"
+  ],
+  "properties": {
+    "format": { "const": "specattest.interchange.v1" },
+    "operation": { "enum": ["stage", "commit", "cancel", "resume"] },
+    "standardPin": { "$ref": "#/$defs/standardPin" },
+    "authorityMode": { "const": "manager" },
+    "transition": { "const": "manager-apply" },
+    "idempotencyKey": { "$ref": "#/$defs/nonEmptyString" },
+    "operationId": { "$ref": "#/$defs/nonEmptyString" },
+    "expectedProjectVersion": { "$ref": "#/$defs/positiveInteger" },
+    "expectedOperationVersion": { "$ref": "#/$defs/positiveInteger" },
+    "requirements": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/requirement" },
+      "minItems": 1
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "operation": { "const": "stage" } }, "required": ["operation"] },
+      "then": { "required": ["transition", "requirements"] }
+    },
+    {
+      "if": { "properties": { "operation": { "enum": ["commit", "cancel", "resume"] } }, "required": ["operation"] },
+      "then": { "required": ["operationId", "expectedOperationVersion"] }
+    }
+  ],
+  "additionalProperties": false
+}

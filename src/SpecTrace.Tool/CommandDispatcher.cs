@@ -124,6 +124,23 @@ public static class CommandDispatcher
         {
             using var document = JsonDocument.Parse(File.ReadAllText(path));
             var root = document.RootElement;
+            var kind = root.TryGetProperty("kind", out var kindValue) ? kindValue.GetString() : "versioning";
+            if (!string.Equals(kind, "versioning", StringComparison.Ordinal))
+            {
+                var nonVersioningValid = kind switch
+                {
+                    "edition-pin-mutation" => ValidatePinMutationCase(root),
+                    "interchange-roundtrip" => ValidateInterchangeCase(root),
+                    "safe-mutation-protocol" => ValidateProtocolCase(root),
+                    _ => throw new InvalidOperationException($"Unsupported conformance case kind '{kind}' in {Path.GetFileName(path)}."),
+                };
+                if (nonVersioningValid != root.GetProperty("valid").GetBoolean())
+                {
+                    throw new InvalidOperationException($"Versioning conformance case produced the wrong result: {Path.GetFileName(path)}");
+                }
+                continue;
+            }
+
             var edition = root.GetProperty("edition").GetString() ?? string.Empty;
             var maturity = root.GetProperty("maturity").GetString() ?? string.Empty;
             var bootstrap = root.GetProperty("bootstrap").GetBoolean();
@@ -151,6 +168,63 @@ public static class CommandDispatcher
         }
 
         return paths.Count;
+    }
+
+    private static bool ValidatePinMutationCase(JsonElement root)
+    {
+        var pin = root.GetProperty("trustedPin");
+        var mutation = root.GetProperty("mutation");
+        var field = mutation.GetProperty("field").GetString() ?? string.Empty;
+        if (!pin.TryGetProperty(field, out var original) || mutation.GetProperty("operation").GetString() == "remove")
+        {
+            return false;
+        }
+
+        return mutation.TryGetProperty("value", out var replacement) && CanonicalEquals(original, replacement);
+    }
+
+    private static bool ValidateInterchangeCase(JsonElement root)
+    {
+        var input = root.GetProperty("inputRequirement");
+        var output = root.GetProperty("outputRequirement");
+        var revision = input.GetProperty("revision").GetInt32();
+        var providerVersion = root.GetProperty("providerRecordVersion").GetInt32();
+        var preserved = input.GetProperty("id").GetString() == output.GetProperty("id").GetString()
+            && revision == output.GetProperty("revision").GetInt32()
+            && CanonicalEquals(input.GetProperty("trace"), output.GetProperty("trace"));
+        var canonicalEquivalent = !root.TryGetProperty("canonicalA", out var first)
+            || root.TryGetProperty("canonicalB", out var second) && CanonicalEquals(first, second);
+        return revision >= 1 && providerVersion >= 1 && revision != providerVersion && preserved && canonicalEquivalent;
+    }
+
+    private static bool ValidateProtocolCase(JsonElement root)
+    {
+        var scenario = root.GetProperty("scenario").GetString();
+        var rest = root.GetProperty("restOutcome").GetString();
+        var mcp = root.GetProperty("mcpOutcome").GetString();
+        if (!string.Equals(rest, mcp, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        return scenario switch
+        {
+            "stale-commit" or "atomic-failure" => rest == "rejected" && !root.GetProperty("partialMutation").GetBoolean(),
+            "deterministic-replay" => root.GetProperty("serverDefaultsExcluded").GetBoolean()
+                && CanonicalEquals(root.GetProperty("logicalRequest"), root.GetProperty("replayedLogicalRequest")),
+            "cancel" => rest == "canceled" && !root.GetProperty("partialMutation").GetBoolean(),
+            "resume" => rest == "committed" && root.GetProperty("atomicCommit").GetBoolean(),
+            _ => false,
+        };
+    }
+
+    private static bool CanonicalEquals(JsonElement left, JsonElement right)
+    {
+        using var leftStream = new MemoryStream();
+        using (var writer = new Utf8JsonWriter(leftStream)) WriteCanonicalValue(writer, left);
+        using var rightStream = new MemoryStream();
+        using (var writer = new Utf8JsonWriter(rightStream)) WriteCanonicalValue(writer, right);
+        return leftStream.ToArray().AsSpan().SequenceEqual(rightStream.ToArray());
     }
 
     private static string ComputeValidationSubjectSha256(JsonElement manifest)

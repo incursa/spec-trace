@@ -1,0 +1,9 @@
+{
+  "case": "protocol-resume",
+  "kind": "safe-mutation-protocol",
+  "valid": true,
+  "scenario": "resume",
+  "restOutcome": "committed",
+  "mcpOutcome": "committed",
+  "atomicCommit": true
+}

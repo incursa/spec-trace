@@ -124,7 +124,7 @@ The repository CI runs the core validation path, catalog build, evidence validat
 
 ## Release And Versioning
 
-Requirement revisions, Standard editions, and tool/package releases are separate coordinates. [`SPEC-VER`](./specs/requirements/spec-trace/SPEC-VER.json) is authoritative for requirement revision and Standard edition semantics. Standard editions use `-draft.N`, `-rc.N`, or a stable SemVer label and are frozen through [`schemas/standard-edition.schema.json`](./schemas/standard-edition.schema.json). Repository commits and package tags do not automatically create Standard editions.
+Requirement revisions, provider concurrency versions, Standard editions, and tool/package releases are separate coordinates. [`SPEC-VER`](./specs/requirements/spec-trace/SPEC-VER.json) is authoritative for requirement revision and Standard edition semantics. Standard editions use `-draft.N`, `-rc.N`, or a stable SemVer label and are frozen through [`schemas/standard-edition.schema.json`](./schemas/standard-edition.schema.json). Interchange and safe mutation use [`schemas/specattest-interchange.schema.json`](./schemas/specattest-interchange.schema.json), and complete pins follow the [fail-closed verification algorithm](./docs/edition-pin-verification.md). Repository commits and package tags do not automatically create Standard editions.
 
 The reusable release surface is the curated JSON schema/template mirror under
 [`publish/`](./publish/), not the full repository.
