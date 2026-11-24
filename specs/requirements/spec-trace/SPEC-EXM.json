@@ -18,41 +18,49 @@
   "requirements": [
     {
       "id": "REQ-EXM-0001",
+      "revision": 1,
       "title": "Provide a product-style traceability chain",
       "statement": "The repository MUST provide a product-style example set that includes linked specification, architecture, work-item, and verification artifacts."
     },
     {
       "id": "REQ-EXM-0002",
+      "revision": 1,
       "title": "Use compact requirement clauses in example specifications",
       "statement": "Example specifications MUST use the compact requirement clause model and show\ndirect traceability to architecture, work-item, and verification artifacts."
     },
     {
       "id": "REQ-EXM-0003",
+      "revision": 1,
       "title": "Keep the payments example concrete and recognizable",
       "statement": "The payments example MUST remain a recognizable duplicate-batch scenario that demonstrates both business-rule and edge-case requirements."
     },
     {
       "id": "REQ-EXM-0004",
+      "revision": 1,
       "title": "Include a narrow technical example",
       "statement": "The repository MUST include a narrow technical example that demonstrates method-level and edge-case requirements in a single specification file."
     },
     {
       "id": "REQ-EXM-0005",
+      "revision": 1,
       "title": "Keep examples aligned with the current standard",
       "statement": "Examples MUST stay aligned with the current templates, schemas, and identifier policy."
     },
     {
       "id": "REQ-EXM-0006",
+      "revision": 1,
       "title": "Keep example prose illustrative rather than canonical",
       "statement": "Example prose MUST remain illustrative rather than become hidden normative content outside the SPEC suite."
     },
     {
       "id": "REQ-EXM-0007",
+      "revision": 1,
       "title": "Demonstrate upstream trace when it is part of the example",
       "statement": "Example specifications SHOULD use `Derived From`, `Supersedes`, or `Upstream Refs` when the worked example includes requirement evolution or upstream source material."
     },
     {
       "id": "REQ-EXM-0008",
+      "revision": 1,
       "title": "Demonstrate inline identifier references",
       "statement": "Worked examples SHOULD show inline identifier references to a requirement, a specification, and a requirement that governs clause grammar or token usage.",
       "trace": {
@@ -69,6 +77,7 @@
     },
     {
       "id": "REQ-EXM-0009",
+      "revision": 1,
       "title": "Distinguish derived evidence views from canonical trace",
       "statement": "Worked examples SHOULD make it obvious when a status, coverage, or attestation view is generated from the trace graph rather than authored as canonical requirement text.",
       "notes": [
@@ -79,6 +88,7 @@
     },
     {
       "id": "REQ-EXM-0010",
+      "revision": 1,
       "title": "Demonstrate dimension-oriented derived reporting",
       "statement": "Worked examples SHOULD include at least one derived view that summarizes requirement coverage by dimension rather than only a single current-status label.",
       "notes": [
@@ -88,6 +98,7 @@
     },
     {
       "id": "REQ-EXM-0011",
+      "revision": 1,
       "title": "Demonstrate requirement coverage expectations",
       "statement": "Worked examples SHOULD show `coverage` expectations on requirements when the example needs to distinguish expected positive, negative, edge, or fuzz evidence dimensions.",
       "coverage": {

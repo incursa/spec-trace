@@ -25,6 +25,7 @@
   "requirements": [
     {
       "id": "REQ-BEM-CSS-0001",
+      "revision": 1,
       "title": "Use class selectors for BEM entities",
       "statement": "BEM entity styling MUST use class selectors.",
       "trace": {
@@ -47,6 +48,7 @@
     },
     {
       "id": "REQ-BEM-CSS-0002",
+      "revision": 1,
       "title": "Avoid tag and ID selectors",
       "statement": "BEM entity styling MUST NOT use tag or ID selectors.",
       "trace": {
@@ -64,6 +66,7 @@
     },
     {
       "id": "REQ-BEM-CSS-0003",
+      "revision": 1,
       "title": "Avoid tag-and-class selectors",
       "statement": "BEM entity styling SHOULD NOT combine tags and classes in a selector.",
       "trace": {
@@ -84,6 +87,7 @@
     },
     {
       "id": "REQ-BEM-CSS-0004",
+      "revision": 1,
       "title": "Minimize nested selectors",
       "statement": "Nested selectors SHOULD be minimized.",
       "trace": {
@@ -100,6 +104,7 @@
     },
     {
       "id": "REQ-BEM-CSS-0005",
+      "revision": 1,
       "title": "Limit nested selectors to block state or theme set changes",
       "statement": "Nested selectors MAY change element styles relative to a block state or theme set.",
       "trace": {
@@ -120,6 +125,7 @@
     },
     {
       "id": "REQ-BEM-CSS-0006",
+      "revision": 1,
       "title": "Avoid combined selectors",
       "statement": "Combined selectors SHOULD NOT be used.",
       "trace": {
@@ -140,6 +146,7 @@
     },
     {
       "id": "REQ-BEM-CSS-0007",
+      "revision": 1,
       "title": "Allow mixes to combine entities on one node",
       "statement": "A mix MAY combine multiple BEM entities on the same DOM node.",
       "trace": {
@@ -161,6 +168,7 @@
     },
     {
       "id": "REQ-BEM-CSS-0008",
+      "revision": 1,
       "title": "Use mixes for external geometry and positioning",
       "statement": "External geometry and positioning SHOULD be set via the parent block or a mix.",
       "trace": {
@@ -182,6 +190,7 @@
     },
     {
       "id": "REQ-BEM-CSS-0009",
+      "revision": 1,
       "title": "Avoid wrapper-heavy positioning",
       "statement": "Implementations SHOULD use mixes instead of wrapper blocks when positioning one block relative to another.",
       "trace": {
@@ -203,6 +212,7 @@
     },
     {
       "id": "REQ-BEM-CSS-0010",
+      "revision": 1,
       "title": "Use selector names that accurately describe the entity",
       "statement": "The name of a selector SHOULD fully and accurately describe the BEM entity it represents.",
       "trace": {

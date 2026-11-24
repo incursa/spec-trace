@@ -4,6 +4,8 @@
 
 ### Added
 
+- Added canonical `SPEC-VER` rules for requirement revisions, immutable Standard editions, draft/candidate/stable maturity, mutable publication disposition, explicit pre-1.0 compatibility, externally anchored bootstrap, and successor cross-validation.
+- Added `schemas/standard-edition.schema.json`, a reusable edition-manifest template, an independent bootstrap validation script, a bootstrap human-review checklist, and a versioning conformance corpus.
 - Restored root reference guidance in `overview.md`, `layout.md`, and the copy-ready template files.
 - Formalized inline identifier references as backtick-delimited, human-readable links to stable artifact IDs, with cross-file resolution left to repository-level tooling.
 - Added guidance that requirement titles are short descriptive labels, requirement clauses carry the normative behavior, and `Trace` blocks have typed semantics by label family.
@@ -18,6 +20,8 @@
 
 ### Changed
 
+- Added required positive integer `revision` coordinates to active requirements and aligned the canonical suite, examples, templates, schema, tool model, tests, and publish mirror.
+- Renamed the prepared initial edition to `0.1.0-draft.1` and made its draft maturity and bootstrap status explicit.
 - Split Central Registry packaging into a dedicated [`publish/`](./publish/) submodule so published versions contain only the reusable schema and template definitions instead of the repository's canonical specs, examples, and tooling.
 - Switched Central Registry publishing from a long-lived token secret to GitHub OIDC via `cue-labs/registry-login-action`, and updated the release workflow to sync and publish the dedicated `publish/` submodule with the pinned CUE CLI on `PATH`.
 - Clarified that consumers import the schema-backed root template package as `github.com/incursa/spec-trace@v0:templates`.

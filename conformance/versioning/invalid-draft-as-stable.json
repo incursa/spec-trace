@@ -1,0 +1,8 @@
+{
+  "case": "invalid-draft-as-stable",
+  "valid": false,
+  "edition": "0.1.0-draft.1",
+  "maturity": "stable",
+  "bootstrap": true,
+  "requirement": { "id": "REQ-EXAMPLE-0001", "revision": 1 }
+}

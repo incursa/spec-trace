@@ -54,6 +54,7 @@
   "type": "object",
   "required": [
     "requirement_id",
+    "revision",
     "title",
     "clause",
     "normative_keyword"
@@ -62,6 +63,11 @@
     "requirement_id": {
       "type": "string",
       "pattern": "^REQ-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$"
+    },
+    "revision": {
+      "description": "Monotonically increasing immutable revision of the stable requirement identifier.",
+      "type": "integer",
+      "minimum": 1
     },
     "title": {
       "description": "Short descriptive label for the requirement; it names the obligation or concern rather than restating the full clause.",

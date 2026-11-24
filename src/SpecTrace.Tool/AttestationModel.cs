@@ -183,6 +183,9 @@ public sealed class SpecTraceAttestationRequirement
     [JsonPropertyName("requirement_id")]
     public required string RequirementId { get; init; }
 
+    [JsonPropertyName("revision")]
+    public required long Revision { get; init; }
+
     [JsonPropertyName("title")]
     public required string Title { get; init; }
 

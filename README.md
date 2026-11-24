@@ -35,6 +35,7 @@ A requirement is a record inside a specification artifact. The `statement` is th
 ```json
 {
   "id": "REQ-EXAMPLE-0001",
+  "revision": 1,
   "title": "Reject duplicate payment batches",
   "statement": "The payment importer MUST reject a batch when its upstream batch identifier was already accepted.",
   "coverage": {
@@ -57,7 +58,7 @@ Keep the clause compact. Put rationale, examples, caveats, source references, an
 
 1. Copy [`spec-template.json`](./spec-template.json).
 2. Give the specification a stable `SPEC-...` artifact ID.
-3. Add one or more `REQ-...` requirement records.
+3. Add one or more `REQ-...` requirement records at revision `1`; increment the revision for every accepted edit that preserves the same obligation.
 4. Use exactly one approved uppercase keyword in each requirement statement: `MUST`, `MUST NOT`, `SHALL`, `SHALL NOT`, `SHOULD`, `SHOULD NOT`, or `MAY`.
 5. Add optional `coverage` expectations when you want to declare what evidence dimensions matter.
 6. Add optional `trace` links when architecture, work items, verification artifacts, lineage, or upstream sources are known.
@@ -123,6 +124,8 @@ The repository CI runs the core validation path, catalog build, evidence validat
 
 ## Release And Versioning
 
+Requirement revisions, Standard editions, and tool/package releases are separate coordinates. [`SPEC-VER`](./specs/requirements/spec-trace/SPEC-VER.json) is authoritative for requirement revision and Standard edition semantics. Standard editions use `-draft.N`, `-rc.N`, or a stable SemVer label and are frozen through [`schemas/standard-edition.schema.json`](./schemas/standard-edition.schema.json). Repository commits and package tags do not automatically create Standard editions.
+
 The reusable release surface is the curated JSON schema/template mirror under
 [`publish/`](./publish/), not the full repository.
 
@@ -144,7 +147,7 @@ source RFC extracts, or private work artifacts in release material.
 - The authoritative JSON Schema is [`model/model.schema.json`](./model/model.schema.json).
 - The authoritative standard is the SPEC suite under [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/).
 - Requirements live inside specification artifacts; they are not loose prose fragments.
-- Requirement IDs and artifact IDs are the stable reference surface. Prefer IDs over file paths in trace links.
+- Requirement IDs and artifact IDs are the stable reference surface. A requirement's positive integer `revision` identifies exact immutable content; prefer IDs over file paths in trace links.
 - `coverage` records expected evidence dimensions, not observed test results or code coverage.
 - `trace` links record explicit relationships; backtick-delimited inline IDs are lightweight prose references.
 - Generated reports, evidence snapshots, catalogs, and browsing views are derived material.

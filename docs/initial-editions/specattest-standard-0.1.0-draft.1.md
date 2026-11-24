@@ -1,17 +1,21 @@
-# SpecAttest Standard 0.1.0 publication preparation
+# SpecAttest Standard 0.1.0-draft.1 publication preparation
 
 ## Edition metadata
 
 - Title: SpecAttest Standard
-- Edition: `0.1.0`
-- Maturity: Initial Public Draft
+- Edition: `0.1.0-draft.1`
+- Maturity: Draft
 - Versioning policy: Semantic Versioning 2.0.0
 - Publisher: Incursa
 - Canonical source: `incursa/spec-trace`
 - Preserved source base revision: `37a1f73237147427c689c28a75b8fe024a2d0f47`
 - Distribution state: prepared, private, and not publicly activated
+- Governance: Incursa owner approved
+- Bootstrap: yes
 
-The edition contains 11 existing specification artifacts and 200 existing requirements. Artifact identifiers, requirement identifiers, document order, repository paths, namespaces, package identifiers, schema identifiers, and MCP tool names are preserved.
+The prepared edition contains 12 specification artifacts and 228 requirements. `SPEC-VER` adds the normative revision, edition, maturity, compatibility, and bootstrap contract. Existing artifact identifiers, requirement identifiers, document order, repository paths, namespaces, package identifiers, schema identifiers, and MCP tool names are preserved. Existing requirements begin at revision 1 because this is the first revision-aware edition.
+
+This file is a preparation record, not the immutable edition manifest. Publication remains blocked until the exact source commit and artifact bundle are frozen; independent validator results, corpus and payload hashes, approval, and a signed tag or release manifest are recorded; and the bootstrap checklist is complete.
 
 ## Intentional rename changes
 
@@ -23,15 +27,21 @@ The human-facing standard name, canonical-suite landing page, owner metadata, an
 
 No stable artifact or requirement identifier changed. These changes do not rename a repository, directory, namespace, package, schema, or MCP tool.
 
-## Deferred refinement backlog
+## Versioning refinement completed in this draft
+
+- requirement records now carry positive integer revisions;
+- `SPEC-VER` defines immutable editions and their compatibility semantics;
+- publication maturity is `draft`, `candidate`, or `stable`;
+- `active`, `superseded`, and `withdrawn` remain mutable disposition outside the edition digest;
+- `schemas/standard-edition.schema.json` defines the frozen edition manifest; and
+- bootstrap and successor cross-validation requirements are normative.
+
+## Remaining publication work
 
 The initial edition does not attempt a comprehensive rewrite. Future work remains separate:
 
 - additional normative clarification and terminology consistency;
 - conformance rules and examples;
-- full edition comparisons and change summaries;
-- normative versus editorial change classification;
-- suggested semantic-version increments;
 - publication preview and approval workflow improvements; and
 - historical edition browsing.
 

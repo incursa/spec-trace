@@ -7,9 +7,11 @@ It intentionally contains only:
 - [`model/`](./model/) for the authoritative JSON Schema mirror
 - root JSON templates:
   - [`spec-template.json`](./spec-template.json)
+  - [`standard-edition-template.json`](./standard-edition-template.json)
   - [`architecture-template.json`](./architecture-template.json)
   - [`work-item-template.json`](./work-item-template.json)
   - [`verification-template.json`](./verification-template.json)
+- [`schemas/standard-edition.schema.json`](./schemas/standard-edition.schema.json) for immutable Standard edition manifests
 
 It does not include the repository's canonical self-specification suite, worked examples, validation tooling, or generated artifacts.
 

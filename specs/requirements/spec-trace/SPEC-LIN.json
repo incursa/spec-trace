@@ -12,12 +12,16 @@
     "traceability",
     "evolution"
   ],
+  "related_artifacts": [
+    "SPEC-VER"
+  ],
   "purpose": "Define how requirement IDs stay stable while requirements evolve, and how the standard records lightweight upstream lineage without workflow states or mandatory tombstone records.",
   "scope": "This specification covers editorial clarifications, semantic changes, split and merge cases, moved requirements, ID reuse, withdrawn requirements, and the optional lineage and upstream-reference fields in requirement Trace blocks.",
   "context": "Requirements change over time, but traceability only stays useful if the repository can distinguish wording edits from new obligations.",
   "requirements": [
     {
       "id": "REQ-LIN-0001",
+      "revision": 1,
       "title": "Keep editorial clarifications on the same requirement ID",
       "statement": "Editorial clarifications MUST keep the same `REQ-...` identifier when the obligation does not change.",
       "notes": [
@@ -27,6 +31,7 @@
     },
     {
       "id": "REQ-LIN-0002",
+      "revision": 1,
       "title": "Assign a new requirement ID for semantic changes",
       "statement": "A semantic change MUST use a new `REQ-...` identifier.",
       "notes": [
@@ -35,6 +40,7 @@
     },
     {
       "id": "REQ-LIN-0003",
+      "revision": 1,
       "title": "Assign new requirement IDs for split and merge outcomes",
       "statement": "Split and merge scenarios MUST produce new `REQ-...` identifiers for the resulting requirements.",
       "notes": [
@@ -44,6 +50,7 @@
     },
     {
       "id": "REQ-LIN-0004",
+      "revision": 1,
       "title": "Preserve identifiers when a requirement moves without semantic change",
       "statement": "A requirement MAY keep the same `REQ-...` identifier when it moves to another file or section and its semantics do not change.",
       "notes": [
@@ -52,6 +59,7 @@
     },
     {
       "id": "REQ-LIN-0005",
+      "revision": 1,
       "title": "Never reuse retired requirement IDs",
       "statement": "A retired `REQ-...` identifier MUST NOT be reused for a different obligation.",
       "notes": [
@@ -60,6 +68,7 @@
     },
     {
       "id": "REQ-LIN-0006",
+      "revision": 1,
       "title": "Keep upstream trace lightweight",
       "statement": "A requirement MAY use `Derived From`, `Supersedes`, and `Upstream Refs` in its Trace block to record lineage and upstream material without adding per-requirement workflow states.",
       "notes": [
@@ -72,6 +81,7 @@
     },
     {
       "id": "REQ-LIN-0007",
+      "revision": 1,
       "title": "Keep inline references separate from Trace",
       "statement": "Inline references MUST NOT be treated as `Derived From`, `Supersedes`, or `Upstream Refs` entries.",
       "notes": [
@@ -83,6 +93,7 @@
     },
     {
       "id": "REQ-LIN-0008",
+      "revision": 1,
       "title": "Allow precise source locators when coverage reporting needs them",
       "statement": "A `Upstream Refs` entry MAY include document names, section labels, anchors, ranges, or other locators precise enough for source-coverage reporting.",
       "trace": {
@@ -97,6 +108,7 @@
     },
     {
       "id": "REQ-LIN-0009",
+      "revision": 1,
       "title": "Retire withdrawn requirements without reusing their identifiers",
       "statement": "A requirement that is withdrawn without a successor MUST retire its `REQ-...`\nidentifier rather than silently repurpose or reuse it.",
       "notes": [
@@ -106,12 +118,31 @@
     },
     {
       "id": "REQ-LIN-0010",
+      "revision": 1,
       "title": "Allow retired-ID ledgers without requiring tombstone requirements",
       "statement": "A repository MAY keep a retired-identifier ledger, changelog, or generated\nhistory surface for withdrawn or superseded requirements without keeping a\nmandatory tombstone requirement artifact.",
       "notes": [
         "This preserves history when teams want visibility into retired IDs.",
         "The core standard still does not require inactive requirement sections to\nremain in the active specification files."
       ]
+    },
+    {
+      "id": "REQ-LIN-0011",
+      "revision": 1,
+      "title": "Create a revision for every accepted refinement",
+      "statement": "A requirement refinement that preserves the stable ID MUST increment its immutable revision coordinate.",
+      "trace": {
+        "related": ["SPEC-VER"]
+      }
+    },
+    {
+      "id": "REQ-LIN-0012",
+      "revision": 1,
+      "title": "Preserve revision history",
+      "statement": "Requirement history MUST retain the content, hash, actor, time, and change summary for every accepted revision.",
+      "trace": {
+        "related": ["SPEC-VER"]
+      }
     }
   ]
 }

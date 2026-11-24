@@ -17,6 +17,7 @@
   "requirements": [
     {
       "id": "REQ-LAY-0001",
+      "revision": 1,
       "title": "Keep live source artifacts under the /specs tree",
       "statement": "A repository using the standard MUST keep live canonical source artifacts as JSON under `/specs` with dedicated areas for requirements, architecture, work-items, verification, generated outputs, templates, and schemas.",
       "notes": [
@@ -25,51 +26,61 @@
     },
     {
       "id": "REQ-LAY-0002",
+      "revision": 1,
       "title": "Organize specifications by stable domain and concern",
       "statement": "Specifications MUST be organized by stable domain first and by capability, behavior area, interface, or technical concern second."
     },
     {
       "id": "REQ-LAY-0003",
+      "revision": 1,
       "title": "Place artifact families according to their role",
       "statement": "Architecture, work-item, and verification artifacts MUST live in their respective family areas with traceability back to requirement identifiers."
     },
     {
       "id": "REQ-LAY-0004",
+      "revision": 1,
       "title": "Keep generated outputs separate from source artifacts",
       "statement": "Generated indexes, matrices, coverage reports, and evidence snapshots MUST live under `/specs/generated` when they are stored in the repository."
     },
     {
       "id": "REQ-LAY-0005",
+      "revision": 1,
       "title": "Include the full specification ID in specification file names",
       "statement": "Each canonical specification `.json` file name MUST include the full specification artifact ID."
     },
     {
       "id": "REQ-LAY-0006",
+      "revision": 1,
       "title": "Keep one specification per canonical artifact file",
       "statement": "Each specification `.json` file MUST contain exactly one specification artifact and one or more related requirement records beneath it."
     },
     {
       "id": "REQ-LAY-0007",
+      "revision": 1,
       "title": "Treat index files as navigation only",
       "statement": "A domain or concern MAY include an `_index.md` file for navigation."
     },
     {
       "id": "REQ-LAY-0008",
+      "revision": 1,
       "title": "Keep the reference package packaging-friendly",
       "statement": "The public reference package MUST keep the SpecAttest Standard canonical suite under the existing technical directory `specs/requirements/spec-trace/`."
     },
     {
       "id": "REQ-LAY-0009",
+      "revision": 1,
       "title": "Keep file names stable and readable",
       "statement": "Specification file names SHOULD remain stable and readable without using dates, sprints, or owner names."
     },
     {
       "id": "REQ-LAY-0010",
+      "revision": 1,
       "title": "Keep indexes non-authoritative",
       "statement": "An `_index.md` file MUST NOT replace the underlying artifacts."
     },
     {
       "id": "REQ-LAY-0011",
+      "revision": 1,
       "title": "Allow copy-friendly root guidance in the reference package",
       "statement": "The public reference package MAY also publish root guidance and templates for copy convenience."
     }

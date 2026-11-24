@@ -1,0 +1,207 @@
+{
+  "artifact_id": "SPEC-VER",
+  "artifact_type": "specification",
+  "title": "Requirement Revisions and Standard Editions",
+  "domain": "spec-trace",
+  "capability": "versioning-publication-and-bootstrap",
+  "status": "draft",
+  "owner": "specattest-maintainers",
+  "tags": [
+    "specattest",
+    "versioning",
+    "publication",
+    "bootstrap",
+    "governance"
+  ],
+  "related_artifacts": [
+    "SPEC-STD",
+    "SPEC-LIN",
+    "SPEC-SCH"
+  ],
+  "purpose": "Define immutable requirement revisions, immutable Standard editions, independent maturity and disposition, compatibility semantics, and the externally anchored bootstrap and successor-validation process.",
+  "scope": "This specification covers revision coordinates for stable requirements; edition labels for frozen specification sets; publication maturity and disposition; Semantic Versioning classification including explicit pre-1.0 compatibility declarations; immutable edition provenance; bootstrap validation; successor cross-validation; conformance corpora; human behavioral review; and governance claims.",
+  "context": "Requirement editing, specification publication, and review maturity are separate concerns. Keeping their coordinates independent lets authors continue work while consumers remain pinned to exact immutable contracts and lets a self-hosted Standard establish trust without relying on circular self-certification.",
+  "requirements": [
+    {
+      "id": "REQ-VER-0001",
+      "revision": 1,
+      "title": "Keep requirement identity stable across refinement",
+      "statement": "A requirement MUST retain its stable `REQ-...` identifier when an edit refines the same obligation.",
+      "trace": { "related": ["SPEC-LIN"] }
+    },
+    {
+      "id": "REQ-VER-0002",
+      "revision": 1,
+      "title": "Assign immutable requirement revisions",
+      "statement": "Every accepted edit to a requirement MUST create a new positive integer revision whose prior content remains recoverable.",
+      "notes": [
+        "Revision numbers are ordinal history and concurrency coordinates, not Semantic Versioning labels."
+      ]
+    },
+    {
+      "id": "REQ-VER-0003",
+      "revision": 1,
+      "title": "Address exact requirement content",
+      "statement": "A reference that depends on exact requirement content MUST identify both the stable requirement ID and its revision.",
+      "notes": [
+        "A bare requirement ID intentionally means the requirement across revisions."
+      ]
+    },
+    {
+      "id": "REQ-VER-0004",
+      "revision": 1,
+      "title": "Create a new ID for a different obligation",
+      "statement": "A fundamentally different obligation MUST receive a new requirement ID and explicit lineage such as `supersedes` or `derived_from`.",
+      "trace": { "related": ["SPEC-LIN"] }
+    },
+    {
+      "id": "REQ-VER-0005",
+      "revision": 1,
+      "title": "Freeze specification sets as editions",
+      "statement": "A published specification set MUST freeze its ordered artifacts and exact requirement revisions in an immutable edition manifest.",
+      "notes": [
+        "Commits and ordinary edits do not automatically create editions."
+      ]
+    },
+    {
+      "id": "REQ-VER-0006",
+      "revision": 1,
+      "title": "Use Semantic Versioning for editions",
+      "statement": "A Standard edition MUST use a Semantic Versioning label with only the `draft.N` and `rc.N` prerelease forms defined by this specification.",
+      "notes": [
+        "Draft example: 0.1.0-draft.1. Candidate example: 0.1.0-rc.1. Stable example: 0.1.0."
+      ]
+    },
+    {
+      "id": "REQ-VER-0007",
+      "revision": 1,
+      "title": "Classify breaking edition changes",
+      "statement": "A breaking change to accepted content, stable identifiers, trace meaning, canonicalization, or required behavior MUST increment the major edition component after 1.0.0.",
+      "notes": [
+        "Before 1.0.0, a breaking change increments the minor component and resets patch to zero, and the manifest declares compatibility as breaking."
+      ]
+    },
+    {
+      "id": "REQ-VER-0008",
+      "revision": 1,
+      "title": "Classify backward-compatible additions",
+      "statement": "A backward-compatible normative addition MUST increment the minor edition component and reset patch to zero.",
+      "notes": [
+        "During 0.x this rule applies only when the addition is actually backward-compatible; breaking 0.x editions use the explicit exception in `REQ-VER-0007`."
+      ]
+    },
+    {
+      "id": "REQ-VER-0009",
+      "revision": 1,
+      "title": "Reserve patch editions for non-normative corrections",
+      "statement": "A patch edition MUST preserve normative interpretation and validation behavior.",
+      "notes": [
+        "A correction that changes accepted content or observable validator behavior is not a patch."
+      ]
+    },
+    {
+      "id": "REQ-VER-0010",
+      "revision": 1,
+      "title": "Declare pre-1.0 compatibility",
+      "statement": "Every 0.x edition manifest MUST declare whether its change is breaking, backward-compatible, or non-normative relative to its predecessor.",
+      "notes": [
+        "The bootstrap edition has no predecessor and records `bootstrap: true` instead."
+      ]
+    },
+    {
+      "id": "REQ-VER-0011",
+      "revision": 1,
+      "title": "Record independent publication maturity",
+      "statement": "An immutable edition manifest MUST record exactly one maturity value of `draft`, `candidate`, or `stable` independently of its edition number.",
+      "notes": [
+        "Stable means supported under the named publisher governance and does not imply external standards-body ratification."
+      ]
+    },
+    {
+      "id": "REQ-VER-0012",
+      "revision": 1,
+      "title": "Keep maturity consistent with prerelease labels",
+      "statement": "Edition validation MUST require `draft` with `-draft.N`, `candidate` with `-rc.N`, and `stable` with no prerelease suffix.",
+      "notes": [
+        "The explicit maturity field prevents consumers from inferring governance solely from a version string."
+      ]
+    },
+    {
+      "id": "REQ-VER-0013",
+      "revision": 1,
+      "title": "Keep publication disposition outside the immutable manifest",
+      "statement": "Publication administration MUST model `active`, `superseded`, and `withdrawn` as mutable disposition outside the immutable edition digest.",
+      "notes": [
+        "A disposition transition records actor, time, reason, and successor where applicable without rewriting edition bytes or maturity."
+      ]
+    },
+    {
+      "id": "REQ-VER-0014",
+      "revision": 1,
+      "title": "Record edition provenance",
+      "statement": "An edition manifest MUST record governance, source commit and path, payload and schema hashes, canonicalization, exact requirement revisions, conformance-corpus hash, validator results, approval reference, and signature reference.",
+      "trace": { "related": ["SPEC-SCH"] }
+    },
+    {
+      "id": "REQ-VER-0015",
+      "revision": 1,
+      "title": "Anchor the bootstrap edition externally",
+      "statement": "The first published edition MUST set `bootstrap` to true and derive trust from independently reproducible schema validation, review evidence, hashes, and a signed tag or release manifest.",
+      "notes": [
+        "A candidate implementation declaring its own output valid is not sufficient bootstrap evidence."
+      ]
+    },
+    {
+      "id": "REQ-VER-0016",
+      "revision": 1,
+      "title": "Validate bootstrap bytes independently",
+      "statement": "Bootstrap validation MUST include ordinary JSON Schema validation and at least one small validation implementation independent of the candidate SpecAttest validator.",
+      "trace": { "related": ["SPEC-SCH"] }
+    },
+    {
+      "id": "REQ-VER-0017",
+      "revision": 1,
+      "title": "Require documented human bootstrap review",
+      "statement": "Bootstrap publication MUST include a completed human review checklist covering identifiers, revision coordinates, normative language, schemas, hashes, known gaps, and governance approval.",
+      "notes": [
+        "The checklist is evidence about the frozen bytes rather than a substitute for machine validation."
+      ]
+    },
+    {
+      "id": "REQ-VER-0018",
+      "revision": 1,
+      "title": "Cross-validate successor editions",
+      "statement": "A non-bootstrap candidate edition MUST be checked by the last accepted validator, the candidate validator, and the shared conformance corpus.",
+      "notes": [
+        "Validator result records pin the validator versions and result hashes."
+      ]
+    },
+    {
+      "id": "REQ-VER-0019",
+      "revision": 1,
+      "title": "Review successor behavioral differences",
+      "statement": "A non-bootstrap candidate edition MUST include human review of behavioral differences between the accepted and candidate validators.",
+      "notes": [
+        "Differences are either reconciled, documented as intended compatibility changes, or treated as publication blockers."
+      ]
+    },
+    {
+      "id": "REQ-VER-0020",
+      "revision": 1,
+      "title": "Publish immutable draft editions without consensus claims",
+      "statement": "A publisher MAY publish an owner-governed immutable draft edition when its maturity, governance, provenance, and known gaps are explicit.",
+      "notes": [
+        "Draft publication provides a stable integration target without claiming broad consensus."
+      ]
+    },
+    {
+      "id": "REQ-VER-0021",
+      "revision": 1,
+      "title": "Pin consumers to exact editions",
+      "statement": "A conforming consumer MUST support pinning to an exact edition manifest and its payload digest rather than treating a branch head as an edition.",
+      "notes": [
+        "Development can continue on the canonical branch while consumers remain pinned."
+      ]
+    }
+  ]
+}

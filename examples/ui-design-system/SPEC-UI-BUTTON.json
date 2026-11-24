@@ -23,6 +23,7 @@
   "requirements": [
     {
       "id": "REQ-UI-BUTTON-0001",
+      "revision": 1,
       "title": "Expose the button block surface",
       "statement": "The button component MUST expose the `ui-button` block surface, satisfy `REQ-UI-CONVENTIONS-0001`, and use `space-control-x-medium` for default inline spacing.",
       "trace": {
@@ -34,6 +35,7 @@
     },
     {
       "id": "REQ-UI-BUTTON-0002",
+      "revision": 1,
       "title": "Define the primary button variant",
       "statement": "The `ui-button--primary` modifier MUST use `color-action-primary` and satisfy `REQ-UI-CONVENTIONS-0003`.",
       "trace": {
@@ -45,6 +47,7 @@
     },
     {
       "id": "REQ-UI-BUTTON-0003",
+      "revision": 1,
       "title": "Define the secondary button variant",
       "statement": "The `ui-button--secondary` modifier MUST use `color-action-secondary` and satisfy `REQ-UI-CONVENTIONS-0003`.",
       "trace": {
@@ -56,6 +59,7 @@
     },
     {
       "id": "REQ-UI-BUTTON-0004",
+      "revision": 1,
       "title": "Define button size modifiers",
       "statement": "The `ui-button--sm`, `ui-button--md`, and `ui-button--lg` modifiers MUST map to `control-height-small`, `control-height-medium`, and `control-height-large`.",
       "trace": {
@@ -69,6 +73,7 @@
     },
     {
       "id": "REQ-UI-BUTTON-0005",
+      "revision": 1,
       "title": "Define the disabled button state",
       "statement": "The `ui-button--disabled` modifier MUST satisfy `REQ-UI-FOUNDATION-0002`.",
       "trace": {
@@ -80,6 +85,7 @@
     },
     {
       "id": "REQ-UI-BUTTON-0006",
+      "revision": 1,
       "title": "Define the focus-visible button state",
       "statement": "The `ui-button--focus-visible` modifier MUST satisfy `REQ-UI-FOUNDATION-0001`.",
       "trace": {

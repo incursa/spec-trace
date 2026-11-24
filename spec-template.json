@@ -11,6 +11,7 @@
   "requirements": [
     {
       "id": "REQ-EXAMPLE-0001",
+      "revision": 1,
       "title": "State one requirement",
       "statement": "The example MUST state one requirement.",
       "coverage": {

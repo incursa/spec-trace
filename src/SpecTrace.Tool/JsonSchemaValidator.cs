@@ -13,14 +13,16 @@ internal sealed class JsonSchemaValidator
     private readonly JsonSchema _retiredLedgerSchema;
     private readonly JsonSchema _topicViewSchema;
     private readonly JsonSchema _topicViewResultSchema;
+    private readonly JsonSchema _standardEditionSchema;
 
-    private JsonSchemaValidator(JsonSchema artifactSchema, JsonSchema evidenceSchema, JsonSchema retiredLedgerSchema, JsonSchema topicViewSchema, JsonSchema topicViewResultSchema)
+    private JsonSchemaValidator(JsonSchema artifactSchema, JsonSchema evidenceSchema, JsonSchema retiredLedgerSchema, JsonSchema topicViewSchema, JsonSchema topicViewResultSchema, JsonSchema standardEditionSchema)
     {
         _artifactSchema = artifactSchema;
         _evidenceSchema = evidenceSchema;
         _retiredLedgerSchema = retiredLedgerSchema;
         _topicViewSchema = topicViewSchema;
         _topicViewResultSchema = topicViewResultSchema;
+        _standardEditionSchema = standardEditionSchema;
     }
 
     public static JsonSchemaValidator Load(string rootPath)
@@ -32,7 +34,8 @@ internal sealed class JsonSchemaValidator
                 LoadSchema(Path.Combine(rootPath, "schemas", "evidence-snapshot.schema.json")),
                 LoadSchema(Path.Combine(rootPath, "schemas", "retired-requirement-ledger.schema.json")),
                 LoadSchema(Path.Combine(rootPath, "schemas", "topic-view.schema.json")),
-                LoadSchema(Path.Combine(rootPath, "schemas", "topic-view-result.schema.json")));
+                LoadSchema(Path.Combine(rootPath, "schemas", "topic-view-result.schema.json")),
+                LoadSchema(Path.Combine(rootPath, "schemas", "standard-edition.schema.json")));
 
             return _cached;
         }
@@ -61,6 +64,11 @@ internal sealed class JsonSchemaValidator
     public JsonElement LoadTopicViewResult(string rootPath, string jsonPath)
     {
         return LoadAndDeserialize<JsonElement>(_topicViewResultSchema, rootPath, jsonPath, "topic view result");
+    }
+
+    public JsonElement LoadStandardEdition(string rootPath, string jsonPath)
+    {
+        return LoadAndDeserialize<JsonElement>(_standardEditionSchema, rootPath, jsonPath, "standard edition manifest");
     }
 
     private static T LoadAndDeserialize<T>(JsonSchema schema, string rootPath, string jsonPath, string documentKind)

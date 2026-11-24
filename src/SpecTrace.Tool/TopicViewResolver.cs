@@ -180,6 +180,7 @@ internal static class TopicViewResolver
         return new TopicViewRequirementResultModel
         {
             RequirementId = context.Requirement.Id,
+            Revision = context.Requirement.Revision,
             Title = context.Requirement.Title,
             ArtifactId = context.Artifact.ArtifactId,
             ArtifactTitle = context.Artifact.Title,

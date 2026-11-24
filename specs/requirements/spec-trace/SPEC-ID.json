@@ -27,6 +27,7 @@
   "requirements": [
     {
       "id": "REQ-ID-0001",
+      "revision": 1,
       "title": "Use approved artifact identifier prefixes",
       "statement": "Artifact documents MUST use `SPEC`, `ARC`, `WI`, or `VER` as applicable.",
       "notes": [
@@ -35,21 +36,25 @@
     },
     {
       "id": "REQ-ID-0010",
+      "revision": 1,
       "title": "Use the REQ prefix for requirement identifiers",
       "statement": "Requirement identifiers MUST use the `REQ` prefix."
     },
     {
       "id": "REQ-ID-0016",
+      "revision": 1,
       "title": "Keep domain tokens uppercase alphanumeric",
       "statement": "A domain token MUST use only ASCII uppercase letters and digits."
     },
     {
       "id": "REQ-ID-0017",
+      "revision": 1,
       "title": "Keep domain tokens letter-starting",
       "statement": "A domain token MUST start with an ASCII uppercase letter."
     },
     {
       "id": "REQ-ID-0003",
+      "revision": 1,
       "title": "Allow stable optional grouping segments",
       "statement": "Identifiers MAY include zero or more grouping segments after the domain token.",
       "notes": [
@@ -58,71 +63,85 @@
     },
     {
       "id": "REQ-ID-0018",
+      "revision": 1,
       "title": "Keep grouping tokens uppercase alphanumeric",
       "statement": "A grouping token MUST use only ASCII uppercase letters and digits."
     },
     {
       "id": "REQ-ID-0019",
+      "revision": 1,
       "title": "Keep grouping tokens letter-starting",
       "statement": "A grouping token MUST start with an ASCII uppercase letter."
     },
     {
       "id": "REQ-ID-0020",
+      "revision": 1,
       "title": "Keep terminal sequences numeric",
       "statement": "A terminal sequence token MUST use only decimal digits."
     },
     {
       "id": "REQ-ID-0021",
+      "revision": 1,
       "title": "Keep terminal sequences at least four digits long",
       "statement": "A terminal sequence token MUST use at least four digits."
     },
     {
       "id": "REQ-ID-0004",
+      "revision": 1,
       "title": "Use terminal-free specification identifiers",
       "statement": "Specification artifact identifiers MUST use `SPEC-<DOMAIN>(-<GROUPING>...)`."
     },
     {
       "id": "REQ-ID-0013",
+      "revision": 1,
       "title": "Use sequence-bearing architecture identifiers",
       "statement": "Architecture artifact identifiers MUST use `ARC-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`."
     },
     {
       "id": "REQ-ID-0014",
+      "revision": 1,
       "title": "Use sequence-bearing work-item identifiers",
       "statement": "Work-item artifact identifiers MUST use `WI-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`."
     },
     {
       "id": "REQ-ID-0015",
+      "revision": 1,
       "title": "Use sequence-bearing verification identifiers",
       "statement": "Verification artifact identifiers MUST use `VER-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`."
     },
     {
       "id": "REQ-ID-0022",
+      "revision": 1,
       "title": "Use sequence-bearing requirement identifiers",
       "statement": "Requirement identifiers MUST use `REQ-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`."
     },
     {
       "id": "REQ-ID-0005",
+      "revision": 1,
       "title": "Preserve identifier stability",
       "statement": "An assigned identifier MUST remain stable."
     },
     {
       "id": "REQ-ID-0011",
+      "revision": 1,
       "title": "Prevent identifier reuse",
       "statement": "An assigned identifier MUST NOT be reused for a different artifact or requirement."
     },
     {
       "id": "REQ-ID-0006",
+      "revision": 1,
       "title": "Keep identifiers authoritative inside the document",
       "statement": "The identifier in canonical artifact fields or a requirement record MUST be authoritative."
     },
     {
       "id": "REQ-ID-0012",
+      "revision": 1,
       "title": "Keep file names non-authoritative",
       "statement": "The file name MUST NOT replace the document or requirement identifier in traceability links."
     },
     {
       "id": "REQ-ID-0007",
+      "revision": 1,
       "title": "Keep requirement IDs aligned with their specification context",
       "statement": "A requirement identifier SHOULD reuse the domain and grouping segments of the specification that contains it.",
       "notes": [
@@ -131,11 +150,13 @@
     },
     {
       "id": "REQ-ID-0008",
+      "revision": 1,
       "title": "Publish machine-readable grouping metadata",
       "statement": "The reference package MUST publish a machine-readable grouping-key registry and identifier summary as JSON data such as `artifact-id-policy.json`."
     },
     {
       "id": "REQ-ID-0009",
+      "revision": 1,
       "title": "Publish identifier family shapes in the catalog",
       "statement": "The authoritative identifier catalog MUST define the `SPEC-<DOMAIN>(-<GROUPING>...)`, `ARC-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`, `WI-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`, `VER-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>`, and `REQ-<DOMAIN>(-<GROUPING>...)-<SEQUENCE>` shapes."
     }

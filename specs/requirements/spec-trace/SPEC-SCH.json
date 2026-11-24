@@ -12,17 +12,22 @@
     "validation",
     "tooling"
   ],
+  "related_artifacts": [
+    "SPEC-VER"
+  ],
   "purpose": "Define the authoritative JSON Schema contracts and repository validation rules that support the standard without prescribing one service or database.",
   "scope": "This specification covers the authoritative JSON Schema package, repository-wide catalog validation, generated evidence snapshot contracts, topic-view definition contracts, requirement coverage expectations, inline identifier reference handling inside canonical JSON string fields, and the validation capabilities expected from tooling.",
   "context": "The standard depends on compact requirement records, explicit trace links, lightweight upstream lineage, portable derived-view selection objects, and repository-level graph checks. Tooling needs authoritative schemas and a repository-wide catalog so references behave like foreign keys instead of loose prose.",
   "requirements": [
     {
       "id": "REQ-SCH-0001",
+      "revision": 1,
       "title": "Provide schemas for the core extracted shapes",
       "statement": "The reference package MUST provide authoritative JSON Schema definitions for canonical artifact metadata, identifier policy metadata, compact requirement records, requirement trace fields, generated evidence snapshots, topic-view definitions, and work-item trace fields."
     },
     {
       "id": "REQ-SCH-0002",
+      "revision": 1,
       "title": "Keep front matter validation strict by document family",
       "statement": "The authoritative JSON Schema package MUST validate `artifact_type`, status vocabularies, and artifact identifier patterns for each document family.",
       "notes": [
@@ -31,11 +36,13 @@
     },
     {
       "id": "REQ-SCH-0003",
+      "revision": 1,
       "title": "Validate requirement identifiers as part of the identifier catalog",
       "statement": "The authoritative identifier definitions MUST validate both artifact identifier rules and `REQ-...` identifier rules."
     },
     {
       "id": "REQ-SCH-0004",
+      "revision": 1,
       "title": "Validate the compact requirement clause shape",
       "statement": "The canonical requirement definition MUST validate a `REQ-...` identifier, short title, a normative clause that contains exactly one approved uppercase keyword, and optional trace or notes data.",
       "notes": [
@@ -44,6 +51,7 @@
     },
     {
       "id": "REQ-SCH-0005",
+      "revision": 1,
       "title": "Keep requirement trace labels canonical",
       "statement": "The canonical requirement trace definition MUST allow only `satisfied_by`, `implemented_by`, `verified_by`, `derived_from`, `supersedes`, `upstream_refs`, and `related`.",
       "notes": [
@@ -52,66 +60,79 @@
     },
     {
       "id": "REQ-SCH-0006",
+      "revision": 1,
       "title": "Treat schemas as extracted-shape contracts",
       "statement": "The authoritative schema layer MUST describe canonical JSON artifact shapes rather than require one specific projection or parser implementation."
     },
     {
       "id": "REQ-SCH-0007",
+      "revision": 1,
       "title": "Resolve explicit traceability links",
       "statement": "Validation tooling MUST be able to resolve requirement links to design, work-item, verification, and lineage identifiers when those references are present in canonical JSON metadata."
     },
     {
       "id": "REQ-SCH-0008",
+      "revision": 1,
       "title": "Report traceability gaps",
       "statement": "Validation tooling SHOULD be able to report requirements missing design,\nimplementation, verification, or requested reporting coverage dimensions."
     },
     {
       "id": "REQ-SCH-0009",
+      "revision": 1,
       "title": "Keep evidence kinds extensible and schema-agnostic",
       "statement": "The evidence snapshot schema MUST model evidence kinds as lowercase extensible\ntokens rather than as a language-specific or framework-specific grammar."
     },
     {
       "id": "REQ-SCH-0010",
+      "revision": 1,
       "title": "Surface evidence coverage views",
       "statement": "Validation tooling SHOULD be able to report which requirements have observed\nevidence for the well-known and custom evidence kinds present in evaluated\nevidence snapshots."
     },
     {
       "id": "REQ-SCH-0011",
+      "revision": 1,
       "title": "Constrain trace-bearing identifier families",
       "statement": "The authoritative JSON Schema definitions MUST constrain the direct trace-bearing lists in top-level artifact fields and requirement or work-item trace blocks to the identifier family each field is meant to carry rather than accept generic non-empty strings."
     },
     {
       "id": "REQ-SCH-0012",
+      "revision": 1,
       "title": "Detect duplicate identifiers",
       "statement": "Validation tooling MUST detect duplicate artifact IDs and duplicate requirement IDs in the repository."
     },
     {
       "id": "REQ-SCH-0013",
+      "revision": 1,
       "title": "Resolve explicit trace references",
       "statement": "Validation tooling MUST resolve explicit trace references and report unresolved requirement or artifact references in direct trace-bearing fields."
     },
     {
       "id": "REQ-SCH-0014",
+      "revision": 1,
       "title": "Enforce reciprocal trace consistency",
       "statement": "Repository tooling MUST report when a requirement link is not reciprocated by the linked architecture, work-item, or verification artifact."
     },
     {
       "id": "REQ-SCH-0015",
+      "revision": 1,
       "title": "Keep namespaces aligned",
       "statement": "Validation tooling MUST report when an artifact's canonical domain value or identifier namespace does not align with the directory namespace that owns the file."
     },
     {
       "id": "REQ-SCH-0016",
+      "revision": 1,
       "title": "Model lineage and upstream refs explicitly",
       "statement": "The authoritative JSON Schema trace definition MUST model `derived_from` and `supersedes` as requirement-reference arrays and `upstream_refs` as a non-empty string array."
     },
     {
       "id": "REQ-SCH-0017",
+      "revision": 1,
       "title": "Allow lineage references without tombstones",
       "statement": "Validation tooling MUST accept `Derived From` and `Supersedes` references even when the referenced requirement IDs are not present as active documents in the repository."
     },
     {
       "id": "REQ-SCH-0018",
+      "revision": 1,
       "title": "Document inline identifier references in schema contracts",
       "statement": "The authoritative schema package and validation guidance MUST document inline identifier references as backtick-delimited canonical artifact identifiers whose full resolution may require repository-level validation beyond JSON shape checking alone.",
       "trace": {
@@ -129,6 +150,7 @@
     },
     {
       "id": "REQ-SCH-0019",
+      "revision": 1,
       "title": "Prevent trace inference from inline identifier references",
       "statement": "Validation tooling MUST NOT infer typed trace edges from inline identifier references alone.",
       "notes": [
@@ -137,6 +159,7 @@
     },
     {
       "id": "REQ-SCH-0020",
+      "revision": 1,
       "title": "Extract inline identifier references when practical",
       "statement": "Validation tooling SHOULD extract inline identifier references separately from structured trace fields when it can do so.",
       "notes": [
@@ -145,6 +168,7 @@
     },
     {
       "id": "REQ-SCH-0021",
+      "revision": 1,
       "title": "Extract inline identifiers from canonical JSON string fields",
       "statement": "Validation tooling MUST extract canonical identifiers from inline prose references in canonical JSON string fields when the visible identifier text is the canonical token.",
       "trace": {
@@ -160,6 +184,7 @@
     },
     {
       "id": "REQ-SCH-0022",
+      "revision": 1,
       "title": "Surface reporting dimensions for downstream tooling",
       "statement": "Validation tooling SHOULD report per-repository and per-requirement coverage\nfor `Upstream Refs`, `Satisfied By`, `Implemented By`, `Verified By`, and the\nevidence kinds present in evaluated evidence snapshots.",
       "trace": {
@@ -175,6 +200,7 @@
     },
     {
       "id": "REQ-SCH-0023",
+      "revision": 1,
       "title": "Emit machine-readable coverage summaries when requested",
       "statement": "Validation tooling SHOULD be able to emit machine-readable summaries of coverage dimensions for dashboards, attestation tooling, and repository reporting.",
       "trace": {
@@ -185,6 +211,7 @@
     },
     {
       "id": "REQ-SCH-0024",
+      "revision": 1,
       "title": "Provide a schema for generated evidence snapshots",
       "statement": "The evidence snapshot contract MUST validate generated evidence snapshots including producer metadata, requirement IDs, evidence kinds, statuses, and optional refs.",
       "trace": {
@@ -195,6 +222,7 @@
     },
     {
       "id": "REQ-SCH-0025",
+      "revision": 1,
       "title": "Allow partial evidence snapshots",
       "statement": "Validation tooling MUST accept evidence snapshots that cover only a subset of\nrequirements or only a subset of evidence kinds.",
       "trace": {
@@ -205,6 +233,7 @@
     },
     {
       "id": "REQ-SCH-0026",
+      "revision": 1,
       "title": "Merge overlapping evidence snapshots additively when reporting",
       "statement": "Validation tooling SHOULD merge overlapping evidence snapshots additively when\nit produces repository-level or requirement-level evidence reports.",
       "trace": {
@@ -216,6 +245,7 @@
     },
     {
       "id": "REQ-SCH-0027",
+      "revision": 1,
       "title": "Avoid negative inference from single-snapshot omission",
       "statement": "Validation tooling MUST NOT infer that evidence is absent from the repository\nsolely because one evaluated evidence snapshot omits a requirement or evidence\nkind.",
       "trace": {
@@ -226,6 +256,7 @@
     },
     {
       "id": "REQ-SCH-0028",
+      "revision": 1,
       "title": "Validate requirement coverage expectations",
       "statement": "The authoritative JSON Schema MUST validate an optional `coverage` object on requirements that requires the `positive`, `negative`, `edge`, and `fuzz` keys and limits their values to `required`, `optional`, `not_applicable`, and `deferred`.",
       "coverage": {
@@ -241,6 +272,7 @@
     },
     {
       "id": "REQ-SCH-0029",
+      "revision": 1,
       "title": "Provide a schema for topic view definitions",
       "statement": "The reference package MUST provide authoritative JSON Schema definitions for portable topic view definitions, including the standard top-level keys, the closed selector vocabulary, recursive boolean operators, literal and regex predicates, exact requirement identifier predicates, and explicit include and exclude arrays.",
       "trace": {
@@ -255,6 +287,7 @@
     },
     {
       "id": "REQ-SCH-0030",
+      "revision": 1,
       "title": "Validate topic view definitions with the shared schema",
       "statement": "Validation tooling SHOULD be able to validate portable topic view definitions against the shared schema and report malformed operators, case modes, requirement identifiers, or selector lists, including selectors outside the portable vocabulary.",
       "trace": {
@@ -269,6 +302,7 @@
     },
     {
       "id": "REQ-SCH-0031",
+      "revision": 1,
       "title": "Provide a schema for topic view result objects",
       "statement": "The reference package MUST provide authoritative JSON Schema definitions for portable topic-view result objects, including normalized input metadata, repository root context, summary counts, selected requirements, explicit exclusions, and match provenance when reported.",
       "trace": {
@@ -281,6 +315,33 @@
         "This schema defines the machine-readable result emitted by topic-view lookup tooling.",
         "The result contract stays subordinate to the input selection semantics."
       ]
+    },
+    {
+      "id": "REQ-SCH-0032",
+      "revision": 1,
+      "title": "Validate requirement revisions",
+      "statement": "The authoritative requirement schema MUST require a positive integer `revision` beside every active stable requirement ID.",
+      "trace": {
+        "related": ["SPEC-VER"]
+      }
+    },
+    {
+      "id": "REQ-SCH-0033",
+      "revision": 1,
+      "title": "Provide the Standard edition manifest schema",
+      "statement": "The reference package MUST provide an authoritative schema for immutable Standard edition identity, provenance, exact requirement revisions, validation evidence, bootstrap state, and signature reference.",
+      "trace": {
+        "related": ["SPEC-VER"]
+      }
+    },
+    {
+      "id": "REQ-SCH-0034",
+      "revision": 1,
+      "title": "Reject inconsistent edition maturity",
+      "statement": "Edition validation MUST reject a draft, candidate, or stable maturity value that disagrees with its Semantic Versioning prerelease form.",
+      "trace": {
+        "related": ["SPEC-VER"]
+      }
     }
   ]
 }

@@ -23,6 +23,7 @@
   "requirements": [
     {
       "id": "REQ-UI-INPUT-0001",
+      "revision": 1,
       "title": "Expose the input block surface",
       "statement": "The input component MUST expose the `ui-input` block surface, satisfy `REQ-UI-CONVENTIONS-0001`, and use `space-control-x-medium` for default control spacing.",
       "trace": {
@@ -34,6 +35,7 @@
     },
     {
       "id": "REQ-UI-INPUT-0002",
+      "revision": 1,
       "title": "Define input element classes",
       "statement": "The `ui-input__label` and `ui-input__field` element classes MUST satisfy `REQ-UI-CONVENTIONS-0002`.",
       "trace": {
@@ -44,6 +46,7 @@
     },
     {
       "id": "REQ-UI-INPUT-0003",
+      "revision": 1,
       "title": "Define input size modifiers",
       "statement": "The `ui-input--sm`, `ui-input--md`, and `ui-input--lg` modifiers MUST map to `control-height-small`, `control-height-medium`, and `control-height-large`.",
       "trace": {
@@ -57,6 +60,7 @@
     },
     {
       "id": "REQ-UI-INPUT-0004",
+      "revision": 1,
       "title": "Define the invalid input state",
       "statement": "The `ui-input--invalid` modifier MUST signal validation failure and satisfy `REQ-UI-CONVENTIONS-0003`.",
       "trace": {
@@ -67,6 +71,7 @@
     },
     {
       "id": "REQ-UI-INPUT-0005",
+      "revision": 1,
       "title": "Define the disabled input state",
       "statement": "The `ui-input--disabled` modifier MUST satisfy `REQ-UI-FOUNDATION-0002`.",
       "trace": {
@@ -78,6 +83,7 @@
     },
     {
       "id": "REQ-UI-INPUT-0006",
+      "revision": 1,
       "title": "Define the focus-visible input state",
       "statement": "The `ui-input--focus-visible` modifier MUST satisfy `REQ-UI-FOUNDATION-0001`.",
       "trace": {

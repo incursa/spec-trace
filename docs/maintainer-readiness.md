@@ -22,7 +22,9 @@ If those layers disagree, fix the lower-authority layer or open a requirement ga
 ## Core Concepts
 
 - `specification`: canonical artifact that groups related requirements for a capability, interface, behavior area, or technical concern.
-- `requirement`: stable `REQ-...` record inside a specification. Its `statement` is the normative, testable clause.
+- `requirement`: stable `REQ-...` record inside a specification. Its positive integer `revision` identifies exact content and its `statement` is the normative, testable clause.
+- `edition`: immutable specification-set publication that freezes exact requirement revisions under a SemVer coordinate.
+- `maturity`: immutable publication review state of `draft`, `candidate`, or `stable`; it is separate from mutable active, superseded, or withdrawn disposition.
 - `architecture`: design artifact that explains how requirements are intended to be satisfied.
 - `work_item`: implementation-scope artifact connected to requirements, design inputs, and verification planning.
 - `verification`: proof artifact that records how a requirement set was checked.
@@ -125,6 +127,8 @@ Do not copy this repository's self-specification suite into a downstream repo as
 
 ## Release And Versioning
 
+The Standard's edition coordinate is independent from repository and tool/package release tags. See [`../specs/requirements/spec-trace/SPEC-VER.json`](../specs/requirements/spec-trace/SPEC-VER.json), the edition manifest schema, and the `0.1.0-draft.1` bootstrap preparation record under `initial-editions/`.
+
 The publishable package is the curated JSON schema/template mirror under [`../publish/`](../publish/), not the full repository.
 
 Release expectations:
@@ -145,10 +149,10 @@ Observed local status for this readiness pass:
 
 - root tool tests passed;
 - RFC workbench tests passed;
-- `core` profile passed for 33 artifacts and 274 requirements;
+- `core` profile passed for 34 artifacts and 302 requirements;
 - catalog generation passed;
 - evidence validation passed for 4 evidence files, 41 requirement entries, and 47 observations;
-- core attestation generation passed for 22 specifications and 274 requirements;
+- core attestation generation passed for 23 specifications and 302 requirements;
 - publish mirror sync completed.
 
 The repository is not yet `traceable` or `auditable` as a whole. The stricter profile checks currently fail because many requirements, including UI example requirements and canonical SpecTrace requirements, do not yet have downstream trace links. The `auditable` profile also reports missing verification coverage for those requirements.

@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "standard-edition.schema.json",
+  "title": "SpecAttest Standard Edition Manifest",
+  "description": "Immutable manifest for an exact published edition of a specification set. Mutable distribution and supersession administration is deliberately excluded.",
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "requirementId": {
+      "type": "string",
+      "pattern": "^REQ-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*-\\d{4,}$"
+    },
+    "specificationId": {
+      "type": "string",
+      "pattern": "^SPEC-[A-Z][A-Z0-9]*(?:-[A-Z][A-Z0-9]*)*$"
+    },
+    "validationRecord": {
+      "type": "object",
+      "required": [
+        "validator",
+        "version",
+        "role",
+        "standardEdition",
+        "result",
+        "resultSha256",
+        "conformanceCorpusSha256"
+      ],
+      "properties": {
+        "validator": { "$ref": "#/$defs/nonEmptyString" },
+        "version": { "$ref": "#/$defs/nonEmptyString" },
+        "role": { "type": "string", "enum": ["independent", "accepted", "candidate"] },
+        "standardEdition": { "$ref": "#/$defs/nonEmptyString" },
+        "result": { "const": "passed" },
+        "resultSha256": { "$ref": "#/$defs/sha256" },
+        "conformanceCorpusSha256": { "$ref": "#/$defs/sha256" }
+      },
+      "additionalProperties": false
+    },
+    "requirementRevision": {
+      "type": "object",
+      "required": [
+        "id",
+        "revision",
+        "sha256"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/requirementId" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "required": [
+    "format",
+    "standardTitle",
+    "edition",
+    "maturity",
+    "governance",
+    "source",
+    "payloadSha256",
+    "schemaSha256",
+    "canonicalization",
+    "specificationOrder",
+    "requirementRevisions",
+    "conformanceCorpusSha256",
+    "validatedBy",
+    "approvalReference",
+    "signature",
+    "bootstrap"
+  ],
+  "properties": {
+    "$schema": { "type": "string", "format": "uri-reference" },
+    "format": { "const": "specattest.standard-edition.v1" },
+    "standardTitle": { "$ref": "#/$defs/nonEmptyString" },
+    "edition": {
+      "type": "string",
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-(?:draft|rc)\\.[1-9][0-9]*)?$"
+    },
+    "maturity": {
+      "type": "string",
+      "enum": ["draft", "candidate", "stable"]
+    },
+    "governance": { "$ref": "#/$defs/nonEmptyString" },
+    "source": {
+      "type": "object",
+      "required": ["repository", "commit", "path"],
+      "properties": {
+        "repository": { "$ref": "#/$defs/nonEmptyString" },
+        "commit": { "type": "string", "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$" },
+        "path": { "$ref": "#/$defs/nonEmptyString" }
+      },
+      "additionalProperties": false
+    },
+    "payloadSha256": { "$ref": "#/$defs/sha256" },
+    "schemaSha256": { "$ref": "#/$defs/sha256" },
+    "canonicalization": { "$ref": "#/$defs/nonEmptyString" },
+    "specificationOrder": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/specificationId" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "requirementRevisions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/requirementRevision" },
+      "minItems": 1
+    },
+    "conformanceCorpusSha256": { "$ref": "#/$defs/sha256" },
+    "validatedBy": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/validationRecord" },
+      "minItems": 2
+    },
+    "approvalReference": { "$ref": "#/$defs/nonEmptyString" },
+    "knownGaps": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/nonEmptyString" },
+      "uniqueItems": true
+    },
+    "signature": {
+      "type": "object",
+      "required": ["kind", "reference", "sha256"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["git-tag", "release-manifest"] },
+        "reference": { "$ref": "#/$defs/nonEmptyString" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      },
+      "additionalProperties": false
+    },
+    "bootstrap": { "type": "boolean" },
+    "previousEdition": { "$ref": "#/$defs/nonEmptyString" },
+    "behavioralReview": { "$ref": "#/$defs/nonEmptyString" },
+    "compatibility": {
+      "type": "string",
+      "enum": ["breaking", "backward-compatible", "non-normative"]
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "maturity": { "const": "draft" } }, "required": ["maturity"] },
+      "then": { "properties": { "edition": { "pattern": "-draft\\.[1-9][0-9]*$" } } }
+    },
+    {
+      "if": { "properties": { "maturity": { "const": "candidate" } }, "required": ["maturity"] },
+      "then": { "properties": { "edition": { "pattern": "-rc\\.[1-9][0-9]*$" } } }
+    },
+    {
+      "if": { "properties": { "maturity": { "const": "stable" } }, "required": ["maturity"] },
+      "then": { "properties": { "edition": { "not": { "pattern": "-" } } } }
+    },
+    {
+      "if": { "properties": { "bootstrap": { "const": true } }, "required": ["bootstrap"] },
+      "then": {
+        "properties": {
+          "validatedBy": {
+            "allOf": [
+              { "contains": { "properties": { "role": { "const": "independent" } }, "required": ["role"] } },
+              { "contains": { "properties": { "role": { "const": "candidate" } }, "required": ["role"] } }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "bootstrap": { "const": false } }, "required": ["bootstrap"] },
+      "then": {
+        "required": ["previousEdition", "behavioralReview", "compatibility"],
+        "properties": {
+          "validatedBy": {
+            "allOf": [
+              { "contains": { "properties": { "role": { "const": "accepted" } }, "required": ["role"] } },
+              { "contains": { "properties": { "role": { "const": "candidate" } }, "required": ["role"] } }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}
