@@ -1,0 +1,52 @@
+{
+  "standardTitle": "SpecAttest Standard",
+  "edition": "0.1.0-rc.1",
+  "editionMaturity": "candidate",
+  "versioningPolicy": "semantic",
+  "governance": "incursa-owner-approved",
+  "bootstrap": false,
+  "previousEdition": "0.1.0-draft.2",
+  "compatibility": "non-normative",
+  "behavioralReview": "https://github.com/incursa/workbench/blob/167b247bd9bfbb2ee10455b2332fcd7d303a8d23/specs/verification/WB/VER-WB-0012-specattest-draft-qualification.md",
+  "publisher": {
+    "displayName": "Incursa"
+  },
+  "canonicalSource": {
+    "repository": "incursa/spec-trace",
+    "baseRevision": "3dedb948549ee3bc07adc7360e80f9c4125076a0",
+    "path": "specs/requirements/spec-trace/"
+  },
+  "specificationOrder": [
+    "SPEC-STD",
+    "SPEC-ID",
+    "SPEC-LIN",
+    "SPEC-VER",
+    "SPEC-PRF",
+    "SPEC-RPT",
+    "SPEC-TOP",
+    "SPEC-EVD",
+    "SPEC-LAY",
+    "SPEC-TPL",
+    "SPEC-SCH",
+    "SPEC-EXM"
+  ],
+  "requirementCount": 235,
+  "validators": [
+    {
+      "validator": "specattest-validator",
+      "version": "0.1.0-draft.2",
+      "role": "accepted"
+    },
+    {
+      "validator": "specattest-validator",
+      "version": "0.1.0-rc.1",
+      "role": "candidate"
+    }
+  ],
+  "knownGaps": [
+    "Candidate maturity is an immutable review snapshot and is not a stable compatibility promise.",
+    "Incursa owner approval does not imply external standards-body ratification."
+  ],
+  "distributionState": "prepared-not-public",
+  "sourceRevisionNote": "This preparation record is not the immutable edition manifest. The final source commit, exact payload and schema hashes, validator result hashes, corpus hash, approval, and signed immutable reference are recorded only after the rc.1 bundle is frozen."
+}
