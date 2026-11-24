@@ -1,0 +1,42 @@
+{
+  "standardTitle": "SpecAttest Standard",
+  "edition": "0.1.0-draft.2",
+  "editionMaturity": "draft",
+  "versioningPolicy": "semantic",
+  "governance": "incursa-owner-approved",
+  "bootstrap": false,
+  "previousEdition": "0.1.0-draft.1",
+  "compatibility": "breaking",
+  "behavioralReview": "VER-WB-0012-specattest-draft-qualification",
+  "publisher": {
+    "displayName": "Incursa"
+  },
+  "canonicalSource": {
+    "repository": "incursa/spec-trace",
+    "baseRevision": "569569f7ffb2b68a45e4b5c3c276951404973470",
+    "path": "specs/requirements/spec-trace/"
+  },
+  "specificationOrder": [
+    "SPEC-STD", "SPEC-ID", "SPEC-LIN", "SPEC-VER", "SPEC-PRF", "SPEC-RPT",
+    "SPEC-TOP", "SPEC-EVD", "SPEC-LAY", "SPEC-TPL", "SPEC-SCH", "SPEC-EXM"
+  ],
+  "requirementCount": 235,
+  "validators": [
+    {
+      "validator": "specattest-independent-edition-validator",
+      "version": "2",
+      "role": "independent"
+    },
+    {
+      "validator": "specattest-validator",
+      "version": "0.1.0-draft.2",
+      "role": "candidate"
+    }
+  ],
+  "knownGaps": [
+    "Draft maturity carries no compatibility promise.",
+    "REST and MCP implementations must record their results against the shared protocol vectors before release-candidate promotion."
+  ],
+  "distributionState": "prepared-not-public",
+  "sourceRevisionNote": "This preparation record is not the immutable edition manifest. The final source commit, exact payload and schema hashes, validator result hashes, corpus hash, approval, and signed immutable reference are recorded only after the draft.2 bundle is frozen."
+}

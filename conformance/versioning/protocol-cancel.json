@@ -1,0 +1,9 @@
+{
+  "case": "protocol-cancel",
+  "kind": "safe-mutation-protocol",
+  "valid": true,
+  "scenario": "cancel",
+  "restOutcome": "canceled",
+  "mcpOutcome": "canceled",
+  "partialMutation": false
+}

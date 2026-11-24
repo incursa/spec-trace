@@ -22,6 +22,7 @@ $copyMap = @(
     @{ Source = 'spec-template.json'; Destination = 'spec-template.json' },
     @{ Source = 'standard-edition-template.json'; Destination = 'standard-edition-template.json' },
     @{ Source = 'schemas\standard-edition.schema.json'; Destination = 'schemas\standard-edition.schema.json' },
+    @{ Source = 'schemas\specattest-interchange.schema.json'; Destination = 'schemas\specattest-interchange.schema.json' },
     @{ Source = 'architecture-template.json'; Destination = 'architecture-template.json' },
     @{ Source = 'work-item-template.json'; Destination = 'work-item-template.json' },
     @{ Source = 'verification-template.json'; Destination = 'verification-template.json' }

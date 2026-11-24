@@ -342,6 +342,27 @@
       "trace": {
         "related": ["SPEC-VER"]
       }
+    },
+    {
+      "id": "REQ-SCH-0035",
+      "revision": 1,
+      "title": "Verify complete immutable edition pins",
+      "statement": "An edition verifier MUST validate the complete pin tuple, resolve its signed immutable reference to the declared source commit, reproduce the manifest, schema, payload, and corpus hashes, reject branch or other mutable references, and reject missing or substituted coordinates.",
+      "trace": { "related": ["SPEC-VER"] }
+    },
+    {
+      "id": "REQ-SCH-0036",
+      "revision": 1,
+      "title": "Provide a SpecAttest interchange schema",
+      "statement": "The reference package MUST provide an authoritative SpecAttest interchange schema that keeps normative requirement revision, expected project version, and expected operation version as distinct validated coordinates.",
+      "trace": { "related": ["SPEC-VER"] }
+    },
+    {
+      "id": "REQ-SCH-0037",
+      "revision": 1,
+      "title": "Publish cross-tool interoperability vectors",
+      "statement": "The shared conformance corpus MUST include positive and negative vectors for complete pin verification, revision preservation, storage-version divergence, lineage, canonical equivalence, stale conflicts, atomic failure, deterministic replay, cancellation, and resumption with equivalent REST and MCP outcomes.",
+      "trace": { "related": ["SPEC-VER"] }
     }
   ]
 }

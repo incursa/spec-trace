@@ -1,0 +1,9 @@
+{
+  "case": "protocol-atomic-failure",
+  "kind": "safe-mutation-protocol",
+  "valid": true,
+  "scenario": "atomic-failure",
+  "restOutcome": "rejected",
+  "mcpOutcome": "rejected",
+  "partialMutation": false
+}

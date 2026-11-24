@@ -66,6 +66,7 @@
     "governance",
     "source",
     "payloadSha256",
+    "modelSchemaSha256",
     "schemaSha256",
     "canonicalization",
     "specificationOrder",
@@ -100,6 +101,7 @@
       "additionalProperties": false
     },
     "payloadSha256": { "$ref": "#/$defs/sha256" },
+    "modelSchemaSha256": { "$ref": "#/$defs/sha256" },
     "schemaSha256": { "$ref": "#/$defs/sha256" },
     "canonicalization": { "$ref": "#/$defs/nonEmptyString" },
     "specificationOrder": {
@@ -172,7 +174,37 @@
     {
       "if": { "properties": { "bootstrap": { "const": false } }, "required": ["bootstrap"] },
       "then": {
-        "required": ["previousEdition", "behavioralReview", "compatibility"],
+        "required": ["previousEdition", "behavioralReview", "compatibility"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "bootstrap": { "const": false },
+          "maturity": { "const": "draft" }
+        },
+        "required": ["bootstrap", "maturity"]
+      },
+      "then": {
+        "properties": {
+          "validatedBy": {
+            "allOf": [
+              { "contains": { "properties": { "role": { "const": "independent" } }, "required": ["role"] } },
+              { "contains": { "properties": { "role": { "const": "candidate" } }, "required": ["role"] } }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "bootstrap": { "const": false },
+          "maturity": { "not": { "const": "draft" } }
+        },
+        "required": ["bootstrap", "maturity"]
+      },
+      "then": {
         "properties": {
           "validatedBy": {
             "allOf": [
