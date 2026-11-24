@@ -50,6 +50,27 @@ public sealed class StandardEditionSchemaTests
         finally { File.Delete(path); }
     }
 
+    [Fact]
+    public async Task ValidateEditionCommandWritesStableReportForPublicationEvidence()
+    {
+        var manifestPath = WriteTempJson(Manifest("0.1.0-draft.1", "draft", true));
+        var reportPath = Path.Combine(Path.GetTempPath(), "specattest-edition-tests", $"{Guid.NewGuid():N}.report.json");
+        try
+        {
+            var exitCode = await CommandDispatcher.RunAsync(["validate-edition", "--root", RepositoryRoot, "--manifest", manifestPath, "--json-report", reportPath]);
+            Assert.Equal(0, exitCode);
+            using var report = JsonDocument.Parse(File.ReadAllText(reportPath));
+            Assert.Equal("passed", report.RootElement.GetProperty("result").GetString());
+            Assert.Equal(5, report.RootElement.GetProperty("conformanceCases").GetInt32());
+            Assert.Matches("^[a-f0-9]{64}$", report.RootElement.GetProperty("validationSubjectSha256").GetString());
+        }
+        finally
+        {
+            File.Delete(manifestPath);
+            File.Delete(reportPath);
+        }
+    }
+
     private static string Manifest(string edition, string maturity, bool bootstrap) => $$"""
 {
   "format": "specattest.standard-edition.v1",

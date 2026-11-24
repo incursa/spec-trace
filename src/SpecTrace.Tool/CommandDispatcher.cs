@@ -1,4 +1,6 @@
 using System.Text.Json;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace SpecTrace.Tool;
 
@@ -21,6 +23,7 @@ public static class CommandDispatcher
             return command switch
             {
                 "validate" => await RunValidateAsync(rootPath, inputPath, GetOption(args, "--profile") ?? "core", GetOption(args, "--json-report")),
+                "validate-edition" => RunValidateEdition(rootPath, GetOption(args, "--manifest"), GetOption(args, "--json-report")),
                 "build-catalog" => await RunBuildCatalogAsync(rootPath, inputPath, GetOption(args, "--json-out")),
                 "validate-evidence" => await RunValidateEvidenceAsync(rootPath, GetOptionValues(args, "--evidence-path")),
                 "resolve-topic-view" => await RunResolveTopicViewAsync(
@@ -72,6 +75,122 @@ public static class CommandDispatcher
 
         Console.WriteLine($"Validation passed for {report.ArtifactCount} artifact(s) and {report.RequirementCount} requirement(s).");
         return 0;
+    }
+
+    private static int RunValidateEdition(string rootPath, string? manifestPath, string? jsonReportPath)
+    {
+        if (string.IsNullOrWhiteSpace(manifestPath))
+        {
+            throw new InvalidOperationException("Provide --manifest <path>.");
+        }
+
+        var fullManifestPath = Path.GetFullPath(Path.IsPathRooted(manifestPath) ? manifestPath : Path.Combine(rootPath, manifestPath));
+        var manifest = JsonSchemaValidator.Load(rootPath).LoadStandardEdition(rootPath, fullManifestPath);
+        var conformanceCases = ValidateVersioningConformanceCorpus(rootPath);
+        var subjectSha256 = ComputeValidationSubjectSha256(manifest);
+        var report = JsonSerializer.Serialize(new
+        {
+            result = "passed",
+            validator = "spec-trace-tool-json-schema",
+            version = typeof(CommandDispatcher).Assembly.GetName().Version?.ToString() ?? "unknown",
+            edition = manifest.GetProperty("edition").GetString(),
+            specifications = manifest.GetProperty("specificationOrder").GetArrayLength(),
+            requirements = manifest.GetProperty("requirementRevisions").GetArrayLength(),
+            conformanceCases,
+            validationSubjectSha256 = subjectSha256,
+        }, new JsonSerializerOptions { WriteIndented = false }) + Environment.NewLine;
+
+        if (!string.IsNullOrWhiteSpace(jsonReportPath))
+        {
+            var fullReportPath = Path.GetFullPath(jsonReportPath);
+            Directory.CreateDirectory(Path.GetDirectoryName(fullReportPath)!);
+            File.WriteAllText(fullReportPath, report, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+        }
+
+        Console.Write(report);
+        return 0;
+    }
+
+    private static int ValidateVersioningConformanceCorpus(string rootPath)
+    {
+        var corpusPath = Path.Combine(rootPath, "conformance", "versioning");
+        var paths = Directory.GetFiles(corpusPath, "*.json").OrderBy(path => path, StringComparer.Ordinal).ToList();
+        if (paths.Count == 0)
+        {
+            throw new InvalidOperationException("Versioning conformance corpus is empty.");
+        }
+
+        foreach (var path in paths)
+        {
+            using var document = JsonDocument.Parse(File.ReadAllText(path));
+            var root = document.RootElement;
+            var edition = root.GetProperty("edition").GetString() ?? string.Empty;
+            var maturity = root.GetProperty("maturity").GetString() ?? string.Empty;
+            var bootstrap = root.GetProperty("bootstrap").GetBoolean();
+            var revision = root.GetProperty("requirement").GetProperty("revision").GetInt32();
+            var match = System.Text.RegularExpressions.Regex.Match(edition, "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(draft|rc)\\.([1-9][0-9]*))?$");
+            var valid = match.Success;
+            if (match.Success)
+            {
+                var prerelease = match.Groups[4].Value;
+                var expectedMaturity = prerelease == "draft" ? "draft" : prerelease == "rc" ? "candidate" : "stable";
+                valid = string.Equals(maturity, expectedMaturity, StringComparison.Ordinal);
+            }
+
+            valid = valid && revision >= 1;
+            if (!bootstrap)
+            {
+                valid = valid && root.TryGetProperty("previousEdition", out var previous) && !string.IsNullOrWhiteSpace(previous.GetString())
+                    && root.TryGetProperty("behavioralReview", out var review) && !string.IsNullOrWhiteSpace(review.GetString());
+            }
+
+            if (valid != root.GetProperty("valid").GetBoolean())
+            {
+                throw new InvalidOperationException($"Versioning conformance case produced the wrong result: {Path.GetFileName(path)}");
+            }
+        }
+
+        return paths.Count;
+    }
+
+    private static string ComputeValidationSubjectSha256(JsonElement manifest)
+    {
+        using var stream = new MemoryStream();
+        using (var writer = new Utf8JsonWriter(stream))
+        {
+            WriteCanonicalObject(writer, manifest, new HashSet<string>(StringComparer.Ordinal) { "validatedBy", "approvalReference", "signature" });
+        }
+
+        return Convert.ToHexString(SHA256.HashData(stream.ToArray())).ToLowerInvariant();
+    }
+
+    private static void WriteCanonicalObject(Utf8JsonWriter writer, JsonElement element, ISet<string>? excludedProperties = null)
+    {
+        writer.WriteStartObject();
+        foreach (var property in element.EnumerateObject().Where(property => excludedProperties is null || !excludedProperties.Contains(property.Name)).OrderBy(property => property.Name, StringComparer.Ordinal))
+        {
+            writer.WritePropertyName(property.Name);
+            WriteCanonicalValue(writer, property.Value);
+        }
+        writer.WriteEndObject();
+    }
+
+    private static void WriteCanonicalValue(Utf8JsonWriter writer, JsonElement element)
+    {
+        switch (element.ValueKind)
+        {
+            case JsonValueKind.Object:
+                WriteCanonicalObject(writer, element);
+                break;
+            case JsonValueKind.Array:
+                writer.WriteStartArray();
+                foreach (var item in element.EnumerateArray()) WriteCanonicalValue(writer, item);
+                writer.WriteEndArray();
+                break;
+            default:
+                element.WriteTo(writer);
+                break;
+        }
     }
 
     private static async Task<int> RunValidateEvidenceAsync(string rootPath, IReadOnlyList<string> evidencePaths)
@@ -315,6 +434,7 @@ public static class CommandDispatcher
     {
         Console.WriteLine("Usage:");
         Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- validate [--root <path>] [--input-path <path>] [--profile core|traceable|auditable] [--json-report <path>]");
+        Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- validate-edition --manifest <path> [--root <path>] [--json-report <path>]");
         Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- build-catalog [--root <path>] [--input-path <path>] [--json-out <path>]");
         Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- validate-evidence [--root <path>] [--evidence-path <file-or-dir>]...");
         Console.WriteLine("  dotnet run --project src/SpecTrace.Tool -- resolve-topic-view [--root <path>] [--input-path <path>] (--topic-view-path <path> | --topic-view-json <json>)");

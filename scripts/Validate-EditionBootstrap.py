@@ -22,6 +22,36 @@ def canonical(value: object) -> bytes:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True).encode("utf-8")
 
 
+def validation_subject(manifest: dict[str, object]) -> dict[str, object]:
+    """Return the immutable subject without self-referential publication evidence."""
+    excluded = {"validatedBy", "approvalReference", "signature"}
+    return {key: value for key, value in manifest.items() if key not in excluded}
+
+
+def validate_conformance_corpus(root: pathlib.Path) -> int:
+    corpus = root / "conformance" / "versioning"
+    cases = sorted(corpus.glob("*.json"))
+    if not cases:
+        fail("versioning conformance corpus is empty")
+
+    for path in cases:
+        case = json.loads(path.read_text(encoding="utf-8"))
+        match = SEMVER.fullmatch(case.get("edition", ""))
+        valid = match is not None
+        if match:
+            prerelease = match.group(4)
+            expected_maturity = "draft" if prerelease == "draft" else "candidate" if prerelease == "rc" else "stable"
+            valid = case.get("maturity") == expected_maturity
+        requirement = case.get("requirement", {})
+        valid = valid and isinstance(requirement.get("revision"), int) and requirement["revision"] >= 1
+        if not case.get("bootstrap", False):
+            valid = valid and bool(case.get("previousEdition")) and bool(case.get("behavioralReview"))
+        if valid != case.get("valid"):
+            fail(f"conformance case produced the wrong result: {path.name}")
+
+    return len(cases)
+
+
 def fail(message: str) -> None:
     raise ValueError(message)
 
@@ -95,12 +125,17 @@ def main() -> int:
     if not manifest.get("approvalReference") or not manifest.get("signature"):
         fail("approval and signature references are required")
 
+    conformance_cases = validate_conformance_corpus(root)
+
     print(json.dumps({
         "result": "passed",
+        "validator": "specattest-independent-bootstrap-validator",
+        "version": "1",
         "edition": manifest["edition"],
         "specifications": len(manifest["specificationOrder"]),
         "requirements": len(discovered),
-        "manifestSha256": sha256(args.manifest.read_bytes()),
+        "conformanceCases": conformance_cases,
+        "validationSubjectSha256": sha256(canonical(validation_subject(manifest))),
     }, sort_keys=True))
     return 0
 
