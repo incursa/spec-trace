@@ -16,6 +16,7 @@ generated `incursa-docs` copy directly.
 
 - [`contributor-agreement-automation.md`](./contributor-agreement-automation.md) - Incursa Contributor Agreement workflow setup, signing flow, required secret, and branch-rule status check.
 - [`maintainer-readiness.md`](./maintainer-readiness.md) - validation floor, release expectations, downstream adoption path, and known gaps.
+- [`initial-editions/specattest-standard-0.1.0.md`](./initial-editions/specattest-standard-0.1.0.md) - active stable-promotion qualification plan and entry baseline.
 
 ## Source And Validation
 
