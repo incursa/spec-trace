@@ -127,7 +127,7 @@ Do not copy this repository's self-specification suite into a downstream repo as
 
 ## Release And Versioning
 
-The Standard's edition coordinate is independent from repository and tool/package release tags. See [`../specs/requirements/spec-trace/SPEC-VER.json`](../specs/requirements/spec-trace/SPEC-VER.json), the edition manifest schema, the published `0.1.0-draft.1` bootstrap record, the `0.1.0-draft.2` successor record, and the `0.1.0-rc.1` candidate preparation record under `initial-editions/`.
+The Standard's edition coordinate is independent from repository and tool/package release tags. See [`../specs/requirements/spec-trace/SPEC-VER.json`](../specs/requirements/spec-trace/SPEC-VER.json), the edition manifest schema, the published `0.1.0-draft.1` bootstrap record, the `0.1.0-draft.2` successor record, the `0.1.0-rc.1` candidate record, and the active `0.1.0` stable-promotion plan under `initial-editions/`.
 
 The publishable package is the curated JSON schema/template mirror under [`../publish/`](../publish/), not the full repository.
 

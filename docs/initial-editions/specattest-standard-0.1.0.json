@@ -1,0 +1,51 @@
+{
+  "standardTitle": "SpecAttest Standard",
+  "edition": "0.1.0",
+  "editionMaturity": "stable",
+  "versioningPolicy": "semantic",
+  "governance": "incursa-owner-approved",
+  "bootstrap": false,
+  "previousEdition": "0.1.0-rc.1",
+  "compatibility": "non-normative",
+  "behavioralReview": "VER-WB-0013-specattest-0.1.0-stable-qualification",
+  "publisher": {
+    "displayName": "Incursa"
+  },
+  "canonicalSource": {
+    "repository": "incursa/spec-trace",
+    "baseRevision": "afb4885980bdcbe250bb18fd07948c8999450330",
+    "path": "specs/requirements/spec-trace/"
+  },
+  "specificationOrder": [
+    "SPEC-STD",
+    "SPEC-ID",
+    "SPEC-LIN",
+    "SPEC-VER",
+    "SPEC-PRF",
+    "SPEC-RPT",
+    "SPEC-TOP",
+    "SPEC-EVD",
+    "SPEC-LAY",
+    "SPEC-TPL",
+    "SPEC-SCH",
+    "SPEC-EXM"
+  ],
+  "requirementCount": 235,
+  "validators": [
+    {
+      "validator": "specattest-validator",
+      "version": "0.1.0-rc.1",
+      "role": "accepted"
+    },
+    {
+      "validator": "specattest-validator",
+      "version": "0.1.0",
+      "role": "candidate"
+    }
+  ],
+  "knownGaps": [
+    "Stable means supported under Incursa governance and does not imply external standards-body ratification."
+  ],
+  "distributionState": "qualification-in-progress",
+  "sourceRevisionNote": "This preparation record is not an immutable edition manifest. Stable publication remains blocked on the completed soak, final qualification, owner approval, a frozen source commit, signed tag, and independent redownload verification."
+}
