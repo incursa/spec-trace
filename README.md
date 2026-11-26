@@ -17,7 +17,7 @@ request there.
 Do not edit the mirrored `incursa-docs` copy directly. Make source changes in
 this repository and let the sync workflow publish the mirror update.
 
-The operational handoff page is [`docs/maintainer-readiness.md`](./docs/maintainer-readiness.md). It records the current validation floor, release expectations, and known gaps.
+The operational handoff page is [`docs/maintainer-readiness.md`](./docs/maintainer-readiness.md). It records the validation commands, release expectations, and conformance-claim rules.
 
 ## Why Use It
 
@@ -174,11 +174,11 @@ source RFC extracts, or private work artifacts in release material.
 - [`publish/README.md`](./publish/README.md) - reusable publish mirror
 - [`apps/spec-trace-mcp/README.md`](./apps/spec-trace-mcp/README.md) - MCP docs server
 
-## Readiness And Gaps
+## Readiness and conformance
 
 [`docs/maintainer-readiness.md`](./docs/maintainer-readiness.md) records the
-current validation floor, downstream adoption path, and open gaps. Use it when
-you need a concise handoff summary rather than the full standard.
+validation floor, downstream adoption path, and rules for making profile claims.
+Use it when you need a concise operational guide rather than the full standard.
 
 ## Contributing
 

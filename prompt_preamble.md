@@ -1,5 +1,5 @@
 Target repository:
-This current directory: C:\src\incursa\...
+Repository root: `<path-to-target-repository>`
 
 Spec Trace source of truth:
 - Canonical standard: [`specs/requirements/spec-trace/`](./specs/requirements/spec-trace/)
