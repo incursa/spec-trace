@@ -110,7 +110,7 @@ Run stricter profiles when the repository claims that level:
 ./scripts/Test-SpecTraceRepository.ps1 -Profile auditable
 ```
 
-Those stricter profiles are expected to fail until every requirement has downstream trace links, and the `auditable` profile also requires verification coverage.
+Claim a stricter profile only when that profile passes. The `traceable` profile requires downstream trace links, and the `auditable` profile also requires verification coverage.
 
 ## Downstream Adoption
 
@@ -127,7 +127,7 @@ Do not copy this repository's self-specification suite into a downstream repo as
 
 ## Release And Versioning
 
-The Standard's edition coordinate is independent from repository and tool/package release tags. See [`../specs/requirements/spec-trace/SPEC-VER.json`](../specs/requirements/spec-trace/SPEC-VER.json), the edition manifest schema, the published `0.1.0-draft.1` bootstrap record, the `0.1.0-draft.2` successor record, the `0.1.0-rc.1` candidate record, and the active `0.1.0` stable-promotion plan under `initial-editions/`.
+The Standard's edition coordinate is independent from repository and tool/package release tags. See [`../specs/requirements/spec-trace/SPEC-VER.json`](../specs/requirements/spec-trace/SPEC-VER.json), the edition manifest schema, and the immutable edition records under `initial-editions/`.
 
 The publishable package is the curated JSON schema/template mirror under [`../publish/`](../publish/), not the full repository.
 
@@ -141,27 +141,14 @@ Release expectations:
 
 The publish workflow creates a `spec-trace-publish-<version>.zip` archive from `publish/`. Do not include local `.work*` directories, generated attestations, source RFC extracts, or private work artifacts in release material.
 
-## Current Readiness Status
+## Conformance claims
 
-This repository is locally ready at the `core` profile when the validation floor above passes.
+The repository satisfies a profile only when the validation floor and that profile's validator pass for the revision being claimed. Record revision-specific commands, counts, skipped checks, and outcomes in the pull request, verification artifact, or release record.
 
-Observed local status for this readiness pass:
+- `core` claims require the core validator and release checks.
+- `traceable` claims additionally require downstream trace links for every requirement.
+- `auditable` claims additionally require verification coverage and the stricter graph rules.
+- A generated catalog or attestation does not by itself establish a profile claim.
+- A prior passing run does not prove a later revision.
 
-- root tool tests passed;
-- RFC workbench tests passed;
-- `core` profile passed for 34 artifacts and 302 requirements;
-- catalog generation passed;
-- evidence validation passed for 4 evidence files, 41 requirement entries, and 47 observations;
-- core attestation generation passed for 23 specifications and 302 requirements;
-- publish mirror sync completed.
-
-The repository is not yet `traceable` or `auditable` as a whole. The stricter profile checks currently fail because many requirements, including UI example requirements and canonical SpecTrace requirements, do not yet have downstream trace links. The `auditable` profile also reports missing verification coverage for those requirements.
-
-## Known Gaps And Follow-Up Work
-
-- Complete downstream trace links before claiming repository-wide `traceable` readiness.
-- Complete verification coverage before claiming repository-wide `auditable` readiness.
-- Keep the RFC workbench deterministic smoke path separate from Codex-assisted extraction and review.
-- Add `CONTRIBUTORS.md` or `AUTHORS.md` only if the project wants a maintained contributor ledger beyond git history.
-- Add `SUPPORT.md`, `CODEOWNERS`, and Dependabot if maintainers want explicit support routing, review ownership, or automated dependency upkeep.
-- Add a `specs/README.md` index if the canonical `specs/requirements/spec-trace/_index.md` stops being sufficient as the primary standard navigation surface.
+Keep deterministic RFC workbench checks separate from Codex-assisted extraction and review. AI-assisted output is review input, not canonical proof.

@@ -42,6 +42,7 @@ If you find a mismatch, follow the higher-authority source and fix the lower-aut
 - Use stable IDs for cross-file references. Prefer artifact IDs and requirement IDs over file paths.
 - If you rename or delete a referenced ID, fix the referrers in the same change.
 - Keep AI-facing docs short, ergonomic, and explicitly subordinate to the SPEC suite.
+- Keep durable documentation free of branch, commit, deployment, point-in-time validation, test-count, package-count, exact-latest-version, temporary-blocker, and unfinished-work status. Put release history in release notes and revision-specific proof in verification artifacts or pull requests.
 
 ## AI Assets In This Repo
 
